@@ -72,7 +72,7 @@ namespace BlazorShell.Modules.Permissions
                     Order = 50,
                     Type = NavigationType.Both,
                     IsVisible = true,
-                    RequiredPermission = "Permissions.Manage"
+                    RequiredPermission = "Permissions.Admin"
                 }
             };
         }

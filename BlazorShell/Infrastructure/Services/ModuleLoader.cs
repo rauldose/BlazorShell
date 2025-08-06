@@ -262,6 +262,7 @@ namespace BlazorShell.Infrastructure.Services
                     return null;
                 }
 
+
                 if (module is IServiceModule serviceModule && (_services as ICollection<ServiceDescriptor>)?.IsReadOnly == false)
                 {
                     serviceModule.RegisterServices(_services);

@@ -17,6 +17,7 @@ using BlazorShell.Components;
 using Module = Autofac.Module;
 using BlazorShell.Components.Account;
 using IdentityRevalidatingAuthenticationStateProvider = BlazorShell.Components.Account.IdentityRevalidatingAuthenticationStateProvider;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
     // Register core services
-    containerBuilder.RegisterModule(new CoreServicesModule());
+    containerBuilder.RegisterModule(new CoreServicesModule(builder.Services));
 
     // Register infrastructure services
     containerBuilder.RegisterModule(new InfrastructureModule());
@@ -333,10 +334,20 @@ async Task SeedDefaultAdmin(UserManager<ApplicationUser> userManager, RoleManage
 // Module registration for Autofac
 public class CoreServicesModule : Module
 {
+    private readonly IServiceCollection _services;
+
+    public CoreServicesModule(IServiceCollection services)
+    {
+        _services = services;
+    }
+
     protected override void Load(ContainerBuilder builder)
     {
         // Register core services with proper lifetimes
-        builder.RegisterType<ModuleLoader>().As<IModuleLoader>().SingleInstance();
+        builder.RegisterType<ModuleLoader>()
+            .As<IModuleLoader>()
+            .WithParameter(new TypedParameter(typeof(IServiceCollection), _services))
+            .SingleInstance();
         builder.RegisterType<ModuleRegistry>().As<IModuleRegistry>().SingleInstance();
         builder.RegisterType<NavigationService>().As<INavigationService>().SingleInstance();
         builder.RegisterType<StateContainer>().As<IStateContainer>().InstancePerLifetimeScope();

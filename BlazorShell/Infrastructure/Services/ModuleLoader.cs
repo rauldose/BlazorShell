@@ -24,6 +24,7 @@ namespace BlazorShell.Infrastructure.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly Dictionary<string, ModuleLoadContext> _loadContexts;
         private readonly string _modulesPath;
+        private readonly IServiceCollection _services;
 
         public ModuleLoader(
             ILogger<ModuleLoader> logger,
@@ -31,7 +32,8 @@ namespace BlazorShell.Infrastructure.Services
             IModuleRegistry moduleRegistry,
             IPluginAssemblyLoader assemblyLoader,
             ApplicationDbContext dbContext,
-            IOptions<ModuleConfiguration> options)
+            IOptions<ModuleConfiguration> options,
+            IServiceCollection services)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
@@ -40,6 +42,7 @@ namespace BlazorShell.Infrastructure.Services
             _dbContext = dbContext;
             _loadContexts = new Dictionary<string, ModuleLoadContext>();
             _modulesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, options.Value.ModulesPath ?? "Modules");
+            _services = services;
         }
 
         public async Task InitializeModulesAsync()
@@ -184,6 +187,11 @@ namespace BlazorShell.Infrastructure.Services
                 {
                     _logger.LogError("Failed to create instance of {Type}", moduleType.FullName);
                     return null;
+                }
+
+                if (module is IServiceModule serviceModule)
+                {
+                    serviceModule.RegisterServices(_services);
                 }
 
                 // Store load context for unloading

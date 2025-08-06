@@ -56,6 +56,7 @@ namespace BlazorShell.Core.Interfaces
         Task<IModule> LoadModuleAsync(string assemblyPath);
         Task<bool> UnloadModuleAsync(string moduleName);
         Task<IEnumerable<IModule>> GetLoadedModulesAsync();
+        Task<IEnumerable<Assembly>> GetModuleAssembliesAsync();
         Task<IModule> GetModuleAsync(string moduleName);
         Task ReloadModuleAsync(string moduleName);
     }

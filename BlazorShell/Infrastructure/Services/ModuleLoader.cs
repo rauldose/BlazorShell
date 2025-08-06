@@ -263,6 +263,11 @@ namespace BlazorShell.Infrastructure.Services
             return await Task.FromResult(_moduleRegistry.GetModules());
         }
 
+        public async Task<IEnumerable<Assembly>> GetModuleAssembliesAsync()
+        {
+            return await Task.FromResult(_loadContexts.Values.Select(c => c.Assembly));
+        }
+
         public async Task<IModule> GetModuleAsync(string moduleName)
         {
             return await Task.FromResult(_moduleRegistry.GetModule(moduleName));

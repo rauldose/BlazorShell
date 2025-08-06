@@ -24,6 +24,7 @@ namespace BlazorShell.Infrastructure.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly Dictionary<string, ModuleLoadContext> _loadContexts;
         private readonly string _modulesPath;
+        private readonly IServiceCollection _services;
 
         public ModuleLoader(
             ILogger<ModuleLoader> logger,
@@ -31,7 +32,8 @@ namespace BlazorShell.Infrastructure.Services
             IModuleRegistry moduleRegistry,
             IPluginAssemblyLoader assemblyLoader,
             ApplicationDbContext dbContext,
-            IOptions<ModuleConfiguration> options)
+            IOptions<ModuleConfiguration> options,
+            IServiceCollection services)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
@@ -40,6 +42,65 @@ namespace BlazorShell.Infrastructure.Services
             _dbContext = dbContext;
             _loadContexts = new Dictionary<string, ModuleLoadContext>();
             _modulesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, options.Value.ModulesPath ?? "Modules");
+            _services = services;
+        }
+
+        public async Task RegisterModuleServicesAsync()
+        {
+            try
+            {
+                // Load configuration
+                var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "modules.json");
+                if (!File.Exists(configPath))
+                {
+                    _logger.LogWarning("Module configuration file not found at {Path}", configPath);
+                    return;
+                }
+
+                var configJson = await File.ReadAllTextAsync(configPath);
+                var config = JsonConvert.DeserializeObject<ModulesConfiguration>(configJson);
+
+                if (config?.Modules == null)
+                {
+                    _logger.LogWarning("No modules found in configuration");
+                    return;
+                }
+
+                if (!Directory.Exists(_modulesPath))
+                {
+                    Directory.CreateDirectory(_modulesPath);
+                }
+
+                var sortedModules = config.Modules
+                    .Where(m => m.Enabled)
+                    .OrderBy(m => m.LoadOrder)
+                    .ToList();
+
+                foreach (var moduleConfig in sortedModules)
+                {
+                    try
+                    {
+                        var assemblyPath = Path.Combine(_modulesPath, moduleConfig.AssemblyName);
+                        if (!File.Exists(assemblyPath))
+                        {
+                            _logger.LogWarning("Module assembly not found: {Path}", assemblyPath);
+                            continue;
+                        }
+
+                        // Load module only for service registration
+                        await LoadModuleAsync(assemblyPath, registerOnly: true);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error registering services for module {Module}", moduleConfig.Name);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Critical error during module service registration");
+                throw;
+            }
         }
 
         public async Task InitializeModulesAsync()
@@ -112,30 +173,45 @@ namespace BlazorShell.Infrastructure.Services
                             continue;
                         }
 
-                        var module = await LoadModuleAsync(assemblyPath);
-                        if (module != null)
+                        if (!_loadContexts.TryGetValue(moduleConfig.Name, out var context))
                         {
-                            // Initialize module
-                            var initialized = await module.InitializeAsync(_serviceProvider);
-                            if (initialized)
+                            var loaded = await LoadModuleAsync(assemblyPath);
+                            if (loaded == null)
                             {
-                                // Register navigation items
-                                var navItems = module.GetNavigationItems();
-                                if (navItems?.Any() == true)
-                                {
-                                    var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
-                                    navigationService.RegisterNavigationItems(navItems);
-                                }
-
-                                // Update or create database entry
-                                await UpdateModuleInDatabase(module, moduleConfig);
-
-                                _logger.LogInformation("Module {Module} loaded successfully", module.Name);
+                                continue;
                             }
-                            else
+                            context = _loadContexts[moduleConfig.Name];
+                        }
+
+                        var module = context.Module;
+
+                        // Initialize module
+                        var initialized = await module.InitializeAsync(_serviceProvider);
+                        if (initialized)
+                        {
+                            // Register navigation items
+                            var navItems = module.GetNavigationItems();
+                            if (navItems?.Any() == true)
                             {
-                                _logger.LogError("Failed to initialize module {Module}", moduleConfig.Name);
+                                var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
+                                navigationService.RegisterNavigationItems(navItems);
                             }
+
+                            // Update or create database entry
+                            await UpdateModuleInDatabase(module, moduleConfig);
+
+                            // Register and activate module
+                            if (!_moduleRegistry.IsModuleRegistered(module.Name))
+                            {
+                                _moduleRegistry.RegisterModule(module);
+                                await module.ActivateAsync();
+                            }
+
+                            _logger.LogInformation("Module {Module} loaded successfully", module.Name);
+                        }
+                        else
+                        {
+                            _logger.LogError("Failed to initialize module {Module}", moduleConfig.Name);
                         }
                     }
                     catch (Exception ex)
@@ -154,7 +230,7 @@ namespace BlazorShell.Infrastructure.Services
             }
         }
 
-        public async Task<IModule> LoadModuleAsync(string assemblyPath)
+        public async Task<IModule> LoadModuleAsync(string assemblyPath, bool registerOnly = false)
         {
             try
             {
@@ -186,19 +262,18 @@ namespace BlazorShell.Infrastructure.Services
                     return null;
                 }
 
-                // Store load context for unloading
+                if (module is IServiceModule serviceModule && (_services as ICollection<ServiceDescriptor>)?.IsReadOnly == false)
+                {
+                    serviceModule.RegisterServices(_services);
+                }
+
+                // Store load context for later activation
                 _loadContexts[module.Name] = new ModuleLoadContext
                 {
                     Assembly = assembly,
                     Module = module,
                     LoadedAt = DateTime.UtcNow
                 };
-
-                // Register module
-                _moduleRegistry.RegisterModule(module);
-
-                // Activate module
-                await module.ActivateAsync();
 
                 return module;
             }

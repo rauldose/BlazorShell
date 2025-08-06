@@ -1,0 +1,31 @@
+@page "/dashboard/analytics"
+@using BlazorShell.Core.Interfaces
+@using BlazorShell.Modules.Dashboard
+@inherits ModuleComponentBase
+@inject IDashboardService DashboardService
+
+<h3>Dashboard Analytics</h3>
+
+@if (data == null)
+{
+    <p>Loading analytics...</p>
+}
+else
+{
+    <ul>
+        <li>Total Users: @data.TotalUsers</li>
+        <li>Active Sessions: @data.ActiveSessions</li>
+        <li>Total Revenue: @data.TotalRevenue</li>
+        <li>Growth Rate: @data.GrowthRate%</li>
+    </ul>
+}
+
+@code {
+    private DashboardData? data;
+    protected override string ModuleName => "Dashboard";
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        data = await DashboardService.GetDashboardDataAsync();
+    }
+}

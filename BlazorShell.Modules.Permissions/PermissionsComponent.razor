@@ -1,0 +1,43 @@
+@page "/admin/permissions"
+@using BlazorShell.Core.Entities
+@using BlazorShell.Core.Interfaces
+@inherits ModuleComponentBase
+@inject IPermissionManagementService PermissionService
+
+<PageTitle>Permissions - BlazorShell</PageTitle>
+
+<div class="permissions-container">
+    <h2><i class="bi bi-shield-lock"></i> Permissions</h2>
+
+    @if (!IsAuthenticated)
+    {
+        <p>You must be logged in to view permissions.</p>
+    }
+    else if (UserPermissions == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (var perm in UserPermissions)
+            {
+                <li class="list-group-item">@perm.Module?.Name - @perm.PermissionType</li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    protected override string ModuleName => "Permissions";
+
+    private IEnumerable<ModulePermission>? UserPermissions;
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        if (IsAuthenticated)
+        {
+            UserPermissions = await PermissionService.GetUserPermissionsAsync(UserId);
+        }
+    }
+}

@@ -1,0 +1,31 @@
+@page "/dashboard/widgets"
+@using BlazorShell.Core.Interfaces
+@using BlazorShell.Modules.Dashboard
+@inherits ModuleComponentBase
+@inject IDashboardService DashboardService
+
+<h3>Dashboard Widgets</h3>
+
+@if (widgets == null)
+{
+    <p>Loading widgets...</p>
+}
+else
+{
+    <ul>
+        @foreach (var widget in widgets)
+        {
+            <li>@widget.Name (@widget.Type)</li>
+        }
+    </ul>
+}
+
+@code {
+    private IEnumerable<Widget>? widgets;
+    protected override string ModuleName => "Dashboard";
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        widgets = await DashboardService.GetWidgetsAsync();
+    }
+}

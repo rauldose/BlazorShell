@@ -33,8 +33,7 @@ namespace BlazorShell.Modules.Dashboard
         public string Category => "Core";
         public int Order => 1;
 
-        //public Type ConfigurationComponentType => typeof(DashboardConfigurationComponent);
-        public Type ConfigurationComponentType => typeof(DashboardComponent);
+        public Type ConfigurationComponentType => typeof(DashboardConfigurationComponent);
 
         public DashboardModule()
         {
@@ -155,9 +154,9 @@ namespace BlazorShell.Modules.Dashboard
             return new List<Type>
             {
                 typeof(DashboardComponent),
-                //typeof(DashboardAnalyticsComponent),
-                //typeof(DashboardWidgetsComponent),
-                //typeof(DashboardConfigurationComponent)
+                typeof(DashboardAnalyticsComponent),
+                typeof(DashboardWidgetsComponent),
+                typeof(DashboardConfigurationComponent)
             };
         }
 

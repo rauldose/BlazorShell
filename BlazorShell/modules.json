@@ -34,7 +34,27 @@
           "icon": "bi bi-speedometer2",
           "order": 1,
           "type": "Both",
-          "requiredPermission": "Dashboard.Read"
+          "requiredPermission": "Dashboard.Read",
+          "children": [
+            {
+              "name": "dashboard-analytics",
+              "displayName": "Analytics",
+              "url": "/dashboard/analytics",
+              "icon": "bi bi-graph-up",
+              "order": 2,
+              "type": "SideMenu",
+              "requiredPermission": "Dashboard.Read"
+            },
+            {
+              "name": "dashboard-widgets",
+              "displayName": "Widgets",
+              "url": "/dashboard/widgets",
+              "icon": "bi bi-grid-3x3",
+              "order": 3,
+              "type": "SideMenu",
+              "requiredPermission": "Dashboard.Admin"
+            }
+          ]
         }
       ],
       "permissions": [

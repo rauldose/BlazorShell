@@ -1,0 +1,92 @@
+﻿@* DashboardReportsPage.razor *@
+@page "/dashboard/reports"
+@using BlazorShell.Core.Components
+@inherits ModuleComponentBase
+
+<PageTitle>Reports - Dashboard</PageTitle>
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Reports</li>
+        </ol>
+    </nav>
+
+    <h1><i class="bi bi-file-earmark-bar-graph"></i> Reports</h1>
+
+    <div class="row mt-4">
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-calendar-month"></i> Monthly Report
+                    </h5>
+                    <p class="card-text">Generate comprehensive monthly performance reports with detailed analytics and insights.</p>
+                    <button class="btn btn-primary" @onclick="() => GenerateReport()">
+                        <i class="bi bi-download"></i> Generate
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-people"></i> User Analytics
+                    </h5>
+                    <p class="card-text">Detailed user behavior and engagement analytics with conversion metrics.</p>
+                    <button class="btn btn-primary" @onclick="() => GenerateReport()">
+                        <i class="bi bi-download"></i> Generate
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-currency-dollar"></i> Revenue Report
+                    </h5>
+                    <p class="card-text">Financial performance metrics including revenue trends and projections.</p>
+                    <button class="btn btn-primary" @onclick="() => GenerateReport()">
+                        <i class="bi bi-download"></i> Generate
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-file-earmark-text"></i> Custom Report
+                    </h5>
+                    <p class="card-text">Create a custom report with your specific parameters and metrics.</p>
+                    <button class="btn btn-primary" @onclick="() => GenerateReport()">
+                        <i class="bi bi-gear"></i> Configure
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (_message != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @_message
+            <button type="button" class="btn-close" @onclick="() => _message = null"></button>
+        </div>
+    }
+</div>
+
+@code {
+    private string? _message;
+
+    private void GenerateReport(string reportType = "monthly")
+    {
+        _message = $"Generating {reportType} report... (This is a demo - actual report generation would be implemented here)";
+    }
+}

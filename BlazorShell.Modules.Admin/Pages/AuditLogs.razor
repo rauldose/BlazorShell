@@ -1,0 +1,277 @@
+﻿@* BlazorShell.Modules.Admin/Pages/AuditLogs.razor *@
+@page "/admin/audit"
+@using BlazorShell.Modules.Admin.Services
+@using BlazorShell.Core.Components
+@using BlazorShell.Core.Entities
+@using Microsoft.AspNetCore.Authorization
+@inherits ModuleComponentBase
+@attribute [Authorize(Roles = "Administrator")]
+
+<PageTitle>Audit Logs</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-journal-text"></i> Audit Logs</h1>
+        <button class="btn btn-primary" @onclick="RefreshLogs">
+            <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <input type="text" class="form-control" placeholder="Search user..."
+                   @bind="_searchUser" @bind:event="oninput" />
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" @bind="_filterAction">
+                <option value="">All Actions</option>
+                <option value="Create">Create</option>
+                <option value="Update">Update</option>
+                <option value="Delete">Delete</option>
+                <option value="Login">Login</option>
+                <option value="Logout">Logout</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" @bind="_filterEntity">
+                <option value="">All Entities</option>
+                <option value="User">User</option>
+                <option value="Module">Module</option>
+                <option value="Role">Role</option>
+                <option value="Setting">Setting</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="date" class="form-control" @bind="_filterDate" />
+        </div>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading audit logs...</p>
+        </div>
+    }
+    else if (_auditLogs != null)
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Entity</th>
+                        <th>Details</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in FilteredLogs)
+                    {
+                        <tr>
+                            <td>
+                                <small>@log.CreatedDate.ToString("MM/dd/yyyy HH:mm:ss")</small>
+                            </td>
+                            <td>
+                                <small>@(log.UserName ?? "System")</small>
+                            </td>
+                            <td>
+                                <span class="badge @GetActionBadgeClass(log.Action)">@log.Action</span>
+                            </td>
+                            <td>
+                                <small>@log.EntityName</small>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(log.EntityId))
+                                {
+                                    <small>ID: @log.EntityId</small>
+                                }
+                                <button class="btn btn-sm btn-link" @onclick="() => ShowDetails(log)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <small>@log.IpAddress</small>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!FilteredLogs.Any())
+        {
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> No audit logs found matching your criteria.
+            </div>
+        }
+
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => LoadLogs(_currentPage - 1)">Previous</button>
+                </li>
+                @for (int i = 1; i <= Math.Min(_totalPages, 10); i++)
+                {
+                    var pageNum = i;
+                    <li class="page-item @(_currentPage == pageNum ? "active" : "")">
+                        <button class="page-link" @onclick="() => LoadLogs(pageNum)">@pageNum</button>
+                    </li>
+                }
+                <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => LoadLogs(_currentPage + 1)">Next</button>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
+
+@* Details Modal *@
+@if (_selectedLog != null)
+{
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Audit Log Details</h5>
+                    <button type="button" class="btn-close" @onclick="() => _selectedLog = null"></button>
+                </div>
+                <div class="modal-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Timestamp:</dt>
+                        <dd class="col-sm-9">@_selectedLog.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</dd>
+
+                        <dt class="col-sm-3">User:</dt>
+                        <dd class="col-sm-9">@(_selectedLog.UserName ?? "System") (@_selectedLog.UserId)</dd>
+
+                        <dt class="col-sm-3">Action:</dt>
+                        <dd class="col-sm-9">@_selectedLog.Action</dd>
+
+                        <dt class="col-sm-3">Entity:</dt>
+                        <dd class="col-sm-9">@_selectedLog.EntityName (ID: @_selectedLog.EntityId)</dd>
+
+                        <dt class="col-sm-3">IP Address:</dt>
+                        <dd class="col-sm-9">@_selectedLog.IpAddress</dd>
+
+                        <dt class="col-sm-3">User Agent:</dt>
+                        <dd class="col-sm-9"><small>@_selectedLog.UserAgent</small></dd>
+                    </dl>
+
+                    @if (!string.IsNullOrEmpty(_selectedLog.OldValues))
+                    {
+                        <h6>Old Values:</h6>
+                        <pre class="bg-light p-2">@_selectedLog.OldValues</pre>
+                    }
+
+                    @if (!string.IsNullOrEmpty(_selectedLog.NewValues))
+                    {
+                        <h6>New Values:</h6>
+                        <pre class="bg-light p-2">@_selectedLog.NewValues</pre>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => _selectedLog = null">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IAuditService? AuditService;
+    private List<AuditLog>? _auditLogs;
+    private AuditLog? _selectedLog;
+
+    private bool _isLoading = true;
+    private string _searchUser = string.Empty;
+    private string _filterAction = string.Empty;
+    private string _filterEntity = string.Empty;
+    private DateTime? _filterDate;
+
+    private int _currentPage = 1;
+    private int _pageSize = 50;
+    private int _totalPages = 1;
+
+    private IEnumerable<AuditLog> FilteredLogs
+    {
+        get
+        {
+            var filtered = _auditLogs?.AsEnumerable() ?? Enumerable.Empty<AuditLog>();
+
+            if (!string.IsNullOrWhiteSpace(_searchUser))
+            {
+                filtered = filtered.Where(l =>
+                    l.UserName?.Contains(_searchUser, StringComparison.OrdinalIgnoreCase) ?? false);
+            }
+
+            if (!string.IsNullOrWhiteSpace(_filterAction))
+            {
+                filtered = filtered.Where(l => l.Action == _filterAction);
+            }
+
+            if (!string.IsNullOrWhiteSpace(_filterEntity))
+            {
+                filtered = filtered.Where(l => l.EntityName == _filterEntity);
+            }
+
+            if (_filterDate.HasValue)
+            {
+                filtered = filtered.Where(l => l.CreatedDate.Date == _filterDate.Value.Date);
+            }
+
+            return filtered;
+        }
+    }
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        AuditService = GetService<IAuditService>();
+
+        if (AuditService == null)
+        {
+            return;
+        }
+
+        await LoadLogs();
+    }
+
+    private async Task LoadLogs(int page = 1)
+    {
+        _isLoading = true;
+        try
+        {
+            _currentPage = page;
+            _auditLogs = (await AuditService!.GetAuditLogsAsync(_currentPage, _pageSize)).ToList();
+            _totalPages = Math.Max(1, 10); // You'd calculate this based on total count
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task RefreshLogs()
+    {
+        await LoadLogs(_currentPage);
+    }
+
+    private void ShowDetails(AuditLog log)
+    {
+        _selectedLog = log;
+    }
+
+    private string GetActionBadgeClass(string? action)
+    {
+        return action?.ToLower() switch
+        {
+            "create" => "bg-success",
+            "update" => "bg-warning",
+            "delete" => "bg-danger",
+            "login" => "bg-info",
+            "logout" => "bg-secondary",
+            _ => "bg-primary"
+        };
+    }
+}

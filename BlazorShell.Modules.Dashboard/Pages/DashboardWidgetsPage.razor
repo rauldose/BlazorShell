@@ -1,0 +1,88 @@
+﻿
+@* DashboardWidgetsPage.razor *@
+@page "/dashboard/widgets"
+@using BlazorShell.Modules.Dashboard
+@using BlazorShell.Core.Components
+@inherits ModuleComponentBase
+
+<PageTitle>Widgets - Dashboard</PageTitle>
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Widgets</li>
+        </ol>
+    </nav>
+
+    <h1><i class="bi bi-grid-3x3"></i> Widget Manager</h1>
+
+    <div class="row mt-4">
+        @if (_availableWidgets != null)
+        {
+            @foreach (var widget in _availableWidgets)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="@(widget.Icon ?? "bi bi-puzzle") fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">@widget.Name</h5>
+                            <p class="card-text small text-muted">Type: @widget.Type</p>
+                            <button class="btn btn-sm btn-primary" @onclick="() => AddWidget(widget.Id)">
+                                <i class="bi bi-plus"></i> Add to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Loading widgets...</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (_message != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+            @_message
+            <button type="button" class="btn-close" @onclick="() => _message = null"></button>
+        </div>
+    }
+</div>
+
+@code {
+    private IEnumerable<Widget>? _availableWidgets;
+    private IWidgetService? _widgetService;
+    private string? _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _widgetService = GetService<IWidgetService>();
+
+        if (_widgetService != null)
+        {
+            _availableWidgets = await _widgetService.GetAvailableWidgetsAsync();
+        }
+    }
+
+    private async Task AddWidget(string widgetId)
+    {
+        if (_widgetService != null)
+        {
+            // In a real app, you'd get the current user ID
+            var userId = "current-user";
+            var success = await _widgetService.AddWidgetToDashboardAsync(userId, widgetId);
+
+            _message = success
+                ? $"Widget added successfully!"
+                : "Widget already exists in your dashboard.";
+        }
+    }
+}
+

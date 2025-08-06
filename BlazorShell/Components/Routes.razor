@@ -1,35 +1,171 @@
-﻿<Router AppAssembly="typeof(Program).Assembly">
-    <Found Context="routeData">
-        <Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
-            <NotAuthorized>
-                @if (!context.User.Identity?.IsAuthenticated ?? false)
-                {
+﻿@* Components/Routes.razor *@
+@using System.Reflection
+@using BlazorShell.Core.Interfaces
+@using BlazorShell.Infrastructure.Services
+@implements IDisposable
+@inject IModuleRegistry ModuleRegistry
+@inject IDynamicRouteService DynamicRouteService
+@inject NavigationManager NavigationManager
 
-                }
-                else
+<CascadingValue Value="DynamicRouteService">
+    <Router AppAssembly="typeof(Program).Assembly" 
+            AdditionalAssemblies="@_additionalAssemblies"
+            OnNavigateAsync="OnNavigateAsync">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    @if (!context.User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <RedirectToLogin />
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">Access Denied</h4>
+                            <p>You are not authorized to access this resource.</p>
+                            <hr>
+                            <a href="/" class="btn btn-primary">Go Home</a>
+                        </div>
+                    }
+                </NotAuthorized>
+                <Authorizing>
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2">Checking authorization...</p>
+                    </div>
+                </Authorizing>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="typeof(Layout.MainLayout)">
+                <DynamicRouteHandler />
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingValue>
+
+@code {
+    private List<Assembly> _additionalAssemblies = new();
+    private bool _isRefreshing = false;
+
+    protected override void OnInitialized()
+    {
+        LoadModuleAssemblies();
+        
+        // Subscribe to changes
+        if (ModuleRegistry != null)
+        {
+            ModuleRegistry.ModuleRegistered += OnModuleRegistered;
+            ModuleRegistry.ModuleUnregistered += OnModuleUnregistered;
+        }
+        
+        if (DynamicRouteService != null)
+        {
+            DynamicRouteService.RoutesChanged += OnRoutesChanged;
+        }
+    }
+
+    private void LoadModuleAssemblies()
+    {
+        var modules = ModuleRegistry?.GetModules() ?? Enumerable.Empty<IModule>();
+        _additionalAssemblies.Clear();
+        
+        foreach (var module in modules)
+        {
+            var assembly = module.GetType().Assembly;
+            if (!_additionalAssemblies.Contains(assembly))
+            {
+                _additionalAssemblies.Add(assembly);
+                DynamicRouteService?.RegisterModuleAssembly(module.Name, assembly);
+            }
+        }
+    }
+
+    private async Task OnNavigateAsync(NavigationContext context)
+    {
+        // Custom navigation handling if needed
+        await Task.CompletedTask;
+    }
+
+    private void OnModuleRegistered(object? sender, ModuleEventArgs e)
+    {
+        if (_isRefreshing) return;
+        
+        InvokeAsync(async () =>
+        {
+            _isRefreshing = true;
+            try
+            {
+                var assembly = e.Module.GetType().Assembly;
+                if (!_additionalAssemblies.Contains(assembly))
                 {
-                    <p>You are not authorized to access this resource.</p>
+                    _additionalAssemblies.Add(assembly);
+                    DynamicRouteService?.RegisterModuleAssembly(e.Module.Name, assembly);
                 }
-            </NotAuthorized>
-            <Authorizing>
-                <p>Loading authorization...</p>
-            </Authorizing>
-        </Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView>
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="typeof(Layout.MainLayout)">
-            <div class="alert alert-warning" role="alert">
-                <h4 class="alert-heading">Page Not Found</h4>
-                <p>Sorry, there's nothing at this address.</p>
-                <hr>
-                <p class="mb-0">
-                    <a href="/" class="btn btn-primary">
-                        <i class="bi bi-house"></i> Go Home
-                    </a>
-                </p>
-            </div>
-        </LayoutView>
-    </NotFound>
-</Router>
+                
+                StateHasChanged();
+                
+                // Force router refresh
+                await Task.Delay(100);
+                NavigationManager.Refresh();
+            }
+            finally
+            {
+                _isRefreshing = false;
+            }
+        });
+    }
+
+    private void OnModuleUnregistered(object? sender, ModuleEventArgs e)
+    {
+        if (_isRefreshing) return;
+        
+        InvokeAsync(async () =>
+        {
+            _isRefreshing = true;
+            try
+            {
+                var assembly = e.Module.GetType().Assembly;
+                _additionalAssemblies.Remove(assembly);
+                DynamicRouteService?.UnregisterModuleAssembly(e.Module.Name);
+                
+                StateHasChanged();
+                
+                // Force router refresh
+                await Task.Delay(100);
+                NavigationManager.Refresh();
+            }
+            finally
+            {
+                _isRefreshing = false;
+            }
+        });
+    }
+
+    private void OnRoutesChanged(object? sender, RouteChangedEventArgs e)
+    {
+        InvokeAsync(() =>
+        {
+            if (!_isRefreshing)
+            {
+                StateHasChanged();
+            }
+        });
+    }
+
+    public void Dispose()
+    {
+        if (ModuleRegistry != null)
+        {
+            ModuleRegistry.ModuleRegistered -= OnModuleRegistered;
+            ModuleRegistry.ModuleUnregistered -= OnModuleUnregistered;
+        }
+        
+        if (DynamicRouteService != null)
+        {
+            DynamicRouteService.RoutesChanged -= OnRoutesChanged;
+        }
+    }
+}

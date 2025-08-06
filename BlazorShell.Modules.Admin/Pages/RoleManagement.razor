@@ -1,0 +1,244 @@
+﻿@* BlazorShell.Modules.Admin/Pages/RoleManagement.razor *@
+@page "/admin/roles"
+@using BlazorShell.Core.Components
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using BlazorShell.Core.Entities
+@using Microsoft.JSInterop
+@inherits ModuleComponentBase
+@attribute [Authorize(Roles = "Administrator")]
+
+<PageTitle>Role Management</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-shield-lock"></i> Role Management</h1>
+        <button class="btn btn-success" @onclick="ShowCreateRoleDialog">
+            <i class="bi bi-plus-circle"></i> New Role
+        </button>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading roles...</p>
+        </div>
+    }
+    else if (_roles != null)
+    {
+        <div class="row">
+            @foreach (var role in _roles)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @role.Name
+                                @if (role.IsSystemRole)
+                                {
+                                    <span class="badge bg-info ms-2">System</span>
+                                }
+                            </h5>
+                            <p class="card-text">@role.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Created: @role.CreatedDate.ToString("MM/dd/yyyy")</small>
+                                @if (!role.IsSystemRole)
+                                {
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" @onclick="() => ShowEditRoleDialog(role)">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" @onclick="() => DeleteRole(role)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@* Create/Edit Role Modal *@
+@if (_showRoleDialog)
+{
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(_editingRole == null ? "Create" : "Edit") Role</h5>
+                    <button type="button" class="btn-close" @onclick="CloseDialog"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Role Name</label>
+                        <input type="text" class="form-control" @bind="_roleName"
+                               disabled="@(_editingRole != null)" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" @bind="_roleDescription" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseDialog">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveRole">
+                        <i class="bi bi-save"></i> Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_message != null)
+{
+    <div class="alert @(_isError ? "alert-danger" : "alert-success") alert-dismissible fade show position-fixed bottom-0 end-0 m-3" style="z-index: 1050;">
+        @_message
+        <button type="button" class="btn-close" @onclick="() => _message = null"></button>
+    </div>
+}
+
+@code {
+    [Inject] private RoleManager<ApplicationRole> RoleManager { get; set; } = null!;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+
+    private List<ApplicationRole>? _roles;
+    private ApplicationRole? _editingRole;
+    private bool _isLoading = true;
+    private bool _showRoleDialog = false;
+    private string _roleName = string.Empty;
+    private string _roleDescription = string.Empty;
+    private string? _message;
+    private bool _isError = false;
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        await LoadRoles();
+    }
+
+    private async Task LoadRoles()
+    {
+        _isLoading = true;
+        try
+        {
+            _roles = await Task.Run(() => RoleManager.Roles.OrderBy(r => r.Name).ToList());
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void ShowCreateRoleDialog()
+    {
+        _editingRole = null;
+        _roleName = string.Empty;
+        _roleDescription = string.Empty;
+        _showRoleDialog = true;
+    }
+
+    private void ShowEditRoleDialog(ApplicationRole role)
+    {
+        _editingRole = role;
+        _roleName = role.Name ?? string.Empty;
+        _roleDescription = role.Description ?? string.Empty;
+        _showRoleDialog = true;
+    }
+
+    private async Task SaveRole()
+    {
+        try
+        {
+            if (_editingRole == null)
+            {
+                // Create new role
+                var role = new ApplicationRole
+                    {
+                        Name = _roleName,
+                        Description = _roleDescription,
+                        IsSystemRole = false,
+                        CreatedDate = DateTime.UtcNow
+                    };
+
+                var result = await RoleManager.CreateAsync(role);
+                if (result.Succeeded)
+                {
+                    ShowMessage("Role created successfully", false);
+                    CloseDialog();
+                    await LoadRoles();
+                }
+                else
+                {
+                    ShowMessage(string.Join(", ", result.Errors.Select(e => e.Description)), true);
+                }
+            }
+            else
+            {
+                // Update existing role
+                _editingRole.Description = _roleDescription;
+                var result = await RoleManager.UpdateAsync(_editingRole);
+                if (result.Succeeded)
+                {
+                    ShowMessage("Role updated successfully", false);
+                    CloseDialog();
+                    await LoadRoles();
+                }
+                else
+                {
+                    ShowMessage(string.Join(", ", result.Errors.Select(e => e.Description)), true);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowMessage($"Error: {ex.Message}", true);
+        }
+    }
+
+    private async Task DeleteRole(ApplicationRole role)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the role '{role.Name}'?"))
+            return;
+
+        try
+        {
+            var result = await RoleManager.DeleteAsync(role);
+            if (result.Succeeded)
+            {
+                ShowMessage("Role deleted successfully", false);
+                await LoadRoles();
+            }
+            else
+            {
+                ShowMessage(string.Join(", ", result.Errors.Select(e => e.Description)), true);
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowMessage($"Error: {ex.Message}", true);
+        }
+    }
+
+    private void CloseDialog()
+    {
+        _showRoleDialog = false;
+        _editingRole = null;
+    }
+
+    private void ShowMessage(string message, bool isError)
+    {
+        _message = message;
+        _isError = isError;
+
+        Task.Delay(5000).ContinueWith(_ =>
+        {
+            _message = null;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}

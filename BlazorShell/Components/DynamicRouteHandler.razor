@@ -1,0 +1,124 @@
+﻿@* Components/DynamicRouteHandler.razor *@
+@using BlazorShell.Infrastructure.Services
+@inject NavigationManager Navigation
+@inject IDynamicRouteService DynamicRouteService
+@inject ILogger<DynamicRouteHandler> Logger
+
+@if (_componentType != null)
+{
+    <DynamicComponent Type="_componentType" Parameters="_routeParameters" />
+}
+else if (_isSearching)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">Loading module page...</p>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Page Not Found</h4>
+        <p>The requested page could not be found: <code>@_currentPath</code></p>
+        @if (_availableRoutes.Any())
+        {
+            <hr>
+            <p class="mb-2">Did you mean one of these?</p>
+            <ul>
+                @foreach (var route in _availableRoutes.Take(5))
+                {
+                    <li><a href="/@route">@route</a></li>
+                }
+            </ul>
+        }
+        <hr>
+        <a href="/" class="btn btn-primary">
+            <i class="bi bi-house"></i> Go Home
+        </a>
+    </div>
+}
+
+@code {
+    private Type? _componentType;
+    private IDictionary<string, object>? _routeParameters;
+    private string _currentPath = string.Empty;
+    private bool _isSearching = true;
+    private List<string> _availableRoutes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SearchForRoute();
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private async Task SearchForRoute()
+    {
+        _isSearching = true;
+        _currentPath = Navigation.ToBaseRelativePath(Navigation.Uri);
+
+        // Small delay to show loading state
+        await Task.Delay(100);
+
+        var routeInfo = DynamicRouteService?.FindRoute(_currentPath);
+
+        if (routeInfo != null)
+        {
+            _componentType = routeInfo.ComponentType;
+            _routeParameters = ExtractRouteParameters(_currentPath, routeInfo.Template);
+            Logger.LogInformation("Found dynamic route {Path} -> {Component} from module {Module}",
+                _currentPath, routeInfo.ComponentType.Name, routeInfo.ModuleName);
+        }
+        else
+        {
+            _componentType = null;
+            // Get available routes for suggestions
+            _availableRoutes = DynamicRouteService?.Routes.Keys.ToList() ?? new List<string>();
+            Logger.LogWarning("No route found for path: {Path}", _currentPath);
+        }
+
+        _isSearching = false;
+    }
+
+    private IDictionary<string, object> ExtractRouteParameters(string path, string template)
+    {
+        var parameters = new Dictionary<string, object>();
+
+        var pathSegments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var templateSegments = template.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+        for (int i = 0; i < templateSegments.Length && i < pathSegments.Length; i++)
+        {
+            var templateSegment = templateSegments[i];
+
+            if (templateSegment.StartsWith('{') && templateSegment.EndsWith('}'))
+            {
+                var paramName = templateSegment.Trim('{', '}');
+
+                // Remove any constraints (e.g., {id:int})
+                var colonIndex = paramName.IndexOf(':');
+                if (colonIndex > 0)
+                {
+                    paramName = paramName.Substring(0, colonIndex);
+                }
+
+                parameters[paramName] = pathSegments[i];
+            }
+        }
+
+        return parameters;
+    }
+
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        await InvokeAsync(async () =>
+        {
+            await SearchForRoute();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}

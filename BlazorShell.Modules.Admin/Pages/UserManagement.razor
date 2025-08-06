@@ -1,0 +1,544 @@
+﻿@* BlazorShell.Modules.Admin/Pages/UserManagement.razor *@
+@page "/admin/users"
+@using BlazorShell.Modules.Admin.Services
+@using BlazorShell.Core.Components
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.JSInterop
+@inherits ModuleComponentBase
+@attribute [Authorize(Roles = "Administrator")]
+
+<PageTitle>User Management</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-people"></i> User Management</h1>
+        <div>
+            <button class="btn btn-success" @onclick="ShowCreateUserDialog">
+                <i class="bi bi-person-plus"></i> New User
+            </button>
+            <button class="btn btn-primary" @onclick="RefreshUsers">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading users...</p>
+        </div>
+    }
+    else if (_users != null)
+    {
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Search users..."
+                           @bind="_searchTerm" @bind:event="oninput" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" @bind="_filterRole">
+                    <option value="">All Roles</option>
+                    <option value="Administrator">Administrator</option>
+                    <option value="ModuleAdmin">Module Admin</option>
+                    <option value="User">User</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" @bind="_filterStatus">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th>Created</th>
+                        <th>Last Login</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in FilteredUsers)
+                    {
+                        <tr>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                                @if (user.EmailConfirmed)
+                                {
+                                    <span class="badge bg-info ms-1" title="Email Confirmed">
+                                        <i class="bi bi-envelope-check"></i>
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <div>
+                                    <strong>@user.FullName</strong>
+                                </div>
+                                <small class="text-muted">@user.UserName</small>
+                            </td>
+                            <td>@user.Email</td>
+                            <td>
+                                @foreach (var role in user.Roles)
+                                {
+                                    <span class="badge bg-primary me-1">@role</span>
+                                }
+                            </td>
+                            <td>
+                                <small>@user.CreatedDate.ToString("MM/dd/yyyy")</small>
+                            </td>
+                            <td>
+                                @if (user.LastLoginDate.HasValue)
+                                {
+                                    <small>@user.LastLoginDate.Value.ToString("MM/dd/yyyy HH:mm")</small>
+                                }
+                                else
+                                {
+                                    <small class="text-muted">Never</small>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-outline-primary" title="Edit"
+                                            @onclick="() => ShowEditUserDialog(user)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" title="Roles"
+                                            @onclick="() => ShowRolesDialog(user)">
+                                        <i class="bi bi-shield"></i>
+                                    </button>
+                                    @if (user.IsActive)
+                                    {
+                                        <button class="btn btn-outline-warning" title="Deactivate"
+                                                @onclick="() => ToggleUserStatus(user.Id)">
+                                            <i class="bi bi-person-slash"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-outline-success" title="Activate"
+                                                @onclick="() => ToggleUserStatus(user.Id)">
+                                            <i class="bi bi-person-check"></i>
+                                        </button>
+                                    }
+                                    @if (user.Id != UserId) @* Don't allow deleting yourself *@
+                                    {
+                                        <button class="btn btn-outline-danger" title="Delete"
+                                                @onclick="() => DeleteUser(user)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!FilteredUsers.Any())
+        {
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> No users found matching your criteria.
+            </div>
+        }
+
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => LoadUsers(_currentPage - 1)">Previous</button>
+                </li>
+                @for (int i = 1; i <= _totalPages; i++)
+                {
+                    var pageNum = i;
+                    <li class="page-item @(_currentPage == pageNum ? "active" : "")">
+                        <button class="page-link" @onclick="() => LoadUsers(pageNum)">@pageNum</button>
+                    </li>
+                }
+                <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => LoadUsers(_currentPage + 1)">Next</button>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
+
+@* Create User Modal *@
+@if (_showCreateDialog)
+{
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New User</h5>
+                    <button type="button" class="btn-close" @onclick="CloseDialogs"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" @bind="_createModel.FullName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" @bind="_createModel.Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" @bind="_createModel.Password" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Roles</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="roleAdmin"
+                                   @bind="_createRoleAdmin">
+                            <label class="form-check-label" for="roleAdmin">Administrator</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="roleModuleAdmin"
+                                   @bind="_createRoleModuleAdmin">
+                            <label class="form-check-label" for="roleModuleAdmin">Module Admin</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="roleUser"
+                                   @bind="_createRoleUser">
+                            <label class="form-check-label" for="roleUser">User</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseDialogs">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="CreateUser">
+                        <i class="bi bi-save"></i> Create User
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* Edit User Modal *@
+@if (_showEditDialog && _editModel != null)
+{
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close" @onclick="CloseDialogs"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" @bind="_editModel.FullName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" @bind="_editModel.Email" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseDialogs">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="UpdateUser">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* Manage Roles Modal *@
+@if (_showRolesDialog && _selectedUser != null)
+{
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Roles for @_selectedUser.FullName</h5>
+                    <button type="button" class="btn-close" @onclick="CloseDialogs"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="userRoleAdmin"
+                               checked="@_selectedUserRoles.Contains("Administrator")"
+                               @onchange='(e) => ToggleRole(" Administrator", (bool?)e.Value ?? false)'>
+                        <label class="form-check-label" for="userRoleAdmin">Administrator</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="userRoleModuleAdmin"
+                               checked="@_selectedUserRoles.Contains("ModuleAdmin")"
+                               @onchange='(e) => ToggleRole(" ModuleAdmin", (bool?)e.Value ?? false)'>
+                        <label class="form-check-label" for="userRoleModuleAdmin">Module Admin</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="userRoleUser"
+                               checked="@_selectedUserRoles.Contains("User")"
+                               @onchange='(e) => ToggleRole(" User", (bool?)e.Value ?? false)'>
+                        <label class="form-check-label" for="userRoleUser">User</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseDialogs">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="UpdateUserRoles">
+                        <i class="bi bi-save"></i> Save Roles
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_message != null)
+{
+    <div class="alert @(_isError ? "alert-danger" : "alert-success") alert-dismissible fade show position-fixed bottom-0 end-0 m-3" style="z-index: 1050;">
+        @_message
+        <button type="button" class="btn-close" @onclick="() => _message = null"></button>
+    </div>
+}
+
+@code {
+    private IUserManagementService? UserManagementService;
+    private List<UserInfo>? _users;
+    private UserInfo? _selectedUser;
+    private List<string> _selectedUserRoles = new();
+
+    private bool _isLoading = true;
+    private bool _showCreateDialog = false;
+    private bool _showEditDialog = false;
+    private bool _showRolesDialog = false;
+
+    private string _searchTerm = string.Empty;
+    private string _filterRole = string.Empty;
+    private string _filterStatus = string.Empty;
+
+    private int _currentPage = 1;
+    private int _pageSize = 20;
+    private int _totalPages = 1;
+
+    private CreateUserModel _createModel = new();
+    private UpdateUserModel? _editModel;
+    private bool _createRoleAdmin = false;
+    private bool _createRoleModuleAdmin = false;
+    private bool _createRoleUser = true;
+
+    private string? _message;
+    private bool _isError = false;
+
+    private IEnumerable<UserInfo> FilteredUsers
+    {
+        get
+        {
+            var filtered = _users?.AsEnumerable() ?? Enumerable.Empty<UserInfo>();
+
+            if (!string.IsNullOrWhiteSpace(_searchTerm))
+            {
+                filtered = filtered.Where(u =>
+                    u.UserName.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    u.Email.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    u.FullName.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrWhiteSpace(_filterRole))
+            {
+                filtered = filtered.Where(u => u.Roles.Contains(_filterRole));
+            }
+
+            if (!string.IsNullOrWhiteSpace(_filterStatus))
+            {
+                filtered = filtered.Where(u => _filterStatus == "Active" ? u.IsActive : !u.IsActive);
+            }
+
+            return filtered;
+        }
+    }
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        UserManagementService = GetService<IUserManagementService>();
+
+        if (UserManagementService == null)
+        {
+            ShowMessage("User Management Service is not available", true);
+            return;
+        }
+
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers(int page = 1)
+    {
+        _isLoading = true;
+        try
+        {
+            _currentPage = page;
+            _users = (await UserManagementService!.GetUsersAsync(_currentPage, _pageSize)).ToList();
+            _totalPages = Math.Max(1, (_users.Count + _pageSize - 1) / _pageSize);
+        }
+        catch (Exception ex)
+        {
+            ShowMessage($"Error loading users: {ex.Message}", true);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task RefreshUsers()
+    {
+        await LoadUsers(_currentPage);
+        ShowMessage("User list refreshed", false);
+    }
+
+    private void ShowCreateUserDialog()
+    {
+        _createModel = new CreateUserModel();
+        _createRoleAdmin = false;
+        _createRoleModuleAdmin = false;
+        _createRoleUser = true;
+        _showCreateDialog = true;
+    }
+
+    private void ShowEditUserDialog(UserInfo user)
+    {
+        _selectedUser = user;
+        _editModel = new UpdateUserModel
+            {
+                Email = user.Email,
+                FullName = user.FullName
+            };
+        _showEditDialog = true;
+    }
+
+    private void ShowRolesDialog(UserInfo user)
+    {
+        _selectedUser = user;
+        _selectedUserRoles = user.Roles.ToList();
+        _showRolesDialog = true;
+    }
+
+    private async Task CreateUser()
+    {
+        var roles = new List<string>();
+        if (_createRoleAdmin) roles.Add("Administrator");
+        if (_createRoleModuleAdmin) roles.Add("ModuleAdmin");
+        if (_createRoleUser) roles.Add("User");
+
+        _createModel.Roles = roles;
+
+        var result = await UserManagementService!.CreateUserAsync(_createModel);
+        ShowMessage(result.Message, !result.Success);
+
+        if (result.Success)
+        {
+            CloseDialogs();
+            await LoadUsers();
+        }
+    }
+
+    private async Task UpdateUser()
+    {
+        if (_selectedUser == null || _editModel == null) return;
+
+        var result = await UserManagementService!.UpdateUserAsync(_selectedUser.Id, _editModel);
+        ShowMessage(result.Message, !result.Success);
+
+        if (result.Success)
+        {
+            CloseDialogs();
+            await LoadUsers(_currentPage);
+        }
+    }
+
+    private async Task DeleteUser(UserInfo user)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {user.FullName}?"))
+            return;
+
+        var result = await UserManagementService!.DeleteUserAsync(user.Id);
+        ShowMessage(result.Message, !result.Success);
+
+        if (result.Success)
+        {
+            await LoadUsers(_currentPage);
+        }
+    }
+
+    private async Task ToggleUserStatus(string userId)
+    {
+        var result = await UserManagementService!.ToggleUserStatusAsync(userId);
+        ShowMessage(result.Message, !result.Success);
+
+        if (result.Success)
+        {
+            await LoadUsers(_currentPage);
+        }
+    }
+
+    private void ToggleRole(string role, bool isChecked)
+    {
+        if (isChecked && !_selectedUserRoles.Contains(role))
+        {
+            _selectedUserRoles.Add(role);
+        }
+        else if (!isChecked)
+        {
+            _selectedUserRoles.Remove(role);
+        }
+    }
+
+    private async Task UpdateUserRoles()
+    {
+        if (_selectedUser == null) return;
+
+        var result = await UserManagementService!.UpdateUserRolesAsync(_selectedUser.Id, _selectedUserRoles);
+        ShowMessage(result.Message, !result.Success);
+
+        if (result.Success)
+        {
+            CloseDialogs();
+            await LoadUsers(_currentPage);
+        }
+    }
+
+    private void CloseDialogs()
+    {
+        _showCreateDialog = false;
+        _showEditDialog = false;
+        _showRolesDialog = false;
+        _selectedUser = null;
+        _editModel = null;
+    }
+
+    private void ShowMessage(string message, bool isError)
+    {
+        _message = message;
+        _isError = isError;
+
+        Task.Delay(5000).ContinueWith(_ =>
+        {
+            _message = null;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+}

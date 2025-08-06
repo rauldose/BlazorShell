@@ -1,0 +1,691 @@
+﻿@page "/admin/modules"
+@using BlazorShell.Modules.Admin.Services
+@using BlazorShell.Core.Components
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.Extensions.Logging
+@using Microsoft.JSInterop
+@inherits ModuleComponentBase
+@attribute [Authorize(Roles = "Administrator,ModuleAdmin")]
+
+
+<PageTitle>Module Management</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-puzzle"></i> Module Management</h1>
+        <div>
+            <button class="btn btn-success" @onclick="ShowUploadDialog">
+                <i class="bi bi-upload"></i> Upload Module
+            </button>
+            <button class="btn btn-primary" @onclick="RefreshModules">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading modules...</p>
+        </div>
+    }
+    else if (_modules != null)
+    {
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Search modules..."
+                           @bind="_searchTerm" @bind:event="oninput" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" @bind="_filterCategory">
+                    <option value="">All Categories</option>
+                    @foreach (var category in _categories)
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" @bind="_filterStatus">
+                    <option value="">All Status</option>
+                    <option value="Running">Running</option>
+                    <option value="Stopped">Stopped</option>
+                    <option value="Disabled">Disabled</option>
+                    <option value="Error">Error</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Module</th>
+                        <th>Version</th>
+                        <th>Category</th>
+                        <th>Author</th>
+                        <th>Components</th>
+                        <th>Size</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var module in FilteredModules)
+                    {
+                        <tr>
+                            <td>
+                                <span class="badge @GetStatusBadgeClass(module.Status)">
+                                    @module.Status
+                                </span>
+                            </td>
+                            <td>
+                                <div>
+                                    <i class="@module.Icon me-2"></i>
+                                    <strong>@module.DisplayName</strong>
+                                    @if (module.IsCore)
+                                    {
+                                        <span class="badge bg-info ms-2">Core</span>
+                                    }
+                                </div>
+                                <small class="text-muted">@module.Name</small>
+                            </td>
+                            <td>@module.Version</td>
+                            <td>@module.Category</td>
+                            <td>@module.Author</td>
+                            <td>
+                                @if (module.IsLoaded)
+                                {
+                                    <span title="Components">@module.ComponentCount <i class="bi bi-file-code"></i></span>
+                                    <span title="Navigation Items" class="ms-2">@module.NavigationItemCount <i class="bi bi-list"></i></span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>@FormatFileSize(module.FileSize)</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-outline-primary" title="Details"
+                                            @onclick="() => ShowModuleDetails(module)">
+                                        <i class="bi bi-info-circle"></i>
+                                    </button>
+
+                                    @if (module.Status == ModuleStatus.Running)
+                                    {
+                                        <button class="btn btn-outline-warning" title="Disable"
+                                                @onclick="() => DisableModule(module.Name)"
+                                                disabled="@(module.IsCore || _operatingModules.Contains(module.Name))">
+                                            <i class="bi bi-pause-circle"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info" title="Reload"
+                                                @onclick="() => ReloadModule(module.Name)"
+                                                disabled="@(_operatingModules.Contains(module.Name))">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </button>
+                                    }
+                                    else if (module.Status == ModuleStatus.Stopped || module.Status == ModuleStatus.Disabled)
+                                    {
+                                        <button class="btn btn-outline-success" title="Enable"
+                                                @onclick="() => EnableModule(module.Name)"
+                                                disabled="@(_operatingModules.Contains(module.Name))">
+                                            <i class="bi bi-play-circle"></i>
+                                        </button>
+                                    }
+
+                                    <button class="btn btn-outline-secondary" title="Configure"
+                                            @onclick="() => ShowConfiguration(module)">
+                                        <i class="bi bi-gear"></i>
+                                    </button>
+
+                                    @if (!module.IsCore && module.Status != ModuleStatus.Running)
+                                    {
+                                        <button class="btn btn-outline-danger" title="Uninstall"
+                                                @onclick="() => UninstallModule(module.Name)"
+                                                disabled="@(_operatingModules.Contains(module.Name))">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!FilteredModules.Any())
+        {
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> No modules found matching your criteria.
+            </div>
+        }
+    }
+
+    @if (_message != null)
+    {
+        <div class="alert @(_messageType == MessageType.Success ? "alert-success" : _messageType == MessageType.Error ? "alert-danger" : "alert-warning") alert-dismissible fade show position-fixed bottom-0 end-0 m-3" style="z-index: 1050;">
+            @_message
+            <button type="button" class="btn-close" @onclick="() => _message = null"></button>
+        </div>
+    }
+</div>
+
+@* Module Details Modal *@
+@if (_selectedModule != null)
+{
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="@_selectedModule.Icon"></i> @_selectedModule.DisplayName Details
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CloseModals"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Name:</label>
+                            <p>@_selectedModule.Name</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Version:</label>
+                            <p>@_selectedModule.Version</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Author:</label>
+                            <p>@_selectedModule.Author</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Category:</label>
+                            <p>@_selectedModule.Category</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Description:</label>
+                        <p>@_selectedModule.Description</p>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">File Size:</label>
+                            <p>@FormatFileSize(_selectedModule.FileSize)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Load Order:</label>
+                            <p>@_selectedModule.LoadOrder</p>
+                        </div>
+                    </div>
+                    @if (_selectedModule.IsLoaded)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Components:</label>
+                                <p>@_selectedModule.ComponentCount</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Navigation Items:</label>
+                                <p>@_selectedModule.NavigationItemCount</p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (_moduleDependencies?.Any() == true)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Dependencies:</label>
+                            <ul class="list-group">
+                                @foreach (var dep in _moduleDependencies)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        @dep.ModuleName
+                                        @if (dep.IsSatisfied)
+                                        {
+                                            <span class="badge bg-success">Satisfied</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Missing</span>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    @if (_moduleHealth != null)
+                    {
+                        <div class="alert @(_moduleHealth.IsHealthy ? "alert-success" : "alert-warning")">
+                            <h6>Health Status: @_moduleHealth.Status</h6>
+                            @if (_moduleHealth.Issues.Any())
+                            {
+                                <ul class="mb-0">
+                                    @foreach (var issue in _moduleHealth.Issues)
+                                    {
+                                        <li>@issue</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModals">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* Module Upload Modal *@
+@if (_showUploadDialog)
+{
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Module</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModals"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select Module DLL File:</label>
+                        <InputFile OnChange="HandleFileSelected" accept=".dll" class="form-control" />
+                    </div>
+                    @if (_uploadFile != null)
+                    {
+                        <div class="alert alert-info">
+                            <strong>Selected:</strong> @_uploadFile.Name (@FormatFileSize(_uploadFile.Size))
+                        </div>
+                    }
+                    @if (_isUploading)
+                    {
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                 style="width: @(_uploadProgress)%">
+                                @_uploadProgress%
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModals">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="UploadModule"
+                            disabled="@(_uploadFile == null || _isUploading)">
+                        <i class="bi bi-upload"></i> Upload
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* Module Configuration Modal *@
+@if (_showConfigDialog && _selectedModule != null)
+{
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Configure @_selectedModule.DisplayName</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModals"></button>
+                </div>
+                <div class="modal-body">
+                    @if (_moduleConfig != null)
+                    {
+                        <form>
+                            @foreach (var config in _moduleConfig)
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">@config.Key:</label>
+                                    <input type="text" class="form-control"
+                                           value="@config.Value?.ToString()"
+                                           @onchange="(e) => UpdateConfigValue(config.Key, e.Value?.ToString())" />
+                                </div>
+                            }
+                        </form>
+                    }
+                    else
+                    {
+                        <p>No configuration options available for this module.</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModals">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveConfiguration">
+                        <i class="bi bi-save"></i> Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IModuleManagementService? ModuleManagementService;
+    private ILogger<ModuleManagement>? Logger;
+
+    private List<ModuleInfo>? _modules;
+    private ModuleInfo? _selectedModule;
+    private List<ModuleDependency>? _moduleDependencies;
+    private ModuleHealthStatus? _moduleHealth;
+    private Dictionary<string, object>? _moduleConfig;
+
+    private bool _isLoading = true;
+    private bool _showUploadDialog = false;
+    private bool _showConfigDialog = false;
+    private bool _isUploading = false;
+    private int _uploadProgress = 0;
+
+    private string _searchTerm = string.Empty;
+    private string _filterCategory = string.Empty;
+    private string _filterStatus = string.Empty;
+    private List<string> _categories = new();
+    private HashSet<string> _operatingModules = new();
+
+    private IBrowserFile? _uploadFile;
+    private string? _message;
+    private MessageType _messageType = MessageType.Info;
+
+    private enum MessageType { Success, Error, Warning, Info }
+
+    private IEnumerable<ModuleInfo> FilteredModules
+    {
+        get
+        {
+            var filtered = _modules?.AsEnumerable() ?? Enumerable.Empty<ModuleInfo>();
+
+            if (!string.IsNullOrWhiteSpace(_searchTerm))
+            {
+                filtered = filtered.Where(m =>
+                    m.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    m.DisplayName.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    m.Description.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrWhiteSpace(_filterCategory))
+            {
+                filtered = filtered.Where(m => m.Category == _filterCategory);
+            }
+
+            if (!string.IsNullOrWhiteSpace(_filterStatus))
+            {
+                filtered = filtered.Where(m => m.Status.ToString() == _filterStatus);
+            }
+
+            return filtered;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ModuleManagementService = GetService<IModuleManagementService>();
+        Logger = GetService<ILogger<ModuleManagement>>();
+
+        if (ModuleManagementService == null)
+        {
+            ShowMessage("Module Management Service is not available", MessageType.Error);
+            return;
+        }
+
+        await LoadModules();
+    }
+
+    private async Task LoadModules()
+    {
+        _isLoading = true;
+        try
+        {
+            _modules = (await ModuleManagementService.GetAllModulesAsync()).ToList();
+            _categories = _modules.Select(m => m.Category).Distinct().OrderBy(c => c).ToList();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading modules");
+            ShowMessage("Error loading modules: " + ex.Message, MessageType.Error);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task RefreshModules()
+    {
+        await LoadModules();
+        ShowMessage("Module list refreshed", MessageType.Success);
+    }
+
+    private async Task EnableModule(string moduleName)
+    {
+        _operatingModules.Add(moduleName);
+        try
+        {
+            var result = await ModuleManagementService.EnableModuleAsync(moduleName);
+            ShowMessage(result.Message, result.Success ? MessageType.Success : MessageType.Error);
+            if (result.Success)
+            {
+                await LoadModules();
+            }
+        }
+        finally
+        {
+            _operatingModules.Remove(moduleName);
+        }
+    }
+
+    private async Task DisableModule(string moduleName)
+    {
+        _operatingModules.Add(moduleName);
+        try
+        {
+            var result = await ModuleManagementService.DisableModuleAsync(moduleName);
+            ShowMessage(result.Message, result.Success ? MessageType.Success : MessageType.Error);
+            if (result.Success)
+            {
+                await LoadModules();
+            }
+        }
+        finally
+        {
+            _operatingModules.Remove(moduleName);
+        }
+    }
+
+    private async Task ReloadModule(string moduleName)
+    {
+        _operatingModules.Add(moduleName);
+        try
+        {
+            var result = await ModuleManagementService.ReloadModuleAsync(moduleName);
+            ShowMessage(result.Message, result.Success ? MessageType.Success : MessageType.Error);
+            if (result.Success)
+            {
+                await LoadModules();
+            }
+        }
+        finally
+        {
+            _operatingModules.Remove(moduleName);
+        }
+    }
+
+    private async Task UninstallModule(string moduleName)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to uninstall {moduleName}?"))
+            return;
+
+        _operatingModules.Add(moduleName);
+        try
+        {
+            var result = await ModuleManagementService.UninstallModuleAsync(moduleName);
+            ShowMessage(result.Message, result.Success ? MessageType.Success : MessageType.Error);
+            if (result.Success)
+            {
+                await LoadModules();
+            }
+        }
+        finally
+        {
+            _operatingModules.Remove(moduleName);
+        }
+    }
+
+    private async Task ShowModuleDetails(ModuleInfo module)
+    {
+        _selectedModule = module;
+        _moduleDependencies = (await ModuleManagementService.GetModuleDependenciesAsync(module.Name)).ToList();
+        _moduleHealth = await ModuleManagementService.GetModuleHealthAsync(module.Name);
+    }
+
+    private async Task ShowConfiguration(ModuleInfo module)
+    {
+        _selectedModule = module;
+        _moduleConfig = await ModuleManagementService.GetModuleConfigurationAsync(module.Name);
+        _showConfigDialog = true;
+    }
+
+    private void UpdateConfigValue(string key, string? value)
+    {
+        if (_moduleConfig != null && value != null)
+        {
+            _moduleConfig[key] = value;
+        }
+    }
+
+    private async Task SaveConfiguration()
+    {
+        if (_selectedModule != null && _moduleConfig != null)
+        {
+            var success = await ModuleManagementService.UpdateModuleConfigurationAsync(
+                _selectedModule.Name, _moduleConfig);
+
+            ShowMessage(
+                success ? "Configuration saved successfully" : "Failed to save configuration",
+                success ? MessageType.Success : MessageType.Error);
+
+            if (success)
+            {
+                CloseModals();
+            }
+        }
+    }
+
+    private void ShowUploadDialog()
+    {
+        _showUploadDialog = true;
+        _uploadFile = null;
+        _uploadProgress = 0;
+    }
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        _uploadFile = e.File;
+    }
+
+    private async Task UploadModule()
+    {
+        if (_uploadFile == null) return;
+
+        _isUploading = true;
+        _uploadProgress = 0;
+
+        try
+        {
+            // Simulate progress
+            _ = Task.Run(async () =>
+            {
+                for (int i = 0; i <= 90; i += 10)
+                {
+                    _uploadProgress = i;
+                    await InvokeAsync(StateHasChanged);
+                    await Task.Delay(100);
+                }
+            });
+
+            using var stream = _uploadFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB max
+            var result = await ModuleManagementService.UploadModuleAsync(stream, _uploadFile.Name);
+
+            _uploadProgress = 100;
+
+            ShowMessage(result.Message, result.Success ? MessageType.Success : MessageType.Error);
+
+            if (result.Success)
+            {
+                CloseModals();
+                await LoadModules();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error uploading module");
+            ShowMessage($"Upload failed: {ex.Message}", MessageType.Error);
+        }
+        finally
+        {
+            _isUploading = false;
+        }
+    }
+
+    private void CloseModals()
+    {
+        _selectedModule = null;
+        _showUploadDialog = false;
+        _showConfigDialog = false;
+        _moduleDependencies = null;
+        _moduleHealth = null;
+        _moduleConfig = null;
+        _uploadFile = null;
+    }
+
+    private void ShowMessage(string message, MessageType type)
+    {
+        _message = message;
+        _messageType = type;
+
+        // Auto-hide after 5 seconds
+        Task.Delay(5000).ContinueWith(_ =>
+        {
+            _message = null;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    private string GetStatusBadgeClass(ModuleStatus status)
+    {
+        return status switch
+        {
+            ModuleStatus.Running => "bg-success",
+            ModuleStatus.Stopped => "bg-warning",
+            ModuleStatus.Disabled => "bg-secondary",
+            ModuleStatus.Error => "bg-danger",
+            ModuleStatus.Missing => "bg-dark",
+            _ => "bg-light text-dark"
+        };
+    }
+
+    private string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB" };
+        int order = 0;
+        double size = bytes;
+
+        while (size >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            size /= 1024;
+        }
+
+        return $"{size:0.##} {sizes[order]}";
+    }
+
+    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+}

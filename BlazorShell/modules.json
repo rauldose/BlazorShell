@@ -25,186 +25,22 @@
         "refreshInterval": 30000,
         "defaultWidgets": [ "stats", "charts", "activities" ],
         "maxWidgets": 6
-      },
-      "navigationItems": [
-        {
-          "name": "dashboard",
-          "displayName": "Dashboard",
-          "url": "/",
-          "icon": "bi bi-speedometer2",
-          "order": 1,
-          "type": "Both",
-          "requiredPermission": "Dashboard.Read"
-        }
-      ],
-      "permissions": [
-        {
-          "name": "Dashboard.Read",
-          "displayName": "View Dashboard",
-          "description": "Allows viewing the dashboard"
-        },
-        {
-          "name": "Dashboard.Admin",
-          "displayName": "Configure Dashboard",
-          "description": "Allows configuring dashboard widgets"
-        }
-      ]
+      }
     },
     {
-      "name": "UserManagement",
-      "displayName": "User Management",
-      "description": "Manages users, roles, and permissions",
-      "assemblyName": "BlazorShell.Modules.UserManagement.dll",
-      "entryType": "BlazorShell.Modules.UserManagement.UserManagementModule",
-      "version": "1.0.0",
-      "author": "BlazorShell Team",
-      "category": "Administration",
-      "icon": "bi bi-people",
-      "enabled": true,
-      "loadOrder": 2,
-      "dependencies": [],
-      "requiredRole": "Administrator",
-      "configuration": {
-        "pageSize": 25,
-        "enableBulkOperations": true,
-        "enableExport": true
-      },
-      "navigationItems": [
-        {
-          "name": "users",
-          "displayName": "Users",
-          "url": "/admin/users",
-          "icon": "bi bi-people",
-          "order": 10,
-          "type": "Both",
-          "requiredPermission": "Users.Read",
-          "parent": null,
-          "children": [
-            {
-              "name": "users-list",
-              "displayName": "User List",
-              "url": "/admin/users/list",
-              "icon": "bi bi-list",
-              "order": 1,
-              "type": "SideMenu",
-              "requiredPermission": "Users.Read"
-            },
-            {
-              "name": "users-roles",
-              "displayName": "Roles",
-              "url": "/admin/users/roles",
-              "icon": "bi bi-shield",
-              "order": 2,
-              "type": "SideMenu",
-              "requiredPermission": "Roles.Read"
-            },
-            {
-              "name": "users-permissions",
-              "displayName": "Permissions",
-              "url": "/admin/users/permissions",
-              "icon": "bi bi-key",
-              "order": 3,
-              "type": "SideMenu",
-              "requiredPermission": "Permissions.Read"
-            }
-          ]
-        }
-      ],
-      "permissions": [
-        {
-          "name": "Users.Read",
-          "displayName": "View Users",
-          "description": "Allows viewing user list"
-        },
-        {
-          "name": "Users.Create",
-          "displayName": "Create Users",
-          "description": "Allows creating new users"
-        },
-        {
-          "name": "Users.Edit",
-          "displayName": "Edit Users",
-          "description": "Allows editing existing users"
-        },
-        {
-          "name": "Users.Delete",
-          "displayName": "Delete Users",
-          "description": "Allows deleting users"
-        },
-        {
-          "name": "Roles.Read",
-          "displayName": "View Roles",
-          "description": "Allows viewing roles"
-        },
-        {
-          "name": "Roles.Manage",
-          "displayName": "Manage Roles",
-          "description": "Allows managing roles"
-        },
-        {
-          "name": "Permissions.Read",
-          "displayName": "View Permissions",
-          "description": "Allows viewing permissions"
-        },
-        {
-          "name": "Permissions.Manage",
-          "displayName": "Manage Permissions",
-          "description": "Allows managing permissions"
-        }
-      ]
-    },
-    {
-      "name": "Reports",
-      "displayName": "Reports Module",
-      "description": "Provides reporting functionality",
-      "assemblyName": "BlazorShell.Modules.Reports.dll",
-      "entryType": "BlazorShell.Modules.Reports.ReportsModule",
-      "version": "1.0.0",
-      "author": "BlazorShell Team",
-      "category": "Business",
-      "icon": "bi bi-file-earmark-bar-graph",
-      "enabled": false,
-      "loadOrder": 5,
-      "dependencies": [ "Dashboard" ],
-      "requiredRole": null,
-      "configuration": {
-        "exportFormats": [ "pdf", "excel", "csv" ],
-        "schedulingEnabled": true,
-        "maxScheduledReports": 10
-      },
-      "navigationItems": [
-        {
-          "name": "reports",
-          "displayName": "Reports",
-          "url": "/reports",
-          "icon": "bi bi-file-earmark-bar-graph",
-          "order": 20,
-          "type": "Both",
-          "requiredPermission": "Reports.Read"
-        }
-      ],
-      "permissions": [
-        {
-          "name": "Reports.Read",
-          "displayName": "View Reports",
-          "description": "Allows viewing reports"
-        },
-        {
-          "name": "Reports.Create",
-          "displayName": "Create Reports",
-          "description": "Allows creating custom reports"
-        },
-        {
-          "name": "Reports.Export",
-          "displayName": "Export Reports",
-          "description": "Allows exporting reports"
-        },
-        {
-          "name": "Reports.Schedule",
-          "displayName": "Schedule Reports",
-          "description": "Allows scheduling reports"
-        }
-      ]
+      "Name": "Admin",
+      "DisplayName": "Administration",
+      "Description": "System administration module",
+      "AssemblyName": "BlazorShell.Modules.Admin.dll",
+      "EntryType": "BlazorShell.Modules.Admin.AdminModule",
+      "Version": "1.0.0",
+      "Author": "BlazorShell Team",
+      "Category": "System",
+      "Icon": "bi bi-gear-fill",
+      "Enabled": true,
+      "LoadOrder": 999,
+      "Dependencies": [],
+      "RequiredRole": "Administrator"
     }
   ]
 }

@@ -8,30 +8,38 @@ using BlazorShell.Core.Interfaces;
 using BlazorShell.Core.Entities;
 using BlazorShell.Infrastructure.Services;
 using BlazorShell.Infrastructure.Security;
+using BlazorShell.Components;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using System.Reflection;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.ResponseCompression;
-using BlazorShell.Components;
 using Module = Autofac.Module;
-using BlazorShell.Components.Account;
-using IdentityRevalidatingAuthenticationStateProvider = BlazorShell.Components.Account.IdentityRevalidatingAuthenticationStateProvider;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Store service collection for later use
+var serviceCollection = builder.Services;
 
 // Configure Autofac as DI container for plugin support
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
-    // Register core services
+    // Register core services - no constructor parameters for Autofac modules
     containerBuilder.RegisterModule(new CoreServicesModule());
 
     // Register infrastructure services
     containerBuilder.RegisterModule(new InfrastructureModule());
 
-    // Plugin registration will happen here
-    containerBuilder.RegisterModule(new PluginModule(builder.Configuration));
+    // Register ModuleServiceProvider here with access to serviceCollection
+    containerBuilder.Register(c =>
+    {
+        var rootProvider = c.Resolve<IServiceProvider>();
+        var logger = c.Resolve<ILogger<ModuleServiceProvider>>();
+        return new ModuleServiceProvider(rootProvider, serviceCollection, logger);
+    })
+    .As<IModuleServiceProvider>()
+    .SingleInstance();
 });
 
 // Add framework services - Updated for .NET 8 Blazor Web App
@@ -46,10 +54,6 @@ builder.Services.AddSignalR(options =>
 {
     // Configure SignalR for production
     options.EnableDetailedErrors = builder.Environment.IsDevelopment();
-    //options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(3);
-    //options.DisconnectedCircuitMaxRetained = 100;
-    //options.JSInteropDefaultCallTimeout = TimeSpan.FromMinutes(1);
-    //options.MaxBufferedUnacknowledgedRenderBatches = 10;
 });
 
 // Configure response compression for performance
@@ -103,6 +107,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 .AddRoles<ApplicationRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
+// Register dynamic route service
+builder.Services.AddSingleton<IDynamicRouteService, DynamicRouteService>();
 
 // Add cascading authentication state (new .NET 8 pattern)
 builder.Services.AddCascadingAuthenticationState();
@@ -179,7 +186,15 @@ builder.Services.AddAntiforgery(options =>
     options.HeaderName = "X-CSRF-TOKEN";
     options.SuppressXFrameOptionsHeader = false;
 });
-builder.Services.AddScoped<IdentityRedirectManager>();
+
+// TEMPORARY: Register Admin module services directly for testing
+// Remove this once dynamic module service registration is working
+//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.IModuleManagementService,
+//                             BlazorShell.Modules.Admin.Services.ModuleManagementService>();
+//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.IUserManagementService,
+//                             BlazorShell.Modules.Admin.Services.UserManagementService>();
+//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.IAuditService,
+//                             BlazorShell.Modules.Admin.Services.AuditService>();
 
 var app = builder.Build();
 
@@ -330,7 +345,7 @@ async Task SeedDefaultAdmin(UserManager<ApplicationUser> userManager, RoleManage
     }
 }
 
-// Module registration for Autofac
+// Module registration for Autofac - NO CONSTRUCTOR PARAMETERS
 public class CoreServicesModule : Module
 {
     protected override void Load(ContainerBuilder builder)
@@ -342,6 +357,14 @@ public class CoreServicesModule : Module
         builder.RegisterType<StateContainer>().As<IStateContainer>().InstancePerLifetimeScope();
         builder.RegisterType<ModuleAuthorizationService>().As<IModuleAuthorizationService>().InstancePerLifetimeScope();
         builder.RegisterType<PluginAssemblyLoader>().As<IPluginAssemblyLoader>().SingleInstance();
+        builder.RegisterType<ModuleRouteProvider>().AsSelf().SingleInstance();
+        builder.RegisterType<ModuleServiceManager>().AsSelf().SingleInstance();
+        builder.RegisterType<DynamicRouteService>()
+            .As<IDynamicRouteService>()
+            .SingleInstance();
+
+        // Note: ModuleServiceProvider is registered in the ConfigureContainer method above
+        // because it needs access to the serviceCollection variable
     }
 }
 
@@ -353,21 +376,5 @@ public class InfrastructureModule : Module
         builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
         builder.RegisterType<FileStorageService>().As<IFileStorageService>().InstancePerLifetimeScope();
         builder.RegisterType<CacheService>().As<ICacheService>().SingleInstance();
-    }
-}
-
-public class PluginModule : Module
-{
-    private readonly IConfiguration _configuration;
-
-    public PluginModule(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
-    protected override void Load(ContainerBuilder builder)
-    {
-        // Plugin registration will be implemented in Phase 2
-        // This will dynamically load assemblies and register their services
     }
 }

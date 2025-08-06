@@ -1,7 +1,97 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - BlazorShell</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container-fluid">
+    <h1>Welcome to BlazorShell</h1>
+    
+    <div class="alert alert-info mt-4">
+        <h4 class="alert-heading">
+            <i class="bi bi-info-circle"></i> Modular Blazor Framework
+        </h4>
+        <p>
+            This is a modular .NET 8 Blazor application framework that allows dynamic loading of modules at runtime.
+        </p>
+        <hr>
+        <p class="mb-0">
+            <strong>Features:</strong>
+        </p>
+        <ul class="mb-0">
+            <li>Dynamic module loading from DLL assemblies</li>
+            <li>ASP.NET Core Identity authentication</li>
+            <li>Role-based and permission-based authorization</li>
+            <li>Dynamic navigation system</li>
+            <li>Bootstrap 5 responsive design</li>
+            <li>Entity Framework Core with SQL Server</li>
+        </ul>
+    </div>
 
-Welcome to your new app.
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-puzzle"></i> Modules
+                    </h5>
+                    <p class="card-text">
+                        Load and manage modules dynamically. Each module can provide its own pages, services, and navigation items.
+                    </p>
+                    <AuthorizeView Roles="Administrator">
+                        <a href="/admin/modules" class="btn btn-primary">Manage Modules</a>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-people"></i> Users & Roles
+                    </h5>
+                    <p class="card-text">
+                        Manage users, roles, and permissions. Control access to modules and features based on user authorization.
+                    </p>
+                    <AuthorizeView Roles="Administrator">
+                        <a href="/admin/users" class="btn btn-primary">Manage Users</a>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-gear"></i> Configuration
+                    </h5>
+                    <p class="card-text">
+                        Configure application settings, module parameters, and system preferences through a centralized interface.
+                    </p>
+                    <AuthorizeView Roles="Administrator">
+                        <a href="/admin/settings" class="btn btn-primary">Settings</a>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <AuthorizeView>
+        <Authorized>
+            <div class="alert alert-success mt-4">
+                <i class="bi bi-check-circle"></i> You are logged in as <strong>@context.User.Identity?.Name</strong>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="alert alert-warning mt-4">
+                <i class="bi bi-exclamation-triangle"></i> You are not logged in. 
+                <a href="/Account/Login" class="alert-link">Click here to login</a>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+@code {
+    // This is a simple home page. 
+    // When modules are loaded, they can replace or extend this page
+}

@@ -8,7 +8,6 @@ using BlazorShell.Core.Entities;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Module = BlazorShell.Core.Entities.Module;
 
 namespace BlazorShell.Infrastructure.Services
 {
@@ -22,15 +21,20 @@ namespace BlazorShell.Infrastructure.Services
         private readonly IModuleRegistry _moduleRegistry;
         private readonly IPluginAssemblyLoader _assemblyLoader;
         private readonly ApplicationDbContext _dbContext;
+        private readonly ModuleRouteProvider _routeProvider;
+        private readonly IModuleServiceProvider _moduleServiceProvider;
         private readonly Dictionary<string, ModuleLoadContext> _loadContexts;
         private readonly string _modulesPath;
-
+        private readonly IDynamicRouteService _dynamicRouteService;
         public ModuleLoader(
             ILogger<ModuleLoader> logger,
             IServiceProvider serviceProvider,
             IModuleRegistry moduleRegistry,
             IPluginAssemblyLoader assemblyLoader,
             ApplicationDbContext dbContext,
+            ModuleRouteProvider routeProvider,
+            IModuleServiceProvider moduleServiceProvider,
+            IDynamicRouteService dynamicRouteService,
             IOptions<ModuleConfiguration> options)
         {
             _logger = logger;
@@ -38,7 +42,10 @@ namespace BlazorShell.Infrastructure.Services
             _moduleRegistry = moduleRegistry;
             _assemblyLoader = assemblyLoader;
             _dbContext = dbContext;
+            _routeProvider = routeProvider;
+            _moduleServiceProvider = moduleServiceProvider;
             _loadContexts = new Dictionary<string, ModuleLoadContext>();
+            _dynamicRouteService = dynamicRouteService;
             _modulesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, options.Value.ModulesPath ?? "Modules");
         }
 
@@ -115,6 +122,13 @@ namespace BlazorShell.Infrastructure.Services
                         var module = await LoadModuleAsync(assemblyPath);
                         if (module != null)
                         {
+                            // Register module services if it implements IServiceModule
+                            if (module is IServiceModule serviceModule)
+                            {
+                                _moduleServiceProvider.RegisterModuleServices(module.Name, serviceModule);
+                                _logger.LogInformation("Registered services for module {Module}", module.Name);
+                            }
+
                             // Initialize module
                             var initialized = await module.InitializeAsync(_serviceProvider);
                             if (initialized)
@@ -125,6 +139,18 @@ namespace BlazorShell.Infrastructure.Services
                                 {
                                     var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
                                     navigationService.RegisterNavigationItems(navItems);
+                                    _logger.LogInformation("Registered {Count} navigation items for module {Module}",
+                                        navItems.Count(), module.Name);
+                                }
+
+                                // Register module components for routing
+                                var componentTypes = module.GetComponentTypes();
+                                if (componentTypes?.Any() == true)
+                                {
+                                    // Register routes with the route provider
+                                    _routeProvider.RegisterModuleRoutes(module.Name, componentTypes);
+                                    _logger.LogInformation("Registered {Count} components for module {Module}",
+                                        componentTypes.Count(), module.Name);
                                 }
 
                                 // Update or create database entry
@@ -185,18 +211,21 @@ namespace BlazorShell.Infrastructure.Services
                     _logger.LogError("Failed to create instance of {Type}", moduleType.FullName);
                     return null;
                 }
-
+              
+                var componentTypes = module.GetComponentTypes()?.ToList() ?? new List<Type>();
                 // Store load context for unloading
                 _loadContexts[module.Name] = new ModuleLoadContext
                 {
                     Assembly = assembly,
                     Module = module,
-                    LoadedAt = DateTime.UtcNow
+                    LoadedAt = DateTime.UtcNow,
+                    ComponentTypes = componentTypes
                 };
 
                 // Register module
                 _moduleRegistry.RegisterModule(module);
 
+                _dynamicRouteService.RegisterModuleAssembly(module.Name, assembly);
                 // Activate module
                 await module.ActivateAsync();
 
@@ -229,11 +258,17 @@ namespace BlazorShell.Infrastructure.Services
                 var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
                 navigationService.UnregisterNavigationItems(moduleName);
 
+                // Unregister routes
+                if (_loadContexts.TryGetValue(moduleName, out var context) && context.ComponentTypes != null)
+                {
+                    _routeProvider.UnregisterModuleRoutes(moduleName, context.ComponentTypes);
+                }
+                _dynamicRouteService.UnregisterModuleAssembly(moduleName);
                 // Unregister from registry
                 _moduleRegistry.UnregisterModule(moduleName);
 
                 // Unload assembly if using load context
-                if (_loadContexts.TryGetValue(moduleName, out var context))
+                if (context != null)
                 {
                     _assemblyLoader.UnloadPlugin(moduleName);
                     _loadContexts.Remove(moduleName);
@@ -307,7 +342,7 @@ namespace BlazorShell.Infrastructure.Services
 
             if (dbModule == null)
             {
-                dbModule = new Module
+                dbModule = new Core.Entities.Module
                 {
                     Name = module.Name,
                     CreatedDate = DateTime.UtcNow,
@@ -334,11 +369,19 @@ namespace BlazorShell.Infrastructure.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        private void RegisterModuleComponents(string moduleName, IEnumerable<Type> componentTypes)
+        {
+            // This method is no longer needed as we use ModuleRouteProvider
+            // Kept for backward compatibility
+            _logger.LogDebug("RegisterModuleComponents called for module {Module}", moduleName);
+        }
+
         private class ModuleLoadContext
         {
             public Assembly Assembly { get; set; }
             public IModule Module { get; set; }
             public DateTime LoadedAt { get; set; }
+            public List<Type> ComponentTypes { get; set; }
         }
     }
 

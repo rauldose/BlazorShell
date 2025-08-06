@@ -1,0 +1,204 @@
+﻿@* BlazorShell.Modules.Admin/Pages/AdminDashboard.razor *@
+@page "/admin"
+@using BlazorShell.Core.Components
+@using BlazorShell.Core.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@inherits ModuleComponentBase
+@attribute [Authorize(Roles = "Administrator")]
+
+<PageTitle>Administration Dashboard</PageTitle>
+
+<div class="container-fluid">
+    <h1><i class="bi bi-gear-fill"></i> Administration Dashboard</h1>
+
+    <div class="row mt-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-puzzle fs-1 text-primary"></i>
+                    <h5 class="card-title mt-3">Modules</h5>
+                    <p class="display-6">@_moduleCount</p>
+                    <a href="/admin/modules" class="btn btn-primary btn-sm">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-people fs-1 text-success"></i>
+                    <h5 class="card-title mt-3">Users</h5>
+                    <p class="display-6">@_userCount</p>
+                    <a href="/admin/users" class="btn btn-success btn-sm">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-shield-lock fs-1 text-warning"></i>
+                    <h5 class="card-title mt-3">Roles</h5>
+                    <p class="display-6">@_roleCount</p>
+                    <a href="/admin/roles" class="btn btn-warning btn-sm">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="bi bi-journal-text fs-1 text-info"></i>
+                    <h5 class="card-title mt-3">Audit Logs</h5>
+                    <p class="display-6">@_auditCount</p>
+                    <a href="/admin/audit" class="btn btn-info btn-sm">View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-activity"></i> System Status
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tbody>
+                            <tr>
+                                <td>Framework Version:</td>
+                                <td><strong>1.0.0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Active Modules:</td>
+                                <td><strong>@_activeModules</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Server Time:</td>
+                                <td><strong>@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Environment:</td>
+                                <td><strong>@Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-clock-history"></i> Recent Activities
+                </div>
+                <div class="card-body">
+                    @if (_recentActivities.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var activity in _recentActivities)
+                            {
+                                <li class="list-group-item px-0">
+                                    <small class="text-muted">@activity.Timestamp.ToString("HH:mm")</small>
+                                    @activity.Description
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No recent activities</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-tools"></i> Quick Actions
+                </div>
+                <div class="card-body">
+                    <div class="btn-toolbar" role="toolbar">
+                        <div class="btn-group me-2" role="group">
+                            <button class="btn btn-outline-primary" @onclick="RefreshModules">
+                                <i class="bi bi-arrow-clockwise"></i> Refresh Modules
+                            </button>
+                            <button class="btn btn-outline-success" @onclick="BackupSystem">
+                                <i class="bi bi-download"></i> Backup System
+                            </button>
+                            <button class="btn btn-outline-warning" @onclick="ClearCache">
+                                <i class="bi bi-trash"></i> Clear Cache
+                            </button>
+                            <button class="btn btn-outline-info" @onclick="ViewLogs">
+                                <i class="bi bi-file-text"></i> View Logs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject] private IModuleRegistry ModuleRegistry { get; set; } = null!;
+
+    private int _moduleCount = 0;
+    private int _activeModules = 0;
+    private int _userCount = 0;
+    private int _roleCount = 0;
+    private int _auditCount = 0;
+
+    private List<(DateTime Timestamp, string Description)> _recentActivities = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        // Get counts
+        _moduleCount = ModuleRegistry.GetModules().Count();
+        _activeModules = _moduleCount; // All loaded modules are active
+
+        // These would come from actual services in production
+        _userCount = Random.Shared.Next(10, 100);
+        _roleCount = 3; // Admin, ModuleAdmin, User
+        _auditCount = Random.Shared.Next(100, 1000);
+
+        // Simulate recent activities
+        _recentActivities = new List<(DateTime, string)>
+        {
+            (DateTime.Now.AddMinutes(-5), "Module Dashboard was loaded"),
+            (DateTime.Now.AddMinutes(-15), "User admin@blazorshell.local logged in"),
+            (DateTime.Now.AddMinutes(-30), "System backup completed"),
+            (DateTime.Now.AddHours(-1), "Module configuration updated"),
+            (DateTime.Now.AddHours(-2), "New user registered")
+        };
+    }
+
+    private async Task RefreshModules()
+    {
+        // Implement module refresh logic
+        await Task.CompletedTask;
+    }
+
+    private async Task BackupSystem()
+    {
+        // Implement backup logic
+        await Task.CompletedTask;
+    }
+
+    private async Task ClearCache()
+    {
+        // Implement cache clearing logic
+        await Task.CompletedTask;
+    }
+
+    private void ViewLogs()
+    {
+        Navigation.NavigateTo("/admin/audit");
+    }
+}

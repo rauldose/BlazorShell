@@ -1,0 +1,181 @@
+﻿@* DashboardPage.razor *@
+@page "/dashboard"
+@using BlazorShell.Modules.Dashboard
+@using BlazorShell.Core.Components
+@using BlazorShell.Infrastructure.Services
+@inherits ModuleComponentBase
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
+        <button class="btn btn-primary" @onclick="RefreshData">
+            <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading dashboard...</p>
+        </div>
+    }
+    else if (_dashboardData != null)
+    {
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card border-start border-primary border-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">Total Users</div>
+                                <div class="h4 mb-0">@_dashboardData.TotalUsers.ToString("N0")</div>
+                            </div>
+                            <i class="bi bi-people fs-1 text-primary opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card border-start border-success border-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">Active Sessions</div>
+                                <div class="h4 mb-0">@_dashboardData.ActiveSessions</div>
+                            </div>
+                            <i class="bi bi-activity fs-1 text-success opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card border-start border-info border-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">Revenue</div>
+                                <div class="h4 mb-0">@_dashboardData.TotalRevenue.ToString("C")</div>
+                            </div>
+                            <i class="bi bi-currency-dollar fs-1 text-info opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card border-start border-warning border-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">Growth Rate</div>
+                                <div class="h4 mb-0">
+                                    @if (_dashboardData.GrowthRate > 0)
+                                    {
+                                        <i class="bi bi-arrow-up text-success"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-arrow-down text-danger"></i>
+                                    }
+                                    @Math.Abs(_dashboardData.GrowthRate).ToString("F1")%
+                                </div>
+                            </div>
+                            <i class="bi bi-graph-up-arrow fs-1 text-warning opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="bi bi-activity"></i> Recent Activities
+                    </div>
+                    <div class="card-body">
+                        @if (_dashboardData.RecentActivities?.Any() == true)
+                        {
+                            <ul class="list-group list-group-flush">
+                                @foreach (var activity in _dashboardData.RecentActivities)
+                                {
+                                    <li class="list-group-item">
+                                        <i class="bi bi-circle-fill text-primary me-2" style="font-size: 0.5rem;"></i>
+                                        @activity
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No recent activities</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-grid-3x3"></i> Quick Actions
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="/dashboard/analytics" class="btn btn-outline-primary">
+                                <i class="bi bi-graph-up"></i> View Analytics
+                            </a>
+                            <a href="/dashboard/widgets" class="btn btn-outline-primary">
+                                <i class="bi bi-grid-3x3"></i> Manage Widgets
+                            </a>
+                            <a href="/dashboard/reports" class="btn btn-outline-primary">
+                                <i class="bi bi-file-earmark-bar-graph"></i> Generate Report
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center text-muted mt-4">
+            <small>Last updated: @_dashboardData.LastUpdated.ToString("g")</small>
+        </div>
+    }
+</div>
+
+@code {
+    private DashboardData? _dashboardData;
+    private bool _isLoading = true;
+    private IDashboardService? _dashboardService;
+    private IWidgetService? _widgetService;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get services from module service provider
+        _dashboardService = GetService<IDashboardService>();
+        _widgetService = GetService<IWidgetService>();
+        
+        if (_dashboardService == null)
+        {
+            throw new InvalidOperationException("Dashboard service not found");
+        }
+        
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+        _dashboardData = await _dashboardService!.GetDashboardDataAsync();
+        _isLoading = false;
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+}

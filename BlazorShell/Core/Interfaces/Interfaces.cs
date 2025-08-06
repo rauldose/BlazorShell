@@ -140,47 +140,6 @@ namespace BlazorShell.Core.Interfaces
     }
 
     /// <summary>
-    /// Module component base class
-    /// </summary>
-    public abstract class ModuleComponentBase : ComponentBase, IDisposable
-    {
-        [Inject] protected IModuleAuthorizationService ModuleAuth { get; set; }
-        [Inject] protected IStateContainer StateContainer { get; set; }
-        [Inject] protected NavigationManager Navigation { get; set; }
-        [Inject] protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-
-        protected string UserId { get; private set; }
-        protected bool IsAuthenticated { get; private set; }
-        protected abstract string ModuleName { get; }
-
-        protected override async Task OnInitializedAsync()
-        {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            IsAuthenticated = authState.User.Identity.IsAuthenticated;
-            UserId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-            if (IsAuthenticated && !await ModuleAuth.CanAccessModuleAsync(UserId, ModuleName))
-            {
-                Navigation.NavigateTo("/unauthorized");
-            }
-
-            await OnModuleInitializedAsync();
-        }
-
-        protected virtual Task OnModuleInitializedAsync() => Task.CompletedTask;
-
-        protected async Task<bool> HasPermissionAsync(PermissionType permission)
-        {
-            return await ModuleAuth.HasPermissionAsync(UserId, ModuleName, permission);
-        }
-
-        public virtual void Dispose()
-        {
-            // Cleanup resources
-        }
-    }
-
-    /// <summary>
     /// Event args for module events
     /// </summary>
     public class ModuleEventArgs : EventArgs

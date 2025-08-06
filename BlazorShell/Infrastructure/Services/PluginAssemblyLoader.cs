@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
 using BlazorShell.Core.Interfaces;
 using BlazorShell.Core.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorShell.Infrastructure.Services
 {
@@ -294,8 +294,16 @@ namespace BlazorShell.Infrastructure.Services
 
         public async Task<IEnumerable<NavigationItem>> GetUserNavigationItemsAsync(string userId, NavigationType type)
         {
-            var authService = _serviceProvider.GetRequiredService<IModuleAuthorizationService>();
+            var authService = _serviceProvider.GetService<IModuleAuthorizationService>();
             var allItems = await GetNavigationItemsAsync(type);
+
+            if (authService == null)
+            {
+                // If no auth service, return public items only
+                return allItems.Where(item => string.IsNullOrEmpty(item.RequiredPermission) &&
+                                             string.IsNullOrEmpty(item.RequiredRole));
+            }
+
             var userItems = new List<NavigationItem>();
 
             foreach (var item in allItems)
@@ -313,13 +321,19 @@ namespace BlazorShell.Infrastructure.Services
         {
             if (item == null) return false;
 
+            // If no requirements, it's public
+            if (string.IsNullOrEmpty(item.RequiredPermission) && string.IsNullOrEmpty(item.RequiredRole))
+                return item.IsVisible;
+
             // Check if item requires authentication
             if (!string.IsNullOrEmpty(item.RequiredPermission) || !string.IsNullOrEmpty(item.RequiredRole))
             {
                 if (string.IsNullOrEmpty(userId))
                     return false;
 
-                var authService = _serviceProvider.GetRequiredService<IModuleAuthorizationService>();
+                var authService = _serviceProvider.GetService<IModuleAuthorizationService>();
+                if (authService == null)
+                    return false;
 
                 // Check permission
                 if (!string.IsNullOrEmpty(item.RequiredPermission))
@@ -328,20 +342,25 @@ namespace BlazorShell.Infrastructure.Services
                     if (parts.Length == 2)
                     {
                         var moduleName = parts[0];
-                        var permission = Enum.Parse<PermissionType>(parts[1]);
-
-                        if (!await authService.HasPermissionAsync(userId, moduleName, permission))
-                            return false;
+                        if (Enum.TryParse<PermissionType>(parts[1], out var permission))
+                        {
+                            if (!await authService.HasPermissionAsync(userId, moduleName, permission))
+                                return false;
+                        }
                     }
                 }
 
                 // Check role
                 if (!string.IsNullOrEmpty(item.RequiredRole))
                 {
-                    var userManager = _serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                    var user = await userManager.FindByIdAsync(userId);
-                    if (user == null || !await userManager.IsInRoleAsync(user, item.RequiredRole))
-                        return false;
+                    using var scope = _serviceProvider.CreateScope();
+                    var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+                    if (userManager != null)
+                    {
+                        var user = await userManager.FindByIdAsync(userId);
+                        if (user == null || !await userManager.IsInRoleAsync(user, item.RequiredRole))
+                            return false;
+                    }
                 }
             }
 

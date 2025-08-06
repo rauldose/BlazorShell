@@ -166,6 +166,7 @@ namespace BlazorShell.Core.Entities
         Write,
         Delete,
         Execute,
-        Admin
+        Admin,
+        View
     }
 }

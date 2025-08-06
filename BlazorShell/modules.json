@@ -34,17 +34,17 @@
           "icon": "bi bi-speedometer2",
           "order": 1,
           "type": "Both",
-          "requiredPermission": "Dashboard.View"
+          "requiredPermission": "Dashboard.Read"
         }
       ],
       "permissions": [
         {
-          "name": "Dashboard.View",
+          "name": "Dashboard.Read",
           "displayName": "View Dashboard",
           "description": "Allows viewing the dashboard"
         },
         {
-          "name": "Dashboard.Configure",
+          "name": "Dashboard.Admin",
           "displayName": "Configure Dashboard",
           "description": "Allows configuring dashboard widgets"
         }
@@ -77,7 +77,7 @@
           "icon": "bi bi-people",
           "order": 10,
           "type": "Both",
-          "requiredPermission": "Users.View",
+          "requiredPermission": "Users.Read",
           "parent": null,
           "children": [
             {
@@ -87,7 +87,7 @@
               "icon": "bi bi-list",
               "order": 1,
               "type": "SideMenu",
-              "requiredPermission": "Users.View"
+              "requiredPermission": "Users.Read"
             },
             {
               "name": "users-roles",
@@ -96,7 +96,7 @@
               "icon": "bi bi-shield",
               "order": 2,
               "type": "SideMenu",
-              "requiredPermission": "Roles.View"
+              "requiredPermission": "Roles.Read"
             },
             {
               "name": "users-permissions",
@@ -105,14 +105,14 @@
               "icon": "bi bi-key",
               "order": 3,
               "type": "SideMenu",
-              "requiredPermission": "Permissions.View"
+              "requiredPermission": "Permissions.Read"
             }
           ]
         }
       ],
       "permissions": [
         {
-          "name": "Users.View",
+          "name": "Users.Read",
           "displayName": "View Users",
           "description": "Allows viewing user list"
         },
@@ -132,7 +132,7 @@
           "description": "Allows deleting users"
         },
         {
-          "name": "Roles.View",
+          "name": "Roles.Read",
           "displayName": "View Roles",
           "description": "Allows viewing roles"
         },
@@ -142,7 +142,7 @@
           "description": "Allows managing roles"
         },
         {
-          "name": "Permissions.View",
+          "name": "Permissions.Read",
           "displayName": "View Permissions",
           "description": "Allows viewing permissions"
         },
@@ -180,12 +180,12 @@
           "icon": "bi bi-file-earmark-bar-graph",
           "order": 20,
           "type": "Both",
-          "requiredPermission": "Reports.View"
+          "requiredPermission": "Reports.Read"
         }
       ],
       "permissions": [
         {
-          "name": "Reports.View",
+          "name": "Reports.Read",
           "displayName": "View Reports",
           "description": "Allows viewing reports"
         },

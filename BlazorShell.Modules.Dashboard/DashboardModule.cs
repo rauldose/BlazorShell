@@ -121,7 +121,7 @@ namespace BlazorShell.Modules.Dashboard
                     Order = 1,
                     Type = NavigationType.Both,
                     IsVisible = true,
-                    RequiredPermission = "Dashboard.View"
+                    RequiredPermission = "Dashboard.Read"
                 },
                 new NavigationItem
                 {
@@ -132,7 +132,7 @@ namespace BlazorShell.Modules.Dashboard
                     Order = 2,
                     Type = NavigationType.SideMenu,
                     IsVisible = true,
-                    RequiredPermission = "Dashboard.View",
+                    RequiredPermission = "Dashboard.Read",
                     ParentId = 1
                 },
                 new NavigationItem
@@ -144,7 +144,7 @@ namespace BlazorShell.Modules.Dashboard
                     Order = 3,
                     Type = NavigationType.SideMenu,
                     IsVisible = true,
-                    RequiredPermission = "Dashboard.Configure",
+                    RequiredPermission = "Dashboard.Admin",
                     ParentId = 1
                 }
             };

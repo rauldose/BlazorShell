@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using BlazorShell.Infrastructure.Data;
 using BlazorShell.Core.Services;
-using BlazorShell.Core.Interfaces;
+using BlazorShell.Application.Interfaces;
 using BlazorShell.Core.Entities;
 using BlazorShell.Infrastructure.Services;
 using BlazorShell.Infrastructure.Security;

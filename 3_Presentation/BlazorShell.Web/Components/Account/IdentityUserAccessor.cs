@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using BlazorShell.Domain.Entities;
 
-namespace BlazorShell.Components.Account;
+namespace BlazorShell.Web.Components.Account;
 
 internal sealed class IdentityUserAccessor(UserManager<ApplicationUser> userManager, IdentityRedirectManager redirectManager)
 {

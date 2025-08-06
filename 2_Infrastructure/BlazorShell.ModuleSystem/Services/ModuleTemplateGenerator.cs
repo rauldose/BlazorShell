@@ -100,7 +100,7 @@ namespace BlazorShell.ModuleSystem.Services
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine("using BlazorShell.Core.Interfaces;");
+            sb.AppendLine("using BlazorShell.Application.Interfaces;");
             sb.AppendLine("using BlazorShell.Domain.Entities;");
             sb.AppendLine("using Microsoft.Extensions.Logging;");
             sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");

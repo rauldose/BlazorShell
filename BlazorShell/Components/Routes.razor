@@ -1,0 +1,35 @@
+﻿<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                @if (!context.User.Identity?.IsAuthenticated ?? false)
+                {
+
+                }
+                else
+                {
+                    <p>You are not authorized to access this resource.</p>
+                }
+            </NotAuthorized>
+            <Authorizing>
+                <p>Loading authorization...</p>
+            </Authorizing>
+        </Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="typeof(Layout.MainLayout)">
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">Page Not Found</h4>
+                <p>Sorry, there's nothing at this address.</p>
+                <hr>
+                <p class="mb-0">
+                    <a href="/" class="btn btn-primary">
+                        <i class="bi bi-house"></i> Go Home
+                    </a>
+                </p>
+            </div>
+        </LayoutView>
+    </NotFound>
+</Router>

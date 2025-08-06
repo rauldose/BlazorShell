@@ -1,0 +1,290 @@
+﻿@using BlazorShell.Core.Interfaces
+@using BlazorShell.Core.Entities
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject INavigationService NavigationService
+@inject IModuleRegistry ModuleRegistry
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
+
+<div class="page">
+    <div class="sidebar @(_sidebarCollapsed ? "collapsed" : "")">
+        <!-- Logo/Brand -->
+        <div class="sidebar-brand">
+            <a href="/">
+                <i class="bi bi-box"></i>
+                <span class="brand-text">BlazorShell</span>
+            </a>
+            <button class="btn btn-link sidebar-toggle d-md-none" @onclick="ToggleSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+
+        <!-- Navigation Items -->
+        <nav class="sidebar-nav">
+            @if (_sideMenuItems != null)
+            {
+                <ul class="nav flex-column">
+                    @foreach (var item in _sideMenuItems)
+                    {
+                        @if (item.Children?.Any() == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(IsChildActive(item) ? "active" : "")"
+                                   data-bs-toggle="collapse"
+                                   href="#collapse-@item.Name"
+                                   role="button">
+                                    <i class="@item.Icon"></i>
+                                    <span class="nav-text">@item.DisplayName</span>
+                                    <i class="bi bi-chevron-down ms-auto"></i>
+                                </a>
+                                <div class="collapse @(IsChildActive(item) ? "show" : "")" id="collapse-@item.Name">
+                                    <ul class="nav flex-column ms-3">
+                                        @foreach (var child in item.Children)
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link @(IsActive(child.Url) ? "active" : "")"
+                                                   href="@child.Url">
+                                                    <i class="@child.Icon"></i>
+                                                    <span class="nav-text">@child.DisplayName</span>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(IsActive(item.Url) ? "active" : "")"
+                                   href="@item.Url">
+                                    <i class="@item.Icon"></i>
+                                    <span class="nav-text">@item.DisplayName</span>
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            }
+            else
+            {
+                <!-- Default navigation when no modules loaded -->
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="bi bi-house-door"></i>
+                            <span class="nav-text">Home</span>
+                        </a>
+                    </li>
+                </ul>
+            }
+        </nav>
+
+        <!-- Module Information -->
+        <div class="sidebar-footer">
+            <div class="text-muted small">
+                <i class="bi bi-puzzle"></i> Modules: @_loadedModulesCount
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <!-- Top Navigation Bar -->
+        <div class="top-row px-4">
+            <button class="btn btn-link sidebar-toggle-top" @onclick="ToggleSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <!-- Top Menu Items -->
+            @if (_topMenuItems != null && _topMenuItems.Any())
+            {
+                <ul class="top-nav-menu">
+                    @foreach (var item in _topMenuItems)
+                    {
+                        @if (item.Children?.Any() == true)
+                        {
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="@item.Icon"></i> @item.DisplayName
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @foreach (var child in item.Children)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="@child.Url">
+                                                <i class="@child.Icon"></i> @child.DisplayName
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="@item.Url">
+                                    <i class="@item.Icon"></i> @item.DisplayName
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            }
+
+            <!-- User Menu -->
+            <div class="ms-auto">
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="dropdown">
+                            <a class="dropdown-toggle user-menu" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> @context.User.Identity?.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="/profile">
+                                        <i class="bi bi-person"></i> Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/settings">
+                                        <i class="bi bi-gear"></i> Settings
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="/Account/Logout">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-box-arrow-right"></i> Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="/Account/Login">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+    private bool _sidebarCollapsed = false;
+    private List<NavigationItem>? _topMenuItems;
+    private List<NavigationItem>? _sideMenuItems;
+    private int _loadedModulesCount = 0;
+    private string? _currentUrl;
+    private string? _userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentUrl = Navigation.Uri;
+        Navigation.LocationChanged += OnLocationChanged;
+
+        // Check if navigation service is available
+        if (NavigationService != null)
+        {
+            NavigationService.NavigationChanged += OnNavigationChanged;
+        }
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            _userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        await LoadNavigationItems();
+
+        if (ModuleRegistry != null)
+        {
+            _loadedModulesCount = ModuleRegistry.GetModules().Count();
+        }
+    }
+
+    private async Task LoadNavigationItems()
+    {
+        // Only load if navigation service is available
+        if (NavigationService == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_userId))
+        {
+            // Load public navigation items
+            _topMenuItems = (await NavigationService.GetNavigationItemsAsync(NavigationType.TopMenu))
+                .Where(n => string.IsNullOrEmpty(n.RequiredPermission) && string.IsNullOrEmpty(n.RequiredRole))
+                .ToList();
+
+            _sideMenuItems = (await NavigationService.GetNavigationItemsAsync(NavigationType.SideMenu))
+                .Where(n => string.IsNullOrEmpty(n.RequiredPermission) && string.IsNullOrEmpty(n.RequiredRole))
+                .ToList();
+        }
+        else
+        {
+            // Load user-specific navigation items
+            _topMenuItems = (await NavigationService.GetUserNavigationItemsAsync(_userId, NavigationType.TopMenu)).ToList();
+            _sideMenuItems = (await NavigationService.GetUserNavigationItemsAsync(_userId, NavigationType.SideMenu)).ToList();
+        }
+
+        StateHasChanged();
+    }
+
+    private void ToggleSidebar()
+    {
+        _sidebarCollapsed = !_sidebarCollapsed;
+    }
+
+    private bool IsActive(string? url)
+    {
+        if (string.IsNullOrEmpty(url)) return false;
+        return _currentUrl?.Contains(url, StringComparison.OrdinalIgnoreCase) ?? false;
+    }
+
+    private bool IsChildActive(NavigationItem parent)
+    {
+        if (parent.Children == null) return false;
+        return parent.Children.Any(c => IsActive(c.Url));
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _currentUrl = e.Location;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async void OnNavigationChanged(object? sender, EventArgs e)
+    {
+        await InvokeAsync(async () =>
+        {
+            await LoadNavigationItems();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+        if (NavigationService != null)
+        {
+            NavigationService.NavigationChanged -= OnNavigationChanged;
+        }
+    }
+}

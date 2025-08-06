@@ -1,0 +1,456 @@
+﻿using System.Reflection;
+using System.Runtime.Loader;
+using Microsoft.Extensions.Logging;
+using BlazorShell.Core.Interfaces;
+using BlazorShell.Core.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace BlazorShell.Infrastructure.Services
+{
+    /// <summary>
+    /// Plugin assembly loader with isolation using AssemblyLoadContext
+    /// </summary>
+    public class PluginAssemblyLoader : IPluginAssemblyLoader
+    {
+        private readonly ILogger<PluginAssemblyLoader> _logger;
+        private readonly Dictionary<string, PluginLoadContext> _loadContexts;
+        private readonly IServiceProvider _serviceProvider;
+
+        public PluginAssemblyLoader(ILogger<PluginAssemblyLoader> logger, IServiceProvider serviceProvider)
+        {
+            _logger = logger;
+            _serviceProvider = serviceProvider;
+            _loadContexts = new Dictionary<string, PluginLoadContext>();
+        }
+
+        public Assembly LoadPlugin(string path)
+        {
+            try
+            {
+                _logger.LogDebug("Loading plugin assembly from {Path}", path);
+
+                var fileName = Path.GetFileNameWithoutExtension(path);
+
+                // Check if already loaded
+                if (_loadContexts.ContainsKey(fileName))
+                {
+                    _logger.LogWarning("Plugin {Plugin} is already loaded", fileName);
+                    return _loadContexts[fileName].LoadedAssembly;
+                }
+
+                // Create isolated load context
+                var loadContext = new PluginLoadContext(path);
+
+                // Load the assembly
+                var assembly = loadContext.LoadFromAssemblyPath(path);
+
+                // Store context for later unloading
+                _loadContexts[fileName] = loadContext;
+                loadContext.LoadedAssembly = assembly;
+
+                _logger.LogInformation("Successfully loaded plugin {Plugin} from {Path}",
+                    assembly.GetName().Name, path);
+
+                return assembly;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to load plugin from {Path}", path);
+                throw;
+            }
+        }
+
+        public void UnloadPlugin(string pluginName)
+        {
+            try
+            {
+                if (_loadContexts.TryGetValue(pluginName, out var context))
+                {
+                    _logger.LogDebug("Unloading plugin {Plugin}", pluginName);
+
+                    // Request unload - actual unload happens asynchronously
+                    context.Unload();
+                    _loadContexts.Remove(pluginName);
+
+                    // Force garbage collection to help with unloading
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect();
+
+                    _logger.LogInformation("Plugin {Plugin} unloaded", pluginName);
+                }
+                else
+                {
+                    _logger.LogWarning("Plugin {Plugin} not found in loaded contexts", pluginName);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unloading plugin {Plugin}", pluginName);
+            }
+        }
+
+        public IEnumerable<Type> GetTypesFromAssembly(Assembly assembly, Type interfaceType)
+        {
+            try
+            {
+                return assembly.GetTypes()
+                    .Where(t => t.IsClass && !t.IsAbstract && interfaceType.IsAssignableFrom(t));
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                _logger.LogError(ex, "Error loading types from assembly {Assembly}", assembly.FullName);
+
+                // Return types that were successfully loaded
+                return ex.Types.Where(t => t != null && interfaceType.IsAssignableFrom(t));
+            }
+        }
+
+        public T CreateInstance<T>(Type type) where T : class
+        {
+            try
+            {
+                // Try to create instance using DI container first
+                var instance = ActivatorUtilities.CreateInstance(_serviceProvider, type) as T;
+
+                if (instance == null)
+                {
+                    // Fallback to direct activation
+                    instance = Activator.CreateInstance(type) as T;
+                }
+
+                return instance;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to create instance of type {Type}", type.FullName);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Custom AssemblyLoadContext for plugin isolation
+        /// </summary>
+        private class PluginLoadContext : AssemblyLoadContext
+        {
+            private readonly AssemblyDependencyResolver _resolver;
+
+            public Assembly LoadedAssembly { get; set; }
+
+            public PluginLoadContext(string pluginPath) : base(isCollectible: true)
+            {
+                _resolver = new AssemblyDependencyResolver(pluginPath);
+            }
+
+            protected override Assembly Load(AssemblyName assemblyName)
+            {
+                // Try to resolve assembly from plugin directory
+                string assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+
+                if (assemblyPath != null)
+                {
+                    return LoadFromAssemblyPath(assemblyPath);
+                }
+
+                // Let the default context handle it (for system assemblies)
+                return null;
+            }
+
+            protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+            {
+                string libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+
+                if (libraryPath != null)
+                {
+                    return LoadUnmanagedDllFromPath(libraryPath);
+                }
+
+                return IntPtr.Zero;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Module Registry implementation
+    /// </summary>
+    public class ModuleRegistry : IModuleRegistry
+    {
+        private readonly Dictionary<string, IModule> _modules;
+        private readonly ILogger<ModuleRegistry> _logger;
+        private readonly object _lock = new object();
+
+        public event EventHandler<ModuleEventArgs> ModuleRegistered;
+        public event EventHandler<ModuleEventArgs> ModuleUnregistered;
+
+        public ModuleRegistry(ILogger<ModuleRegistry> logger)
+        {
+            _logger = logger;
+            _modules = new Dictionary<string, IModule>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        public void RegisterModule(IModule module)
+        {
+            if (module == null)
+                throw new ArgumentNullException(nameof(module));
+
+            lock (_lock)
+            {
+                if (_modules.ContainsKey(module.Name))
+                {
+                    _logger.LogWarning("Module {Module} is already registered", module.Name);
+                    return;
+                }
+
+                _modules[module.Name] = module;
+                _logger.LogInformation("Module {Module} registered", module.Name);
+
+                ModuleRegistered?.Invoke(this, new ModuleEventArgs(module, "Registered"));
+            }
+        }
+
+        public void UnregisterModule(string moduleName)
+        {
+            lock (_lock)
+            {
+                if (_modules.TryGetValue(moduleName, out var module))
+                {
+                    _modules.Remove(moduleName);
+                    _logger.LogInformation("Module {Module} unregistered", moduleName);
+
+                    ModuleUnregistered?.Invoke(this, new ModuleEventArgs(module, "Unregistered"));
+                }
+                else
+                {
+                    _logger.LogWarning("Module {Module} not found for unregistration", moduleName);
+                }
+            }
+        }
+
+        public IModule GetModule(string moduleName)
+        {
+            lock (_lock)
+            {
+                return _modules.TryGetValue(moduleName, out var module) ? module : null;
+            }
+        }
+
+        public IEnumerable<IModule> GetModules()
+        {
+            lock (_lock)
+            {
+                return _modules.Values.ToList();
+            }
+        }
+
+        public IEnumerable<IModule> GetModulesByCategory(string category)
+        {
+            lock (_lock)
+            {
+                return _modules.Values
+                    .Where(m => string.Equals(m.Category, category, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+        }
+
+        public bool IsModuleRegistered(string moduleName)
+        {
+            lock (_lock)
+            {
+                return _modules.ContainsKey(moduleName);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Navigation Service implementation
+    /// </summary>
+    public class NavigationService : INavigationService
+    {
+        private readonly List<NavigationItem> _navigationItems;
+        private readonly ILogger<NavigationService> _logger;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly object _lock = new object();
+
+        public event EventHandler NavigationChanged;
+
+        public NavigationService(ILogger<NavigationService> logger, IServiceProvider serviceProvider)
+        {
+            _logger = logger;
+            _serviceProvider = serviceProvider;
+            _navigationItems = new List<NavigationItem>();
+        }
+
+        public async Task<IEnumerable<NavigationItem>> GetNavigationItemsAsync(NavigationType type)
+        {
+            lock (_lock)
+            {
+                return _navigationItems
+                    .Where(n => n.Type == type || n.Type == NavigationType.Both)
+                    .OrderBy(n => n.Order)
+                    .ToList();
+            }
+        }
+
+        public async Task<IEnumerable<NavigationItem>> GetUserNavigationItemsAsync(string userId, NavigationType type)
+        {
+            var authService = _serviceProvider.GetRequiredService<IModuleAuthorizationService>();
+            var allItems = await GetNavigationItemsAsync(type);
+            var userItems = new List<NavigationItem>();
+
+            foreach (var item in allItems)
+            {
+                if (await CanAccessNavigationItemAsync(item, userId))
+                {
+                    userItems.Add(item);
+                }
+            }
+
+            return userItems;
+        }
+
+        public async Task<bool> CanAccessNavigationItemAsync(NavigationItem item, string userId)
+        {
+            if (item == null) return false;
+
+            // Check if item requires authentication
+            if (!string.IsNullOrEmpty(item.RequiredPermission) || !string.IsNullOrEmpty(item.RequiredRole))
+            {
+                if (string.IsNullOrEmpty(userId))
+                    return false;
+
+                var authService = _serviceProvider.GetRequiredService<IModuleAuthorizationService>();
+
+                // Check permission
+                if (!string.IsNullOrEmpty(item.RequiredPermission))
+                {
+                    var parts = item.RequiredPermission.Split('.');
+                    if (parts.Length == 2)
+                    {
+                        var moduleName = parts[0];
+                        var permission = Enum.Parse<PermissionType>(parts[1]);
+
+                        if (!await authService.HasPermissionAsync(userId, moduleName, permission))
+                            return false;
+                    }
+                }
+
+                // Check role
+                if (!string.IsNullOrEmpty(item.RequiredRole))
+                {
+                    var userManager = _serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                    var user = await userManager.FindByIdAsync(userId);
+                    if (user == null || !await userManager.IsInRoleAsync(user, item.RequiredRole))
+                        return false;
+                }
+            }
+
+            return item.IsVisible;
+        }
+
+        public void RegisterNavigationItems(IEnumerable<NavigationItem> items)
+        {
+            lock (_lock)
+            {
+                foreach (var item in items)
+                {
+                    if (!_navigationItems.Any(n => n.Name == item.Name))
+                    {
+                        _navigationItems.Add(item);
+                        _logger.LogDebug("Registered navigation item: {Name}", item.Name);
+                    }
+                }
+
+                NavigationChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void UnregisterNavigationItems(string moduleName)
+        {
+            lock (_lock)
+            {
+                var itemsToRemove = _navigationItems
+                    .Where(n => n.Module?.Name == moduleName)
+                    .ToList();
+
+                foreach (var item in itemsToRemove)
+                {
+                    _navigationItems.Remove(item);
+                    _logger.LogDebug("Unregistered navigation item: {Name}", item.Name);
+                }
+
+                if (itemsToRemove.Any())
+                {
+                    NavigationChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// State Container implementation
+    /// </summary>
+    public class StateContainer : IStateContainer
+    {
+        private readonly Dictionary<string, object> _state;
+        private readonly object _lock = new object();
+        private readonly ILogger<StateContainer> _logger;
+
+        public event EventHandler<StateChangedEventArgs> StateChanged;
+
+        public StateContainer(ILogger<StateContainer> logger)
+        {
+            _logger = logger;
+            _state = new Dictionary<string, object>();
+        }
+
+        public T GetState<T>(string key) where T : class
+        {
+            lock (_lock)
+            {
+                if (_state.TryGetValue(key, out var value))
+                {
+                    return value as T;
+                }
+                return null;
+            }
+        }
+
+        public void SetState<T>(string key, T value) where T : class
+        {
+            lock (_lock)
+            {
+                var oldValue = _state.ContainsKey(key) ? _state[key] : null;
+                _state[key] = value;
+
+                _logger.LogDebug("State updated for key: {Key}", key);
+                StateChanged?.Invoke(this, new StateChangedEventArgs(key, oldValue, value));
+            }
+        }
+
+        public bool RemoveState(string key)
+        {
+            lock (_lock)
+            {
+                if (_state.TryGetValue(key, out var oldValue))
+                {
+                    _state.Remove(key);
+                    _logger.LogDebug("State removed for key: {Key}", key);
+                    StateChanged?.Invoke(this, new StateChangedEventArgs(key, oldValue, null));
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public void ClearState()
+        {
+            lock (_lock)
+            {
+                _state.Clear();
+                _logger.LogDebug("State cleared");
+                StateChanged?.Invoke(this, new StateChangedEventArgs(null, null, null));
+            }
+        }
+    }
+}

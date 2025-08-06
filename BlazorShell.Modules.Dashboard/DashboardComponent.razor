@@ -1,0 +1,355 @@
+﻿@page "/"
+@using BlazorShell.Core.Interfaces
+@using BlazorShell.Modules.Dashboard
+@using BlazorShell.Core.Entities
+@inherits ModuleComponentBase
+@inject IDashboardService DashboardService
+@inject IWidgetService WidgetService
+@inject IStateContainer StateContainer
+
+<PageTitle>Dashboard - BlazorShell</PageTitle>
+
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
+            <p class="text-muted">Welcome back, here's what's happening in your application</p>
+        </div>
+        <div>
+            <button class="btn btn-primary" @onclick="RefreshData">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+            @if (CanConfigure)
+            {
+                <button class="btn btn-outline-secondary ms-2" @onclick="ShowWidgetManager">
+                    <i class="bi bi-gear"></i> Configure
+                </button>
+            }
+        </div>
+    </div>
+
+    @if (IsLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading dashboard data...</p>
+        </div>
+    }
+    else if (DashboardData != null)
+    {
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Users
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    @DashboardData.TotalUsers.ToString("N0")
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-people fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Active Sessions
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    @DashboardData.ActiveSessions
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-activity fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Revenue
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    @DashboardData.TotalRevenue.ToString("C")
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-currency-dollar fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Growth Rate
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    @DashboardData.GrowthRate.ToString("F1")%
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-graph-up-arrow fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Widgets Grid -->
+        @if (Widgets != null && Widgets.Any())
+        {
+            <div class="row">
+                @foreach (var widget in Widgets.OrderBy(w => w.Order))
+                {
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="bi bi-grid-3x3"></i> @widget.Name
+                                </h6>
+                                @if (CanConfigure)
+                                {
+                                    <button class="btn btn-sm btn-outline-danger"
+                                    @onclick="() => RemoveWidget(widget.Id)">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                }
+                            </div>
+                            <div class="card-body">
+                                @switch (widget.Type)
+                                {
+                                    case "stats":
+                                        <div class="text-center">
+                                            <i class="bi bi-bar-chart fs-1 text-primary"></i>
+                                            <p class="mt-2">Statistics Widget Content</p>
+                                        </div>
+                                        break;
+                                    case "chart":
+                                        <div class="text-center">
+                                            <i class="bi bi-graph-up fs-1 text-success"></i>
+                                            <p class="mt-2">Chart Widget Content</p>
+                                        </div>
+                                        break;
+                                    case "list":
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">Activity Item 1</li>
+                                            <li class="list-group-item">Activity Item 2</li>
+                                            <li class="list-group-item">Activity Item 3</li>
+                                        </ul>
+                                        break;
+                                    default:
+                                        <p>Custom widget type: @widget.Type</p>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="text-muted text-center mt-4">
+            <small>Last updated: @DashboardData.LastUpdated.ToString("g")</small>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No dashboard data available.
+        </div>
+    }
+</div>
+
+<!-- Widget Manager Modal -->
+@if (ShowWidgetManagerModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Dashboard Widgets</h5>
+                    <button type="button" class="btn-close" @onclick="CloseWidgetManager"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Available Widgets</h6>
+                    <div class="row">
+                        @if (AvailableWidgets != null)
+                        {
+                            @foreach (var widget in AvailableWidgets)
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-plus-square fs-3"></i>
+                                            <h6 class="mt-2">@widget.Name</h6>
+                                            <button class="btn btn-sm btn-primary"
+                                            @onclick="() => AddWidget(widget.Id)">
+                                                Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseWidgetManager">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .dashboard-container {
+    animation: fadeIn 0.5s;
+    }
+
+    .border-left-primary {
+    border-left: 4px solid #4e73df !important;
+    }
+
+    .border-left-success {
+    border-left: 4px solid #1cc88a !important;
+    }
+
+    .border-left-info {
+    border-left: 4px solid #36b9cc !important;
+    }
+
+    .border-left-warning {
+    border-left: 4px solid #f6c23e !important;
+    }
+
+    .text-xs {
+    font-size: 0.7rem;
+    }
+
+    .text-gray-300 {
+    color: #dddfeb !important;
+    }
+
+    .text-gray-800 {
+    color: #5a5c69 !important;
+    }
+</style>
+
+@code {
+    protected override string ModuleName => "Dashboard";
+
+    private DashboardData DashboardData { get; set; }
+    private List<Widget> Widgets { get; set; }
+    private List<Widget> AvailableWidgets { get; set; }
+    private bool IsLoading { get; set; } = true;
+    private bool ShowWidgetManagerModal { get; set; }
+    private bool CanConfigure { get; set; }
+    private System.Timers.Timer _refreshTimer;
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        CanConfigure = await HasPermissionAsync(PermissionType.Write);
+        await LoadDashboardData();
+
+        // Set up auto-refresh if enabled
+        int refreshInterval = 30000;// StateContainer.GetState<int>("Dashboard.RefreshInterval") ?? 30000;
+        if (refreshInterval > 0)
+        {
+            _refreshTimer = new System.Timers.Timer(refreshInterval);
+            _refreshTimer.Elapsed += async (sender, e) => await InvokeAsync(LoadDashboardData);
+            _refreshTimer.Start();
+        }
+    }
+
+    private async Task LoadDashboardData()
+    {
+        try
+        {
+            IsLoading = true;
+            StateHasChanged();
+
+            DashboardData = await DashboardService.GetDashboardDataAsync();
+            Widgets = (await DashboardService.GetWidgetsAsync()).ToList();
+
+            // Store in state container for other components
+            StateContainer.SetState("Dashboard.LastData", DashboardData);
+        }
+        catch (Exception ex)
+        {
+            // Handle error appropriately
+            Console.WriteLine($"Error loading dashboard: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadDashboardData();
+    }
+
+    private async Task ShowWidgetManager()
+    {
+        AvailableWidgets = (await WidgetService.GetAvailableWidgetsAsync()).ToList();
+        ShowWidgetManagerModal = true;
+    }
+
+    private void CloseWidgetManager()
+    {
+        ShowWidgetManagerModal = false;
+    }
+
+    private async Task AddWidget(string widgetId)
+    {
+        if (await WidgetService.AddWidgetToDashboardAsync(widgetId))
+        {
+            await LoadDashboardData();
+            CloseWidgetManager();
+        }
+    }
+
+    private async Task RemoveWidget(string widgetId)
+    {
+        if (await WidgetService.RemoveWidgetFromDashboardAsync(widgetId))
+        {
+            await LoadDashboardData();
+        }
+    }
+
+    public override void Dispose()
+    {
+        _refreshTimer?.Dispose();
+        base.Dispose();
+    }
+}

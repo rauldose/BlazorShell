@@ -1,4 +1,8 @@
-﻿<Router AppAssembly="typeof(Program).Assembly">
+@using System.Reflection
+@using BlazorShell.Core.Interfaces
+@inject IModuleLoader ModuleLoader
+
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="moduleAssemblies">
     <Found Context="routeData">
         <Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
             <NotAuthorized>
@@ -33,3 +37,12 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    private IEnumerable<Assembly> moduleAssemblies = Array.Empty<Assembly>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        moduleAssemblies = await ModuleLoader.GetModuleAssembliesAsync();
+    }
+}

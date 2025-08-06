@@ -17,6 +17,7 @@ using BlazorShell.Components;
 using Module = Autofac.Module;
 using BlazorShell.Components.Account;
 using IdentityRevalidatingAuthenticationStateProvider = BlazorShell.Components.Account.IdentityRevalidatingAuthenticationStateProvider;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
     // Register core services
-    containerBuilder.RegisterModule(new CoreServicesModule());
+    containerBuilder.RegisterModule(new CoreServicesModule(builder.Services));
 
     // Register infrastructure services
     containerBuilder.RegisterModule(new InfrastructureModule());
@@ -181,6 +182,19 @@ builder.Services.AddAntiforgery(options =>
 });
 builder.Services.AddScoped<IdentityRedirectManager>();
 
+// Pre-register services from modules before building the app
+{
+    var tempBuilder = new ContainerBuilder();
+    tempBuilder.Populate(builder.Services);
+    tempBuilder.RegisterModule(new CoreServicesModule(builder.Services));
+    tempBuilder.RegisterModule(new InfrastructureModule());
+    tempBuilder.RegisterModule(new PluginModule(builder.Configuration));
+    using var tempContainer = tempBuilder.Build();
+    using var tempScope = tempContainer.BeginLifetimeScope();
+    var preLoader = tempScope.Resolve<IModuleLoader>();
+    await preLoader.RegisterModuleServicesAsync();
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
@@ -333,10 +347,20 @@ async Task SeedDefaultAdmin(UserManager<ApplicationUser> userManager, RoleManage
 // Module registration for Autofac
 public class CoreServicesModule : Module
 {
+    private readonly IServiceCollection _services;
+
+    public CoreServicesModule(IServiceCollection services)
+    {
+        _services = services;
+    }
+
     protected override void Load(ContainerBuilder builder)
     {
         // Register core services with proper lifetimes
-        builder.RegisterType<ModuleLoader>().As<IModuleLoader>().SingleInstance();
+        builder.RegisterType<ModuleLoader>()
+            .As<IModuleLoader>()
+            .WithParameter(new TypedParameter(typeof(IServiceCollection), _services))
+            .SingleInstance();
         builder.RegisterType<ModuleRegistry>().As<IModuleRegistry>().SingleInstance();
         builder.RegisterType<NavigationService>().As<INavigationService>().SingleInstance();
         builder.RegisterType<StateContainer>().As<IStateContainer>().InstancePerLifetimeScope();

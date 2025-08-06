@@ -1,0 +1,3701 @@
+﻿[
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\appsettings.Development.json",
+        "Name":  "appsettings.Development.json",
+        "SizeBytes":  127,
+        "Modified":  {
+                         "value":  "\/Date(1754439240619)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\appsettings.json",
+        "Name":  "appsettings.json",
+        "SizeBytes":  601,
+        "Modified":  {
+                         "value":  "\/Date(1754494326298)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 17:32:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\BlazorShell.csproj",
+        "Name":  "BlazorShell.csproj",
+        "SizeBytes":  1540,
+        "Modified":  {
+                         "value":  "\/Date(1754505772183)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:42:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\BlazorShell.csproj.user",
+        "Name":  "BlazorShell.csproj.user",
+        "SizeBytes":  238,
+        "Modified":  {
+                         "value":  "\/Date(1754439241480)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:01"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\modules.json",
+        "Name":  "modules.json",
+        "SizeBytes":  1385,
+        "Modified":  {
+                         "value":  "\/Date(1754460002759)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 08:00:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Program.cs",
+        "Name":  "Program.cs",
+        "SizeBytes":  19808,
+        "Modified":  {
+                         "value":  "\/Date(1754505772151)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:42:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\appsettings.Development.json",
+        "Name":  "appsettings.Development.json",
+        "SizeBytes":  127,
+        "Modified":  {
+                         "value":  "\/Date(1754439240619)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\appsettings.json",
+        "Name":  "appsettings.json",
+        "SizeBytes":  601,
+        "Modified":  {
+                         "value":  "\/Date(1754494326298)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 17:32:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Autofac.dll",
+        "Name":  "Autofac.dll",
+        "SizeBytes":  375808,
+        "Modified":  {
+                         "value":  "\/Date(1754326270000)\/",
+                         "DateTime":  "Monday, August 4, 2025 18:51:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Autofac.Extensions.DependencyInjection.dll",
+        "Name":  "Autofac.Extensions.DependencyInjection.dll",
+        "SizeBytes":  17408,
+        "Modified":  {
+                         "value":  "\/Date(1653515074000)\/",
+                         "DateTime":  "Wednesday, May 25, 2022 23:44:34"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Azure.Core.dll",
+        "Name":  "Azure.Core.dll",
+        "SizeBytes":  400936,
+        "Modified":  {
+                         "value":  "\/Date(1708961080000)\/",
+                         "DateTime":  "Monday, February 26, 2024 16:24:40"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Azure.Identity.dll",
+        "Name":  "Azure.Identity.dll",
+        "SizeBytes":  342960,
+        "Modified":  {
+                         "value":  "\/Date(1718037828000)\/",
+                         "DateTime":  "Monday, June 10, 2024 18:43:48"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\BlazorShell.deps.json",
+        "Name":  "BlazorShell.deps.json",
+        "SizeBytes":  144756,
+        "Modified":  {
+                         "value":  "\/Date(1754507038135)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\BlazorShell.dll",
+        "Name":  "BlazorShell.dll",
+        "SizeBytes":  506880,
+        "Modified":  {
+                         "value":  "\/Date(1754508170153)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\BlazorShell.exe",
+        "Name":  "BlazorShell.exe",
+        "SizeBytes":  138752,
+        "Modified":  {
+                         "value":  "\/Date(1754508170231)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\BlazorShell.pdb",
+        "Name":  "BlazorShell.pdb",
+        "SizeBytes":  257724,
+        "Modified":  {
+                         "value":  "\/Date(1754508170104)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\BlazorShell.runtimeconfig.json",
+        "Name":  "BlazorShell.runtimeconfig.json",
+        "SizeBytes":  485,
+        "Modified":  {
+                         "value":  "\/Date(1754507038135)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\BlazorShell.staticwebassets.endpoints.json",
+        "Name":  "BlazorShell.staticwebassets.endpoints.json",
+        "SizeBytes":  73281,
+        "Modified":  {
+                         "value":  "\/Date(1754507037891)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\BlazorShell.staticwebassets.runtime.json",
+        "Name":  "BlazorShell.staticwebassets.runtime.json",
+        "SizeBytes":  10654,
+        "Modified":  {
+                         "value":  "\/Date(1754507037891)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\dotnet-aspnet-codegenerator-design.dll",
+        "Name":  "dotnet-aspnet-codegenerator-design.dll",
+        "SizeBytes":  54320,
+        "Modified":  {
+                         "value":  "\/Date(1731019650000)\/",
+                         "DateTime":  "Thursday, November 7, 2024 23:47:30"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Humanizer.dll",
+        "Name":  "Humanizer.dll",
+        "SizeBytes":  355944,
+        "Modified":  {
+                         "value":  "\/Date(1643468644000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.Authorization.dll",
+        "Name":  "Microsoft.AspNetCore.Authorization.dll",
+        "SizeBytes":  51472,
+        "Modified":  {
+                         "value":  "\/Date(1753209762000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:42:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.Components.Authorization.dll",
+        "Name":  "Microsoft.AspNetCore.Components.Authorization.dll",
+        "SizeBytes":  31528,
+        "Modified":  {
+                         "value":  "\/Date(1753209836000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:43:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.Components.dll",
+        "Name":  "Microsoft.AspNetCore.Components.dll",
+        "SizeBytes":  334632,
+        "Modified":  {
+                         "value":  "\/Date(1753209756000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:42:36"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.Cryptography.Internal.dll",
+        "Name":  "Microsoft.AspNetCore.Cryptography.Internal.dll",
+        "SizeBytes":  53016,
+        "Modified":  {
+                         "value":  "\/Date(1753209742000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:42:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll",
+        "Name":  "Microsoft.AspNetCore.Cryptography.KeyDerivation.dll",
+        "SizeBytes":  23848,
+        "Modified":  {
+                         "value":  "\/Date(1753209778000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:42:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.DataProtection.Abstractions.dll",
+        "Name":  "Microsoft.AspNetCore.DataProtection.Abstractions.dll",
+        "SizeBytes":  27912,
+        "Modified":  {
+                         "value":  "\/Date(1753209742000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:42:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.DataProtection.dll",
+        "Name":  "Microsoft.AspNetCore.DataProtection.dll",
+        "SizeBytes":  190248,
+        "Modified":  {
+                         "value":  "\/Date(1753209748000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:42:28"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.dll",
+        "Name":  "Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.dll",
+        "SizeBytes":  24848,
+        "Modified":  {
+                         "value":  "\/Date(1753209808000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:43:28"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll",
+        "Name":  "Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll",
+        "SizeBytes":  108808,
+        "Modified":  {
+                         "value":  "\/Date(1753209814000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:43:34"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.Identity.UI.dll",
+        "Name":  "Microsoft.AspNetCore.Identity.UI.dll",
+        "SizeBytes":  933176,
+        "Modified":  {
+                         "value":  "\/Date(1753210028000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:47:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.Metadata.dll",
+        "Name":  "Microsoft.AspNetCore.Metadata.dll",
+        "SizeBytes":  16152,
+        "Modified":  {
+                         "value":  "\/Date(1753209744000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:42:24"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.AspNetCore.Razor.Language.dll",
+        "Name":  "Microsoft.AspNetCore.Razor.Language.dll",
+        "SizeBytes":  1010440,
+        "Modified":  {
+                         "value":  "\/Date(1697691312000)\/",
+                         "DateTime":  "Thursday, October 19, 2023 06:55:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Azure.SignalR.Common.dll",
+        "Name":  "Microsoft.Azure.SignalR.Common.dll",
+        "SizeBytes":  280632,
+        "Modified":  {
+                         "value":  "\/Date(1754383208000)\/",
+                         "DateTime":  "Tuesday, August 5, 2025 10:40:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Azure.SignalR.dll",
+        "Name":  "Microsoft.Azure.SignalR.dll",
+        "SizeBytes":  152104,
+        "Modified":  {
+                         "value":  "\/Date(1754383208000)\/",
+                         "DateTime":  "Tuesday, August 5, 2025 10:40:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Azure.SignalR.Protocols.dll",
+        "Name":  "Microsoft.Azure.SignalR.Protocols.dll",
+        "SizeBytes":  117288,
+        "Modified":  {
+                         "value":  "\/Date(1754383206000)\/",
+                         "DateTime":  "Tuesday, August 5, 2025 10:40:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Bcl.AsyncInterfaces.dll",
+        "Name":  "Microsoft.Bcl.AsyncInterfaces.dll",
+        "SizeBytes":  19072,
+        "Modified":  {
+                         "value":  "\/Date(1666109698000)\/",
+                         "DateTime":  "Tuesday, October 18, 2022 18:14:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Build.dll",
+        "Name":  "Microsoft.Build.dll",
+        "SizeBytes":  1965736,
+        "Modified":  {
+                         "value":  "\/Date(1713432058000)\/",
+                         "DateTime":  "Thursday, April 18, 2024 11:20:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Build.Framework.dll",
+        "Name":  "Microsoft.Build.Framework.dll",
+        "SizeBytes":  309408,
+        "Modified":  {
+                         "value":  "\/Date(1713432012000)\/",
+                         "DateTime":  "Thursday, April 18, 2024 11:20:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.AnalyzerUtilities.dll",
+        "Name":  "Microsoft.CodeAnalysis.AnalyzerUtilities.dll",
+        "SizeBytes":  543624,
+        "Modified":  {
+                         "value":  "\/Date(1591414640000)\/",
+                         "DateTime":  "Saturday, June 6, 2020 05:37:20"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.CSharp.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.dll",
+        "SizeBytes":  6501536,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.CSharp.Features.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.dll",
+        "SizeBytes":  2013984,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
+        "SizeBytes":  883472,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.dll",
+        "Name":  "Microsoft.CodeAnalysis.dll",
+        "SizeBytes":  2895520,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.Elfie.dll",
+        "Name":  "Microsoft.CodeAnalysis.Elfie.dll",
+        "SizeBytes":  145840,
+        "Modified":  {
+                         "value":  "\/Date(1652280582000)\/",
+                         "DateTime":  "Wednesday, May 11, 2022 16:49:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.Features.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.dll",
+        "SizeBytes":  4902672,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.Razor.dll",
+        "Name":  "Microsoft.CodeAnalysis.Razor.dll",
+        "SizeBytes":  92448,
+        "Modified":  {
+                         "value":  "\/Date(1697691320000)\/",
+                         "DateTime":  "Thursday, October 19, 2023 06:55:20"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.Scripting.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.dll",
+        "SizeBytes":  137904,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.CodeAnalysis.Workspaces.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.dll",
+        "SizeBytes":  3852448,
+        "Modified":  {
+                         "value":  "\/Date(1699465912000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:51:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Data.SqlClient.dll",
+        "Name":  "Microsoft.Data.SqlClient.dll",
+        "SizeBytes":  275984,
+        "Modified":  {
+                         "value":  "\/Date(1724782968000)\/",
+                         "DateTime":  "Tuesday, August 27, 2024 20:22:48"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.DiaSymReader.dll",
+        "Name":  "Microsoft.DiaSymReader.dll",
+        "SizeBytes":  87168,
+        "Modified":  {
+                         "value":  "\/Date(1682710284000)\/",
+                         "DateTime":  "Friday, April 28, 2023 21:31:24"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.DotNet.Scaffolding.Shared.dll",
+        "Name":  "Microsoft.DotNet.Scaffolding.Shared.dll",
+        "SizeBytes":  135736,
+        "Modified":  {
+                         "value":  "\/Date(1731019618000)\/",
+                         "DateTime":  "Thursday, November 7, 2024 23:46:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.Abstractions.dll",
+        "Name":  "Microsoft.EntityFrameworkCore.Abstractions.dll",
+        "SizeBytes":  34848,
+        "Modified":  {
+                         "value":  "\/Date(1752946076000)\/",
+                         "DateTime":  "Saturday, July 19, 2025 19:27:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.Design.dll",
+        "Name":  "Microsoft.EntityFrameworkCore.Design.dll",
+        "SizeBytes":  486432,
+        "Modified":  {
+                         "value":  "\/Date(1752946178000)\/",
+                         "DateTime":  "Saturday, July 19, 2025 19:29:38"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.dll",
+        "Name":  "Microsoft.EntityFrameworkCore.dll",
+        "SizeBytes":  2534984,
+        "Modified":  {
+                         "value":  "\/Date(1752946120000)\/",
+                         "DateTime":  "Saturday, July 19, 2025 19:28:40"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.Relational.dll",
+        "Name":  "Microsoft.EntityFrameworkCore.Relational.dll",
+        "SizeBytes":  1994296,
+        "Modified":  {
+                         "value":  "\/Date(1752946170000)\/",
+                         "DateTime":  "Saturday, July 19, 2025 19:29:30"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.EntityFrameworkCore.SqlServer.dll",
+        "Name":  "Microsoft.EntityFrameworkCore.SqlServer.dll",
+        "SizeBytes":  548920,
+        "Modified":  {
+                         "value":  "\/Date(1752946182000)\/",
+                         "DateTime":  "Saturday, July 19, 2025 19:29:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Caching.Memory.dll",
+        "Name":  "Microsoft.Extensions.Caching.Memory.dll",
+        "SizeBytes":  45832,
+        "Modified":  {
+                         "value":  "\/Date(1726528210000)\/",
+                         "DateTime":  "Tuesday, September 17, 2024 01:10:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "Name":  "Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "SizeBytes":  65320,
+        "Modified":  {
+                         "value":  "\/Date(1727127082000)\/",
+                         "DateTime":  "Monday, September 23, 2024 23:31:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.DependencyInjection.dll",
+        "Name":  "Microsoft.Extensions.DependencyInjection.dll",
+        "SizeBytes":  92464,
+        "Modified":  {
+                         "value":  "\/Date(1727127090000)\/",
+                         "DateTime":  "Monday, September 23, 2024 23:31:30"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.DependencyModel.dll",
+        "Name":  "Microsoft.Extensions.DependencyModel.dll",
+        "SizeBytes":  84264,
+        "Modified":  {
+                         "value":  "\/Date(1727127118000)\/",
+                         "DateTime":  "Monday, September 23, 2024 23:31:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Diagnostics.Abstractions.dll",
+        "Name":  "Microsoft.Extensions.Diagnostics.Abstractions.dll",
+        "SizeBytes":  30480,
+        "Modified":  {
+                         "value":  "\/Date(1726528208000)\/",
+                         "DateTime":  "Tuesday, September 17, 2024 01:10:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll",
+        "Name":  "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll",
+        "SizeBytes":  23848,
+        "Modified":  {
+                         "value":  "\/Date(1753209824000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:43:44"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Diagnostics.HealthChecks.dll",
+        "Name":  "Microsoft.Extensions.Diagnostics.HealthChecks.dll",
+        "SizeBytes":  55568,
+        "Modified":  {
+                         "value":  "\/Date(1753209836000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:43:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore.dll",
+        "Name":  "Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore.dll",
+        "SizeBytes":  22280,
+        "Modified":  {
+                         "value":  "\/Date(1753209838000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:43:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.FileProviders.Embedded.dll",
+        "Name":  "Microsoft.Extensions.FileProviders.Embedded.dll",
+        "SizeBytes":  35624,
+        "Modified":  {
+                         "value":  "\/Date(1753209774000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:42:54"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Hosting.Abstractions.dll",
+        "Name":  "Microsoft.Extensions.Hosting.Abstractions.dll",
+        "SizeBytes":  51472,
+        "Modified":  {
+                         "value":  "\/Date(1726528224000)\/",
+                         "DateTime":  "Tuesday, September 17, 2024 01:10:24"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Identity.Core.dll",
+        "Name":  "Microsoft.Extensions.Identity.Core.dll",
+        "SizeBytes":  177960,
+        "Modified":  {
+                         "value":  "\/Date(1753209782000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:43:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Identity.Stores.dll",
+        "Name":  "Microsoft.Extensions.Identity.Stores.dll",
+        "SizeBytes":  45352,
+        "Modified":  {
+                         "value":  "\/Date(1753209790000)\/",
+                         "DateTime":  "Tuesday, July 22, 2025 20:43:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Logging.Abstractions.dll",
+        "Name":  "Microsoft.Extensions.Logging.Abstractions.dll",
+        "SizeBytes":  65288,
+        "Modified":  {
+                         "value":  "\/Date(1737053740000)\/",
+                         "DateTime":  "Thursday, January 16, 2025 19:55:40"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Logging.dll",
+        "Name":  "Microsoft.Extensions.Logging.dll",
+        "SizeBytes":  50976,
+        "Modified":  {
+                         "value":  "\/Date(1726528206000)\/",
+                         "DateTime":  "Tuesday, September 17, 2024 01:10:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Extensions.Options.dll",
+        "Name":  "Microsoft.Extensions.Options.dll",
+        "SizeBytes":  64776,
+        "Modified":  {
+                         "value":  "\/Date(1705547126000)\/",
+                         "DateTime":  "Thursday, January 18, 2024 04:05:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Identity.Client.dll",
+        "Name":  "Microsoft.Identity.Client.dll",
+        "SizeBytes":  1005600,
+        "Modified":  {
+                         "value":  "\/Date(1717711768000)\/",
+                         "DateTime":  "Friday, June 7, 2024 00:09:28"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.Identity.Client.Extensions.Msal.dll",
+        "Name":  "Microsoft.Identity.Client.Extensions.Msal.dll",
+        "SizeBytes":  66592,
+        "Modified":  {
+                         "value":  "\/Date(1717712092000)\/",
+                         "DateTime":  "Friday, June 7, 2024 00:14:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.IdentityModel.Abstractions.dll",
+        "Name":  "Microsoft.IdentityModel.Abstractions.dll",
+        "SizeBytes":  18968,
+        "Modified":  {
+                         "value":  "\/Date(1701406616000)\/",
+                         "DateTime":  "Friday, December 1, 2023 05:56:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.IdentityModel.JsonWebTokens.dll",
+        "Name":  "Microsoft.IdentityModel.JsonWebTokens.dll",
+        "SizeBytes":  112576,
+        "Modified":  {
+                         "value":  "\/Date(1701405240000)\/",
+                         "DateTime":  "Friday, December 1, 2023 05:34:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.IdentityModel.Logging.dll",
+        "Name":  "Microsoft.IdentityModel.Logging.dll",
+        "SizeBytes":  36792,
+        "Modified":  {
+                         "value":  "\/Date(1701405322000)\/",
+                         "DateTime":  "Friday, December 1, 2023 05:35:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.IdentityModel.Protocols.dll",
+        "Name":  "Microsoft.IdentityModel.Protocols.dll",
+        "SizeBytes":  39864,
+        "Modified":  {
+                         "value":  "\/Date(1701405448000)\/",
+                         "DateTime":  "Friday, December 1, 2023 05:37:28"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+        "Name":  "Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+        "SizeBytes":  114104,
+        "Modified":  {
+                         "value":  "\/Date(1701406088000)\/",
+                         "DateTime":  "Friday, December 1, 2023 05:48:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.IdentityModel.Tokens.dll",
+        "Name":  "Microsoft.IdentityModel.Tokens.dll",
+        "SizeBytes":  993312,
+        "Modified":  {
+                         "value":  "\/Date(1701405710000)\/",
+                         "DateTime":  "Friday, December 1, 2023 05:41:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.NET.StringTools.dll",
+        "Name":  "Microsoft.NET.StringTools.dll",
+        "SizeBytes":  30888,
+        "Modified":  {
+                         "value":  "\/Date(1713432048000)\/",
+                         "DateTime":  "Thursday, April 18, 2024 11:20:48"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.SqlServer.Server.dll",
+        "Name":  "Microsoft.SqlServer.Server.dll",
+        "SizeBytes":  23976,
+        "Modified":  {
+                         "value":  "\/Date(1643303948000)\/",
+                         "DateTime":  "Thursday, January 27, 2022 18:19:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.VisualStudio.Web.CodeGeneration.Core.dll",
+        "Name":  "Microsoft.VisualStudio.Web.CodeGeneration.Core.dll",
+        "SizeBytes":  63016,
+        "Modified":  {
+                         "value":  "\/Date(1731019634000)\/",
+                         "DateTime":  "Thursday, November 7, 2024 23:47:14"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.VisualStudio.Web.CodeGeneration.dll",
+        "Name":  "Microsoft.VisualStudio.Web.CodeGeneration.dll",
+        "SizeBytes":  37432,
+        "Modified":  {
+                         "value":  "\/Date(1731019646000)\/",
+                         "DateTime":  "Thursday, November 7, 2024 23:47:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore.dll",
+        "Name":  "Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore.dll",
+        "SizeBytes":  81968,
+        "Modified":  {
+                         "value":  "\/Date(1731019646000)\/",
+                         "DateTime":  "Thursday, November 7, 2024 23:47:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.VisualStudio.Web.CodeGeneration.Templating.dll",
+        "Name":  "Microsoft.VisualStudio.Web.CodeGeneration.Templating.dll",
+        "SizeBytes":  30248,
+        "Modified":  {
+                         "value":  "\/Date(1731019630000)\/",
+                         "DateTime":  "Thursday, November 7, 2024 23:47:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.VisualStudio.Web.CodeGeneration.Utils.dll",
+        "Name":  "Microsoft.VisualStudio.Web.CodeGeneration.Utils.dll",
+        "SizeBytes":  35376,
+        "Modified":  {
+                         "value":  "\/Date(1731019620000)\/",
+                         "DateTime":  "Thursday, November 7, 2024 23:47:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll",
+        "Name":  "Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll",
+        "SizeBytes":  604216,
+        "Modified":  {
+                         "value":  "\/Date(1731019650000)\/",
+                         "DateTime":  "Thursday, November 7, 2024 23:47:30"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\modules.json",
+        "Name":  "modules.json",
+        "SizeBytes":  1385,
+        "Modified":  {
+                         "value":  "\/Date(1754460002759)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 08:00:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Mono.TextTemplating.dll",
+        "Name":  "Mono.TextTemplating.dll",
+        "SizeBytes":  177664,
+        "Modified":  {
+                         "value":  "\/Date(1725400636000)\/",
+                         "DateTime":  "Tuesday, September 3, 2024 23:57:16"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Newtonsoft.Json.dll",
+        "Name":  "Newtonsoft.Json.dll",
+        "SizeBytes":  712464,
+        "Modified":  {
+                         "value":  "\/Date(1678259394000)\/",
+                         "DateTime":  "Wednesday, March 8, 2023 08:09:54"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\NuGet.Common.dll",
+        "Name":  "NuGet.Common.dll",
+        "SizeBytes":  123432,
+        "Modified":  {
+                         "value":  "\/Date(1719543150000)\/",
+                         "DateTime":  "Friday, June 28, 2024 04:52:30"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\NuGet.Configuration.dll",
+        "Name":  "NuGet.Configuration.dll",
+        "SizeBytes":  179752,
+        "Modified":  {
+                         "value":  "\/Date(1719543222000)\/",
+                         "DateTime":  "Friday, June 28, 2024 04:53:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\NuGet.DependencyResolver.Core.dll",
+        "Name":  "NuGet.DependencyResolver.Core.dll",
+        "SizeBytes":  97304,
+        "Modified":  {
+                         "value":  "\/Date(1719543268000)\/",
+                         "DateTime":  "Friday, June 28, 2024 04:54:28"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\NuGet.Frameworks.dll",
+        "Name":  "NuGet.Frameworks.dll",
+        "SizeBytes":  133152,
+        "Modified":  {
+                         "value":  "\/Date(1719543270000)\/",
+                         "DateTime":  "Friday, June 28, 2024 04:54:30"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\NuGet.LibraryModel.dll",
+        "Name":  "NuGet.LibraryModel.dll",
+        "SizeBytes":  59440,
+        "Modified":  {
+                         "value":  "\/Date(1719543246000)\/",
+                         "DateTime":  "Friday, June 28, 2024 04:54:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\NuGet.Packaging.dll",
+        "Name":  "NuGet.Packaging.dll",
+        "SizeBytes":  689712,
+        "Modified":  {
+                         "value":  "\/Date(1719543254000)\/",
+                         "DateTime":  "Friday, June 28, 2024 04:54:14"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\NuGet.ProjectModel.dll",
+        "Name":  "NuGet.ProjectModel.dll",
+        "SizeBytes":  255008,
+        "Modified":  {
+                         "value":  "\/Date(1719543266000)\/",
+                         "DateTime":  "Friday, June 28, 2024 04:54:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\NuGet.Protocol.dll",
+        "Name":  "NuGet.Protocol.dll",
+        "SizeBytes":  790960,
+        "Modified":  {
+                         "value":  "\/Date(1719543268000)\/",
+                         "DateTime":  "Friday, June 28, 2024 04:54:28"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\NuGet.Versioning.dll",
+        "Name":  "NuGet.Versioning.dll",
+        "SizeBytes":  68544,
+        "Modified":  {
+                         "value":  "\/Date(1719543348000)\/",
+                         "DateTime":  "Friday, June 28, 2024 04:55:48"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.ClientModel.dll",
+        "Name":  "System.ClientModel.dll",
+        "SizeBytes":  28608,
+        "Modified":  {
+                         "value":  "\/Date(1704303780000)\/",
+                         "DateTime":  "Wednesday, January 3, 2024 18:43:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.CodeDom.dll",
+        "Name":  "System.CodeDom.dll",
+        "SizeBytes":  184944,
+        "Modified":  {
+                         "value":  "\/Date(1634946466000)\/",
+                         "DateTime":  "Saturday, October 23, 2021 01:47:46"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Composition.AttributedModel.dll",
+        "Name":  "System.Composition.AttributedModel.dll",
+        "SizeBytes":  20096,
+        "Modified":  {
+                         "value":  "\/Date(1666109726000)\/",
+                         "DateTime":  "Tuesday, October 18, 2022 18:15:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Composition.Convention.dll",
+        "Name":  "System.Composition.Convention.dll",
+        "SizeBytes":  53880,
+        "Modified":  {
+                         "value":  "\/Date(1666109746000)\/",
+                         "DateTime":  "Tuesday, October 18, 2022 18:15:46"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Composition.Hosting.dll",
+        "Name":  "System.Composition.Hosting.dll",
+        "SizeBytes":  55440,
+        "Modified":  {
+                         "value":  "\/Date(1666109760000)\/",
+                         "DateTime":  "Tuesday, October 18, 2022 18:16:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Composition.Runtime.dll",
+        "Name":  "System.Composition.Runtime.dll",
+        "SizeBytes":  26240,
+        "Modified":  {
+                         "value":  "\/Date(1666109746000)\/",
+                         "DateTime":  "Tuesday, October 18, 2022 18:15:46"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Composition.TypedParts.dll",
+        "Name":  "System.Composition.TypedParts.dll",
+        "SizeBytes":  65168,
+        "Modified":  {
+                         "value":  "\/Date(1666109762000)\/",
+                         "DateTime":  "Tuesday, October 18, 2022 18:16:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Configuration.ConfigurationManager.dll",
+        "Name":  "System.Configuration.ConfigurationManager.dll",
+        "SizeBytes":  442632,
+        "Modified":  {
+                         "value":  "\/Date(1698764348000)\/",
+                         "DateTime":  "Tuesday, October 31, 2023 15:59:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Formats.Asn1.dll",
+        "Name":  "System.Formats.Asn1.dll",
+        "SizeBytes":  96048,
+        "Modified":  {
+                         "value":  "\/Date(1727127036000)\/",
+                         "DateTime":  "Monday, September 23, 2024 23:30:36"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.IdentityModel.Tokens.Jwt.dll",
+        "Name":  "System.IdentityModel.Tokens.Jwt.dll",
+        "SizeBytes":  77344,
+        "Modified":  {
+                         "value":  "\/Date(1701405108000)\/",
+                         "DateTime":  "Friday, December 1, 2023 05:31:48"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.IO.Pipelines.dll",
+        "Name":  "System.IO.Pipelines.dll",
+        "SizeBytes":  77608,
+        "Modified":  {
+                         "value":  "\/Date(1727127084000)\/",
+                         "DateTime":  "Monday, September 23, 2024 23:31:24"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Memory.Data.dll",
+        "Name":  "System.Memory.Data.dll",
+        "SizeBytes":  21368,
+        "Modified":  {
+                         "value":  "\/Date(1617900354000)\/",
+                         "DateTime":  "Thursday, April 8, 2021 18:45:54"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Reflection.MetadataLoadContext.dll",
+        "Name":  "System.Reflection.MetadataLoadContext.dll",
+        "SizeBytes":  253104,
+        "Modified":  {
+                         "value":  "\/Date(1698764372000)\/",
+                         "DateTime":  "Tuesday, October 31, 2023 15:59:32"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Runtime.Caching.dll",
+        "Name":  "System.Runtime.Caching.dll",
+        "SizeBytes":  89200,
+        "Modified":  {
+                         "value":  "\/Date(1634946722000)\/",
+                         "DateTime":  "Saturday, October 23, 2021 01:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Security.Cryptography.Pkcs.dll",
+        "Name":  "System.Security.Cryptography.Pkcs.dll",
+        "SizeBytes":  264864,
+        "Modified":  {
+                         "value":  "\/Date(1726528196000)\/",
+                         "DateTime":  "Tuesday, September 17, 2024 01:09:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Security.Cryptography.ProtectedData.dll",
+        "Name":  "System.Security.Cryptography.ProtectedData.dll",
+        "SizeBytes":  36616,
+        "Modified":  {
+                         "value":  "\/Date(1698764344000)\/",
+                         "DateTime":  "Tuesday, October 31, 2023 15:59:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Security.Cryptography.Xml.dll",
+        "Name":  "System.Security.Cryptography.Xml.dll",
+        "SizeBytes":  198424,
+        "Modified":  {
+                         "value":  "\/Date(1726528198000)\/",
+                         "DateTime":  "Tuesday, September 17, 2024 01:09:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Text.Encodings.Web.dll",
+        "Name":  "System.Text.Encodings.Web.dll",
+        "SizeBytes":  70920,
+        "Modified":  {
+                         "value":  "\/Date(1727127074000)\/",
+                         "DateTime":  "Monday, September 23, 2024 23:31:14"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\System.Text.Json.dll",
+        "Name":  "System.Text.Json.dll",
+        "SizeBytes":  643744,
+        "Modified":  {
+                         "value":  "\/Date(1727127108000)\/",
+                         "DateTime":  "Monday, September 23, 2024 23:31:48"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\af\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ar\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  21608,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\az\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\bg\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17000,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\bn-BD\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17000,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\cs\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  18536,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\cs\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  46240,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\cs\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  421552,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\cs\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18080,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\cs\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  191240,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\cs\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  46752,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\cs\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18192,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\cs\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  48304,
+        "Modified":  {
+                         "value":  "\/Date(1699465914000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:51:54"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\da\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17512,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\de\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  19560,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\de\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  46768,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\de\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  450208,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\de\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18080,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\de\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  201504,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\de\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  48304,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\de\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18608,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\de\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  49824,
+        "Modified":  {
+                         "value":  "\/Date(1699465916000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:51:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\el\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17512,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\es\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  33384,
+        "Modified":  {
+                         "value":  "\/Date(1643468652000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\es\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  47264,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\es\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  440480,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\es\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18080,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\es\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  198928,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\es\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  48304,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\es\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18096,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\es\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  49824,
+        "Modified":  {
+                         "value":  "\/Date(1699465918000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:51:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fa\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17000,
+        "Modified":  {
+                         "value":  "\/Date(1643468644000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fi-FI\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  13928,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fr\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  19048,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fr\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  47776,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fr\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  451232,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fr\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18192,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fr\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  205584,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fr\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  48800,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fr\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18608,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fr\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  50848,
+        "Modified":  {
+                         "value":  "\/Date(1699465920000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\fr-BE\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17000,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\he\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  21096,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\hr\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  19048,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\hu\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\hy\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17000,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\id\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17000,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\is\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  24168,
+        "Modified":  {
+                         "value":  "\/Date(1643468652000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\it\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468652000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\it\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  47376,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\it\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  447240,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\it\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18096,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\it\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  200968,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\it\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  48800,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\it\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18592,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\it\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  50336,
+        "Modified":  {
+                         "value":  "\/Date(1699465922000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ja\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468644000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ja\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  48912,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ja\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  492704,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ja\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18096,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ja\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  211216,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ja\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  51872,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ja\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18608,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ja\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  53408,
+        "Modified":  {
+                         "value":  "\/Date(1699465922000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ko\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  46368,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ko\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  452272,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ko\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18192,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ko\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  196256,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ko\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  48800,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ko\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18592,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ko\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  50336,
+        "Modified":  {
+                         "value":  "\/Date(1699465922000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ko-KR\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  26728,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ku\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  30312,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\lv\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  27240,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Admin.deps.json",
+        "Name":  "BlazorShell.Modules.Admin.deps.json",
+        "SizeBytes":  146000,
+        "Modified":  {
+                         "value":  "\/Date(1754507039928)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Admin.dll",
+        "Name":  "BlazorShell.Modules.Admin.dll",
+        "SizeBytes":  218624,
+        "Modified":  {
+                         "value":  "\/Date(1754507039818)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Admin.pdb",
+        "Name":  "BlazorShell.Modules.Admin.pdb",
+        "SizeBytes":  113672,
+        "Modified":  {
+                         "value":  "\/Date(1754507039818)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Admin.staticwebassets.endpoints.json",
+        "Name":  "BlazorShell.Modules.Admin.staticwebassets.endpoints.json",
+        "SizeBytes":  21678,
+        "Modified":  {
+                         "value":  "\/Date(1754507039849)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Admin.staticwebassets.runtime.json",
+        "Name":  "BlazorShell.Modules.Admin.staticwebassets.runtime.json",
+        "SizeBytes":  1868,
+        "Modified":  {
+                         "value":  "\/Date(1754507039849)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Dashboard.deps.json",
+        "Name":  "BlazorShell.Modules.Dashboard.deps.json",
+        "SizeBytes":  146012,
+        "Modified":  {
+                         "value":  "\/Date(1754458086262)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:28:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Dashboard.dll",
+        "Name":  "BlazorShell.Modules.Dashboard.dll",
+        "SizeBytes":  60928,
+        "Modified":  {
+                         "value":  "\/Date(1754458086172)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:28:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Dashboard.pdb",
+        "Name":  "BlazorShell.Modules.Dashboard.pdb",
+        "SizeBytes":  44988,
+        "Modified":  {
+                         "value":  "\/Date(1754458086168)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:28:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Dashboard.staticwebassets.endpoints.json",
+        "Name":  "BlazorShell.Modules.Dashboard.staticwebassets.endpoints.json",
+        "SizeBytes":  17405,
+        "Modified":  {
+                         "value":  "\/Date(1754458086202)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:28:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\Modules\\BlazorShell.Modules.Dashboard.staticwebassets.runtime.json",
+        "Name":  "BlazorShell.Modules.Dashboard.staticwebassets.runtime.json",
+        "SizeBytes":  1648,
+        "Modified":  {
+                         "value":  "\/Date(1754458086203)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:28:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ms-MY\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  27240,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\mt\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  29800,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\nb\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17512,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\nb-NO\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17512,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\nl\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pl\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  18536,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pl\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  47368,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pl\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  453280,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pl\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18208,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pl\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  198408,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pl\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  48816,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pl\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18592,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pl\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  49840,
+        "Modified":  {
+                         "value":  "\/Date(1699465922000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pt\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pt-BR\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  46864,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pt-BR\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  432800,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pt-BR\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18096,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pt-BR\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  196888,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pt-BR\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  47264,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pt-BR\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18080,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\pt-BR\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  49312,
+        "Modified":  {
+                         "value":  "\/Date(1699465922000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ro\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468652000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ru\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  21608,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ru\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  55048,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ru\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  595104,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ru\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18704,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ru\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  261392,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ru\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  58528,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ru\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  19616,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\ru\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  57504,
+        "Modified":  {
+                         "value":  "\/Date(1699465922000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\runtimes\\browser\\lib\\net8.0\\System.Text.Encodings.Web.dll",
+        "Name":  "System.Text.Encodings.Web.dll",
+        "SizeBytes":  70952,
+        "Modified":  {
+                         "value":  "\/Date(1727127094000)\/",
+                         "DateTime":  "Monday, September 23, 2024 23:31:34"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\runtimes\\unix\\lib\\net6.0\\Microsoft.Data.SqlClient.dll",
+        "Name":  "Microsoft.Data.SqlClient.dll",
+        "SizeBytes":  1559184,
+        "Modified":  {
+                         "value":  "\/Date(1724782968000)\/",
+                         "DateTime":  "Tuesday, August 27, 2024 20:22:48"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net6.0\\Microsoft.Data.SqlClient.dll",
+        "Name":  "Microsoft.Data.SqlClient.dll",
+        "SizeBytes":  1643168,
+        "Modified":  {
+                         "value":  "\/Date(1724782980000)\/",
+                         "DateTime":  "Tuesday, August 27, 2024 20:23:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net6.0\\System.Runtime.Caching.dll",
+        "Name":  "System.Runtime.Caching.dll",
+        "SizeBytes":  91240,
+        "Modified":  {
+                         "value":  "\/Date(1634946764000)\/",
+                         "DateTime":  "Saturday, October 23, 2021 01:52:44"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\runtimes\\win\\lib\\net8.0\\System.Security.Cryptography.Pkcs.dll",
+        "Name":  "System.Security.Cryptography.Pkcs.dll",
+        "SizeBytes":  319784,
+        "Modified":  {
+                         "value":  "\/Date(1726528256000)\/",
+                         "DateTime":  "Tuesday, September 17, 2024 01:10:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\runtimes\\win-arm\\native\\Microsoft.Data.SqlClient.SNI.dll",
+        "Name":  "Microsoft.Data.SqlClient.SNI.dll",
+        "SizeBytes":  381984,
+        "Modified":  {
+                         "value":  "\/Date(1691780188000)\/",
+                         "DateTime":  "Friday, August 11, 2023 20:56:28"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\runtimes\\win-arm64\\native\\Microsoft.Data.SqlClient.SNI.dll",
+        "Name":  "Microsoft.Data.SqlClient.SNI.dll",
+        "SizeBytes":  491552,
+        "Modified":  {
+                         "value":  "\/Date(1691780188000)\/",
+                         "DateTime":  "Friday, August 11, 2023 20:56:28"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\runtimes\\win-x64\\native\\Microsoft.Data.SqlClient.SNI.dll",
+        "Name":  "Microsoft.Data.SqlClient.SNI.dll",
+        "SizeBytes":  504872,
+        "Modified":  {
+                         "value":  "\/Date(1691780178000)\/",
+                         "DateTime":  "Friday, August 11, 2023 20:56:18"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\runtimes\\win-x86\\native\\Microsoft.Data.SqlClient.SNI.dll",
+        "Name":  "Microsoft.Data.SqlClient.SNI.dll",
+        "SizeBytes":  414248,
+        "Modified":  {
+                         "value":  "\/Date(1691780178000)\/",
+                         "DateTime":  "Friday, August 11, 2023 20:56:18"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\sk\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  18536,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\sl\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  21096,
+        "Modified":  {
+                         "value":  "\/Date(1643468646000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\sr\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  19048,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\sr-Latn\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  18536,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\sv\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468648000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\th-TH\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  29800,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\tr\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\tr\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  46344,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\tr\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  429216,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\tr\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18192,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\tr\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  192784,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\tr\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  46752,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\tr\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18080,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\tr\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  48288,
+        "Modified":  {
+                         "value":  "\/Date(1699465922000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\uk\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  21608,
+        "Modified":  {
+                         "value":  "\/Date(1643468650000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\uz-Cyrl-UZ\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17000,
+        "Modified":  {
+                         "value":  "\/Date(1643468652000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\uz-Latn-UZ\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468652000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\vi\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  17000,
+        "Modified":  {
+                         "value":  "\/Date(1643468652000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-CN\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468652000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hans\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468652000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hans\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  44296,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hans\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  382128,
+        "Modified":  {
+                         "value":  "\/Date(1699466168000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hans\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18080,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hans\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  172304,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hans\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  43680,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hans\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18080,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hans\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  46240,
+        "Modified":  {
+                         "value":  "\/Date(1699465922000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hant\\Humanizer.resources.dll",
+        "Name":  "Humanizer.resources.dll",
+        "SizeBytes":  16488,
+        "Modified":  {
+                         "value":  "\/Date(1643468654000)\/",
+                         "DateTime":  "Saturday, January 29, 2022 16:04:14"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hant\\Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Features.resources.dll",
+        "SizeBytes":  44312,
+        "Modified":  {
+                         "value":  "\/Date(1699466322000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:58:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hant\\Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.resources.dll",
+        "SizeBytes":  381600,
+        "Modified":  {
+                         "value":  "\/Date(1699466170000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hant\\Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll",
+        "SizeBytes":  18192,
+        "Modified":  {
+                         "value":  "\/Date(1699466182000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:56:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hant\\Microsoft.CodeAnalysis.Features.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Features.resources.dll",
+        "SizeBytes":  174360,
+        "Modified":  {
+                         "value":  "\/Date(1699465946000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hant\\Microsoft.CodeAnalysis.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.resources.dll",
+        "SizeBytes":  44192,
+        "Modified":  {
+                         "value":  "\/Date(1699465564000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:46:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hant\\Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Scripting.resources.dll",
+        "SizeBytes":  18080,
+        "Modified":  {
+                         "value":  "\/Date(1699465924000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\bin\\Debug\\net8.0\\zh-Hant\\Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "Name":  "Microsoft.CodeAnalysis.Workspaces.resources.dll",
+        "SizeBytes":  46256,
+        "Modified":  {
+                         "value":  "\/Date(1699465922000)\/",
+                         "DateTime":  "Wednesday, November 8, 2023 18:52:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\App.razor",
+        "Name":  "App.razor",
+        "SizeBytes":  995,
+        "Modified":  {
+                         "value":  "\/Date(1754505966958)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:46:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\DynamicRouteHandler.razor",
+        "Name":  "DynamicRouteHandler.razor",
+        "SizeBytes":  4450,
+        "Modified":  {
+                         "value":  "\/Date(1754490787332)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 16:33:07"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\DynamicRouteRefresher.cs",
+        "Name":  "DynamicRouteRefresher.cs",
+        "SizeBytes":  1871,
+        "Modified":  {
+                         "value":  "\/Date(1754458726930)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:38:46"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\ModuleComponentBase.cs",
+        "Name":  "ModuleComponentBase.cs",
+        "SizeBytes":  8902,
+        "Modified":  {
+                         "value":  "\/Date(1754489387908)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 16:09:47"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\ModuleRouter.razor",
+        "Name":  "ModuleRouter.razor",
+        "SizeBytes":  1148,
+        "Modified":  {
+                         "value":  "\/Date(1754456742117)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:05:42"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\ModuleServiceScope.cs",
+        "Name":  "ModuleServiceScope.cs",
+        "SizeBytes":  1218,
+        "Modified":  {
+                         "value":  "\/Date(1754460677766)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 08:11:17"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Routes.razor",
+        "Name":  "Routes.razor",
+        "SizeBytes":  8909,
+        "Modified":  {
+                         "value":  "\/Date(1754506434076)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:53:54"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\_Imports.razor",
+        "Name":  "_Imports.razor",
+        "SizeBytes":  448,
+        "Modified":  {
+                         "value":  "\/Date(1754439240573)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\IdentityComponentsEndpointRouteBuilderExtensions.cs",
+        "Name":  "IdentityComponentsEndpointRouteBuilderExtensions.cs",
+        "SizeBytes":  5870,
+        "Modified":  {
+                         "value":  "\/Date(1754506081136)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:48:01"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\IdentityNoOpEmailSender.cs",
+        "Name":  "IdentityNoOpEmailSender.cs",
+        "SizeBytes":  1217,
+        "Modified":  {
+                         "value":  "\/Date(1754439438202)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:18"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\IdentityRedirectManager.cs",
+        "Name":  "IdentityRedirectManager.cs",
+        "SizeBytes":  2984,
+        "Modified":  {
+                         "value":  "\/Date(1754505700475)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:41:40"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\IdentityRevalidatingAuthenticationStateProvider.cs",
+        "Name":  "IdentityRevalidatingAuthenticationStateProvider.cs",
+        "SizeBytes":  1992,
+        "Modified":  {
+                         "value":  "\/Date(1754439429398)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\IdentityUserAccessor.cs",
+        "Name":  "IdentityUserAccessor.cs",
+        "SizeBytes":  652,
+        "Modified":  {
+                         "value":  "\/Date(1754439429459)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\AccessDenied.razor",
+        "Name":  "AccessDenied.razor",
+        "SizeBytes":  218,
+        "Modified":  {
+                         "value":  "\/Date(1754439240761)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\ConfirmEmail.razor",
+        "Name":  "ConfirmEmail.razor",
+        "SizeBytes":  1431,
+        "Modified":  {
+                         "value":  "\/Date(1754439429358)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\ConfirmEmailChange.razor",
+        "Name":  "ConfirmEmailChange.razor",
+        "SizeBytes":  2078,
+        "Modified":  {
+                         "value":  "\/Date(1754439432309)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:12"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\ExternalLogin.razor",
+        "Name":  "ExternalLogin.razor",
+        "SizeBytes":  7369,
+        "Modified":  {
+                         "value":  "\/Date(1754505700475)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:41:40"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\ForgotPassword.razor",
+        "Name":  "ForgotPassword.razor",
+        "SizeBytes":  2710,
+        "Modified":  {
+                         "value":  "\/Date(1754439429379)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\ForgotPasswordConfirmation.razor",
+        "Name":  "ForgotPasswordConfirmation.razor",
+        "SizeBytes":  208,
+        "Modified":  {
+                         "value":  "\/Date(1754439240777)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\InvalidPasswordReset.razor",
+        "Name":  "InvalidPasswordReset.razor",
+        "SizeBytes":  178,
+        "Modified":  {
+                         "value":  "\/Date(1754439240777)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\InvalidUser.razor",
+        "Name":  "InvalidUser.razor",
+        "SizeBytes":  118,
+        "Modified":  {
+                         "value":  "\/Date(1754439240777)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Lockout.razor",
+        "Name":  "Lockout.razor",
+        "SizeBytes":  224,
+        "Modified":  {
+                         "value":  "\/Date(1754439240777)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Login.razor",
+        "Name":  "Login.razor",
+        "SizeBytes":  7323,
+        "Modified":  {
+                         "value":  "\/Date(1754506885730)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:01:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\LoginWith2fa.razor",
+        "Name":  "LoginWith2fa.razor",
+        "SizeBytes":  4034,
+        "Modified":  {
+                         "value":  "\/Date(1754439429369)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\LoginWithRecoveryCode.razor",
+        "Name":  "LoginWithRecoveryCode.razor",
+        "SizeBytes":  3150,
+        "Modified":  {
+                         "value":  "\/Date(1754439429313)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Logout.razor",
+        "Name":  "Logout.razor",
+        "SizeBytes":  1273,
+        "Modified":  {
+                         "value":  "\/Date(1754506146081)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:49:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Register.razor",
+        "Name":  "Register.razor",
+        "SizeBytes":  5934,
+        "Modified":  {
+                         "value":  "\/Date(1754505699816)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:41:39"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\RegisterConfirmation.razor",
+        "Name":  "RegisterConfirmation.razor",
+        "SizeBytes":  2412,
+        "Modified":  {
+                         "value":  "\/Date(1754439429454)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\ResendEmailConfirmation.razor",
+        "Name":  "ResendEmailConfirmation.razor",
+        "SizeBytes":  2579,
+        "Modified":  {
+                         "value":  "\/Date(1754439429443)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\ResetPassword.razor",
+        "Name":  "ResetPassword.razor",
+        "SizeBytes":  4111,
+        "Modified":  {
+                         "value":  "\/Date(1754439429464)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\ResetPasswordConfirmation.razor",
+        "Name":  "ResetPasswordConfirmation.razor",
+        "SizeBytes":  242,
+        "Modified":  {
+                         "value":  "\/Date(1754439240526)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\_Imports.razor",
+        "Name":  "_Imports.razor",
+        "SizeBytes":  72,
+        "Modified":  {
+                         "value":  "\/Date(1754439240526)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\ChangePassword.razor",
+        "Name":  "ChangePassword.razor",
+        "SizeBytes":  4244,
+        "Modified":  {
+                         "value":  "\/Date(1754439429393)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\DeletePersonalData.razor",
+        "Name":  "DeletePersonalData.razor",
+        "SizeBytes":  2930,
+        "Modified":  {
+                         "value":  "\/Date(1754439429375)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\Disable2fa.razor",
+        "Name":  "Disable2fa.razor",
+        "SizeBytes":  2247,
+        "Modified":  {
+                         "value":  "\/Date(1754439429383)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\Email.razor",
+        "Name":  "Email.razor",
+        "SizeBytes":  5071,
+        "Modified":  {
+                         "value":  "\/Date(1754439429388)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\EnableAuthenticator.razor",
+        "Name":  "EnableAuthenticator.razor",
+        "SizeBytes":  6984,
+        "Modified":  {
+                         "value":  "\/Date(1754439429411)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\ExternalLogins.razor",
+        "Name":  "ExternalLogins.razor",
+        "SizeBytes":  5357,
+        "Modified":  {
+                         "value":  "\/Date(1754439429421)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\GenerateRecoveryCodes.razor",
+        "Name":  "GenerateRecoveryCodes.razor",
+        "SizeBytes":  2536,
+        "Modified":  {
+                         "value":  "\/Date(1754439429407)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\Index.razor",
+        "Name":  "Index.razor",
+        "SizeBytes":  2808,
+        "Modified":  {
+                         "value":  "\/Date(1754439429402)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\PersonalData.razor",
+        "Name":  "PersonalData.razor",
+        "SizeBytes":  1077,
+        "Modified":  {
+                         "value":  "\/Date(1754439240573)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\ResetAuthenticator.razor",
+        "Name":  "ResetAuthenticator.razor",
+        "SizeBytes":  2003,
+        "Modified":  {
+                         "value":  "\/Date(1754439429416)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\SetPassword.razor",
+        "Name":  "SetPassword.razor",
+        "SizeBytes":  3570,
+        "Modified":  {
+                         "value":  "\/Date(1754439429437)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\TwoFactorAuthentication.razor",
+        "Name":  "TwoFactorAuthentication.razor",
+        "SizeBytes":  3932,
+        "Modified":  {
+                         "value":  "\/Date(1754439429469)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Pages\\Manage\\_Imports.razor",
+        "Name":  "_Imports.razor",
+        "SizeBytes":  84,
+        "Modified":  {
+                         "value":  "\/Date(1754439240619)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Shared\\AccountLayout.razor",
+        "Name":  "AccountLayout.razor",
+        "SizeBytes":  783,
+        "Modified":  {
+                         "value":  "\/Date(1754439240557)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Shared\\ExternalLoginPicker.razor",
+        "Name":  "ExternalLoginPicker.razor",
+        "SizeBytes":  1462,
+        "Modified":  {
+                         "value":  "\/Date(1754439429474)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Shared\\ManageLayout.razor",
+        "Name":  "ManageLayout.razor",
+        "SizeBytes":  342,
+        "Modified":  {
+                         "value":  "\/Date(1754439240573)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Shared\\ManageNavMenu.razor",
+        "Name":  "ManageNavMenu.razor",
+        "SizeBytes":  1263,
+        "Modified":  {
+                         "value":  "\/Date(1754439429479)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:17:09"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Shared\\RedirectToLogin.razor",
+        "Name":  "RedirectToLogin.razor",
+        "SizeBytes":  1587,
+        "Modified":  {
+                         "value":  "\/Date(1754505500112)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:38:20"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Shared\\ShowRecoveryCodes.razor",
+        "Name":  "ShowRecoveryCodes.razor",
+        "SizeBytes":  732,
+        "Modified":  {
+                         "value":  "\/Date(1754439240573)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Account\\Shared\\StatusMessage.razor",
+        "Name":  "StatusMessage.razor",
+        "SizeBytes":  842,
+        "Modified":  {
+                         "value":  "\/Date(1754439240573)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Layout\\MainLayout.razor",
+        "Name":  "MainLayout.razor",
+        "SizeBytes":  14622,
+        "Modified":  {
+                         "value":  "\/Date(1754506004278)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:46:44"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Layout\\MainLayout.razor.css",
+        "Name":  "MainLayout.razor.css",
+        "SizeBytes":  1880,
+        "Modified":  {
+                         "value":  "\/Date(1754439240699)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Layout\\NavMenu.razor",
+        "Name":  "NavMenu.razor",
+        "SizeBytes":  3442,
+        "Modified":  {
+                         "value":  "\/Date(1754505866149)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 20:44:26"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Layout\\NavMenu.razor.css",
+        "Name":  "NavMenu.razor.css",
+        "SizeBytes":  5632,
+        "Modified":  {
+                         "value":  "\/Date(1754439240730)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Pages\\Auth.razor",
+        "Name":  "Auth.razor",
+        "SizeBytes":  232,
+        "Modified":  {
+                         "value":  "\/Date(1754439240730)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Pages\\Counter.razor",
+        "Name":  "Counter.razor",
+        "SizeBytes":  332,
+        "Modified":  {
+                         "value":  "\/Date(1754439240730)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Pages\\Error.razor",
+        "Name":  "Error.razor",
+        "SizeBytes":  1215,
+        "Modified":  {
+                         "value":  "\/Date(1754439240730)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Pages\\Home.razor",
+        "Name":  "Home.razor",
+        "SizeBytes":  3777,
+        "Modified":  {
+                         "value":  "\/Date(1754455518616)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 06:45:18"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Components\\Pages\\Weather.razor",
+        "Name":  "Weather.razor",
+        "SizeBytes":  1817,
+        "Modified":  {
+                         "value":  "\/Date(1754439240730)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Core\\Entities\\Entities.cs",
+        "Name":  "Entities.cs",
+        "SizeBytes":  6181,
+        "Modified":  {
+                         "value":  "\/Date(1754440996532)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:43:16"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Core\\Interfaces\\Interfaces.cs",
+        "Name":  "Interfaces.cs",
+        "SizeBytes":  6121,
+        "Modified":  {
+                         "value":  "\/Date(1754459568316)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:52:48"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Core\\Services\\AuthenticationService.cs",
+        "Name":  "AuthenticationService.cs",
+        "SizeBytes":  6135,
+        "Modified":  {
+                         "value":  "\/Date(1754497673390)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 18:27:53"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Core\\Services\\Interfaces.cs",
+        "Name":  "Interfaces.cs",
+        "SizeBytes":  1040,
+        "Modified":  {
+                         "value":  "\/Date(1754433318155)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 00:35:18"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Core\\Services\\ModuleCleanupService.cs",
+        "Name":  "ModuleCleanupService.cs",
+        "SizeBytes":  1855,
+        "Modified":  {
+                         "value":  "\/Date(1754494328068)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 17:32:08"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Data\\ApplicationDbContext.cs",
+        "Name":  "ApplicationDbContext.cs",
+        "SizeBytes":  3547,
+        "Modified":  {
+                         "value":  "\/Date(1754435767506)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 01:16:07"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Middleware\\ModuleFallbackMiddleware.cs",
+        "Name":  "ModuleFallbackMiddleware.cs",
+        "SizeBytes":  1974,
+        "Modified":  {
+                         "value":  "\/Date(1754490271433)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 16:24:31"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Security\\SecurityServices.cs",
+        "Name":  "SecurityServices.cs",
+        "SizeBytes":  13441,
+        "Modified":  {
+                         "value":  "\/Date(1754435616217)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 01:13:36"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\DynamicRouteService.cs",
+        "Name":  "DynamicRouteService.cs",
+        "SizeBytes":  11093,
+        "Modified":  {
+                         "value":  "\/Date(1754458956766)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:42:36"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\LazyModuleLoader.cs",
+        "Name":  "LazyModuleLoader.cs",
+        "SizeBytes":  13872,
+        "Modified":  {
+                         "value":  "\/Date(1754493921295)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 17:25:21"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModuleHotReloadService.cs",
+        "Name":  "ModuleHotReloadService.cs",
+        "SizeBytes":  6621,
+        "Modified":  {
+                         "value":  "\/Date(1754493426042)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 17:17:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModuleLoader.cs",
+        "Name":  "ModuleLoader.cs",
+        "SizeBytes":  31958,
+        "Modified":  {
+                         "value":  "\/Date(1754496131427)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 18:02:11"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModuleMetadataCache.cs",
+        "Name":  "ModuleMetadataCache.cs",
+        "SizeBytes":  5752,
+        "Modified":  {
+                         "value":  "\/Date(1754496178502)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 18:02:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModulePerformanceMonitor.cs",
+        "Name":  "ModulePerformanceMonitor.cs",
+        "SizeBytes":  9615,
+        "Modified":  {
+                         "value":  "\/Date(1754493426057)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 17:17:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModuleRegistry.cs",
+        "Name":  "ModuleRegistry.cs",
+        "SizeBytes":  2640,
+        "Modified":  {
+                         "value":  "\/Date(1754490790156)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 16:33:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModuleReloadCoordinator.cs",
+        "Name":  "ModuleReloadCoordinator.cs",
+        "SizeBytes":  9561,
+        "Modified":  {
+                         "value":  "\/Date(1754506980610)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModuleRouteProvider.cs",
+        "Name":  "ModuleRouteProvider.cs",
+        "SizeBytes":  3287,
+        "Modified":  {
+                         "value":  "\/Date(1754455972122)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 06:52:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModuleServiceManager.cs",
+        "Name":  "ModuleServiceManager.cs",
+        "SizeBytes":  4316,
+        "Modified":  {
+                         "value":  "\/Date(1754456990400)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:09:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModuleServiceProvider.cs",
+        "Name":  "ModuleServiceProvider.cs",
+        "SizeBytes":  15025,
+        "Modified":  {
+                         "value":  "\/Date(1754489347252)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 16:09:07"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\ModuleTemplateGenerator.cs",
+        "Name":  "ModuleTemplateGenerator.cs",
+        "SizeBytes":  18569,
+        "Modified":  {
+                         "value":  "\/Date(1754492766515)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 17:06:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\PluginAssemblyLoader.cs",
+        "Name":  "PluginAssemblyLoader.cs",
+        "SizeBytes":  13731,
+        "Modified":  {
+                         "value":  "\/Date(1754490790171)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 16:33:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Infrastructure\\Services\\Services.cs",
+        "Name":  "Services.cs",
+        "SizeBytes":  11043,
+        "Modified":  {
+                         "value":  "\/Date(1754435299731)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 01:08:19"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\BlazorShell.csproj.nuget.dgspec.json",
+        "Name":  "BlazorShell.csproj.nuget.dgspec.json",
+        "SizeBytes":  4400,
+        "Modified":  {
+                         "value":  "\/Date(1754507035955)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:55"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\BlazorShell.csproj.nuget.g.props",
+        "Name":  "BlazorShell.csproj.nuget.g.props",
+        "SizeBytes":  3275,
+        "Modified":  {
+                         "value":  "\/Date(1754439382930)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:16:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\BlazorShell.csproj.nuget.g.targets",
+        "Name":  "BlazorShell.csproj.nuget.g.targets",
+        "SizeBytes":  2241,
+        "Modified":  {
+                         "value":  "\/Date(1754439382930)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:16:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\project.assets.json",
+        "Name":  "project.assets.json",
+        "SizeBytes":  419098,
+        "Modified":  {
+                         "value":  "\/Date(1754439382930)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:16:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\project.nuget.cache",
+        "Name":  "project.nuget.cache",
+        "SizeBytes":  24437,
+        "Modified":  {
+                         "value":  "\/Date(1754507035955)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:55"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+        "Name":  ".NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+        "SizeBytes":  198,
+        "Modified":  {
+                         "value":  "\/Date(1754439244922)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\ApiEndpoints.json",
+        "Name":  "ApiEndpoints.json",
+        "SizeBytes":  2269,
+        "Modified":  {
+                         "value":  "\/Date(1754507088590)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:04:48"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\apphost.exe",
+        "Name":  "apphost.exe",
+        "SizeBytes":  138752,
+        "Modified":  {
+                         "value":  "\/Date(1754508170231)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorSh.CE12FB16.Up2Date",
+        "Name":  "BlazorSh.CE12FB16.Up2Date",
+        "SizeBytes":  0,
+        "Modified":  {
+                         "value":  "\/Date(1754507038073)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.AssemblyInfo.cs",
+        "Name":  "BlazorShell.AssemblyInfo.cs",
+        "SizeBytes":  1230,
+        "Modified":  {
+                         "value":  "\/Date(1754508164870)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:44"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.AssemblyInfoInputs.cache",
+        "Name":  "BlazorShell.AssemblyInfoInputs.cache",
+        "SizeBytes":  66,
+        "Modified":  {
+                         "value":  "\/Date(1754508164838)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:44"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.assets.cache",
+        "Name":  "BlazorShell.assets.cache",
+        "SizeBytes":  127098,
+        "Modified":  {
+                         "value":  "\/Date(1754456128189)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 06:55:28"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.csproj.AssemblyReference.cache",
+        "Name":  "BlazorShell.csproj.AssemblyReference.cache",
+        "SizeBytes":  60301,
+        "Modified":  {
+                         "value":  "\/Date(1754507036311)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.csproj.BuildWithSkipAnalyzers",
+        "Name":  "BlazorShell.csproj.BuildWithSkipAnalyzers",
+        "SizeBytes":  0,
+        "Modified":  {
+                         "value":  "\/Date(1754506889125)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:01:29"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.csproj.CoreCompileInputs.cache",
+        "Name":  "BlazorShell.csproj.CoreCompileInputs.cache",
+        "SizeBytes":  66,
+        "Modified":  {
+                         "value":  "\/Date(1754507036404)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.csproj.FileListAbsolute.txt",
+        "Name":  "BlazorShell.csproj.FileListAbsolute.txt",
+        "SizeBytes":  28389,
+        "Modified":  {
+                         "value":  "\/Date(1754508170387)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.dll",
+        "Name":  "BlazorShell.dll",
+        "SizeBytes":  506880,
+        "Modified":  {
+                         "value":  "\/Date(1754508170153)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.GeneratedMSBuildEditorConfig.editorconfig",
+        "Name":  "BlazorShell.GeneratedMSBuildEditorConfig.editorconfig",
+        "SizeBytes":  13535,
+        "Modified":  {
+                         "value":  "\/Date(1754507036395)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.genruntimeconfig.cache",
+        "Name":  "BlazorShell.genruntimeconfig.cache",
+        "SizeBytes":  66,
+        "Modified":  {
+                         "value":  "\/Date(1754507038135)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.GlobalUsings.g.cs",
+        "Name":  "BlazorShell.GlobalUsings.g.cs",
+        "SizeBytes":  770,
+        "Modified":  {
+                         "value":  "\/Date(1754439244844)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.MvcApplicationPartsAssemblyInfo.cache",
+        "Name":  "BlazorShell.MvcApplicationPartsAssemblyInfo.cache",
+        "SizeBytes":  0,
+        "Modified":  {
+                         "value":  "\/Date(1754507036603)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.MvcApplicationPartsAssemblyInfo.cs",
+        "Name":  "BlazorShell.MvcApplicationPartsAssemblyInfo.cs",
+        "SizeBytes":  624,
+        "Modified":  {
+                         "value":  "\/Date(1754507036602)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:56"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.pdb",
+        "Name":  "BlazorShell.pdb",
+        "SizeBytes":  257724,
+        "Modified":  {
+                         "value":  "\/Date(1754508170104)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\BlazorShell.sourcelink.json",
+        "Name":  "BlazorShell.sourcelink.json",
+        "SizeBytes":  151,
+        "Modified":  {
+                         "value":  "\/Date(1754508164917)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:44"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets.build.endpoints.json",
+        "Name":  "staticwebassets.build.endpoints.json",
+        "SizeBytes":  73281,
+        "Modified":  {
+                         "value":  "\/Date(1754507037891)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets.build.json",
+        "Name":  "staticwebassets.build.json",
+        "SizeBytes":  156339,
+        "Modified":  {
+                         "value":  "\/Date(1754508170309)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets.development.json",
+        "Name":  "staticwebassets.development.json",
+        "SizeBytes":  10654,
+        "Modified":  {
+                         "value":  "\/Date(1754507037891)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets.pack.json",
+        "Name":  "staticwebassets.pack.json",
+        "SizeBytes":  2196,
+        "Modified":  {
+                         "value":  "\/Date(1754507037906)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets.references.upToDateCheck.txt",
+        "Name":  "staticwebassets.references.upToDateCheck.txt",
+        "SizeBytes":  0,
+        "Modified":  {
+                         "value":  "\/Date(1754439261513)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:21"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets.removed.txt",
+        "Name":  "staticwebassets.removed.txt",
+        "SizeBytes":  0,
+        "Modified":  {
+                         "value":  "\/Date(1754439244984)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:04"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\ref\\BlazorShell.dll",
+        "Name":  "BlazorShell.dll",
+        "SizeBytes":  110592,
+        "Modified":  {
+                         "value":  "\/Date(1754508170153)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\refint\\BlazorShell.dll",
+        "Name":  "BlazorShell.dll",
+        "SizeBytes":  110592,
+        "Modified":  {
+                         "value":  "\/Date(1754508170153)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\scopedcss\\bundle\\BlazorShell.styles.css",
+        "Name":  "BlazorShell.styles.css",
+        "SizeBytes":  8193,
+        "Modified":  {
+                         "value":  "\/Date(1754507037875)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\scopedcss\\Components\\Layout\\MainLayout.razor.rz.scp.css",
+        "Name":  "MainLayout.razor.rz.scp.css",
+        "SizeBytes":  2112,
+        "Modified":  {
+                         "value":  "\/Date(1754507037875)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\scopedcss\\Components\\Layout\\NavMenu.razor.rz.scp.css",
+        "Name":  "NavMenu.razor.rz.scp.css",
+        "SizeBytes":  5936,
+        "Modified":  {
+                         "value":  "\/Date(1754507037875)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\BlazorShell.bundle.scp.css",
+        "Name":  "BlazorShell.bundle.scp.css",
+        "SizeBytes":  8193,
+        "Modified":  {
+                         "value":  "\/Date(1754507037875)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.BlazorShell.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+        "Name":  "msbuild.BlazorShell.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+        "SizeBytes":  12550,
+        "Modified":  {
+                         "value":  "\/Date(1754507037906)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.BlazorShell.Microsoft.AspNetCore.StaticWebAssets.props",
+        "Name":  "msbuild.BlazorShell.Microsoft.AspNetCore.StaticWebAssets.props",
+        "SizeBytes":  7463,
+        "Modified":  {
+                         "value":  "\/Date(1754507037906)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.BlazorShell.props",
+        "Name":  "msbuild.build.BlazorShell.props",
+        "SizeBytes":  166,
+        "Modified":  {
+                         "value":  "\/Date(1754507037906)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.BlazorShell.props",
+        "Name":  "msbuild.buildMultiTargeting.BlazorShell.props",
+        "SizeBytes":  75,
+        "Modified":  {
+                         "value":  "\/Date(1754507037906)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.BlazorShell.props",
+        "Name":  "msbuild.buildTransitive.BlazorShell.props",
+        "SizeBytes":  89,
+        "Modified":  {
+                         "value":  "\/Date(1754507037906)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Properties\\launchSettings.json",
+        "Name":  "launchSettings.json",
+        "SizeBytes":  1101,
+        "Modified":  {
+                         "value":  "\/Date(1754439240619)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Properties\\serviceDependencies.json",
+        "Name":  "serviceDependencies.json",
+        "SizeBytes":  139,
+        "Modified":  {
+                         "value":  "\/Date(1754439243802)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:03"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Properties\\serviceDependencies.local.json",
+        "Name":  "serviceDependencies.local.json",
+        "SizeBytes":  145,
+        "Modified":  {
+                         "value":  "\/Date(1754439243802)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:03"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\Properties\\serviceDependencies.local.json.user",
+        "Name":  "serviceDependencies.local.json.user",
+        "SizeBytes":  153,
+        "Modified":  {
+                         "value":  "\/Date(1754439243806)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:03"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\wwwroot\\app.css",
+        "Name":  "app.css",
+        "SizeBytes":  6140,
+        "Modified":  {
+                         "value":  "\/Date(1754489062200)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 16:04:22"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\wwwroot\\dynamicRouting.js",
+        "Name":  "dynamicRouting.js",
+        "SizeBytes":  1843,
+        "Modified":  {
+                         "value":  "\/Date(1754458764945)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:39:24"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\wwwroot\\favicon.png",
+        "Name":  "favicon.png",
+        "SizeBytes":  1148,
+        "Modified":  {
+                         "value":  "\/Date(1754439240619)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\wwwroot\\industrial-theme.css",
+        "Name":  "industrial-theme.css",
+        "SizeBytes":  17708,
+        "Modified":  {
+                         "value":  "\/Date(1754463625582)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 09:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\wwwroot\\bootstrap\\bootstrap.min.css",
+        "Name":  "bootstrap.min.css",
+        "SizeBytes":  162720,
+        "Modified":  {
+                         "value":  "\/Date(1754439240730)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+        "Name":  "bootstrap.min.css.map",
+        "SizeBytes":  449111,
+        "Modified":  {
+                         "value":  "\/Date(1754439240746)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    }
+]

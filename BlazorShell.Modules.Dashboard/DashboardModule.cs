@@ -1,10 +1,11 @@
-﻿using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Entities;
+﻿
 using BlazorShell.Core.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Components;
 using System.Reflection;
+using BlazorShell.Domain.Entities;
+using BlazorShell.Application.Interfaces;
 
 namespace BlazorShell.Modules.Dashboard
 {

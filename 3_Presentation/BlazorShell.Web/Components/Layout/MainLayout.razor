@@ -1,0 +1,376 @@
+﻿@using BlazorShell.Application.Interfaces
+@using BlazorShell.Domain.Entities
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject INavigationService NavigationService
+@inject IModuleRegistry ModuleRegistry
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<div class="page">
+    <div class="sidebar @(_sidebarCollapsed ? "collapsed" : "")">
+        <!-- Logo/Brand -->
+        <div class="sidebar-brand">
+            <a href="/">
+                <i class="bi bi-box"></i>
+                <span class="brand-text">BlazorShell</span>
+            </a>
+            <button class="btn btn-link sidebar-toggle d-md-none" @onclick="ToggleSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+
+        <!-- Navigation Items -->
+        <nav class="sidebar-nav">
+            @if (_sideMenuItems != null)
+            {
+                <ul class="nav flex-column">
+                    @foreach (var item in _sideMenuItems)
+                    {
+                        @if (item.Children?.Any() == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(IsChildActive(item) ? "active" : "")"
+                                   data-bs-toggle="collapse"
+                                   href="#collapse-@item.Name"
+                                   role="button">
+                                    <i class="@item.Icon"></i>
+                                    <span class="nav-text">@item.DisplayName</span>
+                                    <i class="bi bi-chevron-down ms-auto"></i>
+                                </a>
+                                <div class="collapse @(IsChildActive(item) ? "show" : "")" id="collapse-@item.Name">
+                                    <ul class="nav flex-column ms-3">
+                                        @foreach (var child in item.Children)
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link @(IsActive(child.Url) ? "active" : "")"
+                                                   href="@child.Url">
+                                                    <i class="@child.Icon"></i>
+                                                    <span class="nav-text">@child.DisplayName</span>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(IsActive(item.Url) ? "active" : "")"
+                                   href="@item.Url">
+                                    <i class="@item.Icon"></i>
+                                    <span class="nav-text">@item.DisplayName</span>
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            }
+        </nav>
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <button class="btn btn-link sidebar-toggle d-md-inline-block" @onclick="ToggleSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <nav class="navbar navbar-expand-lg navbar-light rounded mb-3">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#topNavMenu"
+                            aria-controls="topNavMenu" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="topNavMenu">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            @if (_topMenuItems != null && _topMenuItems.Any())
+                            @foreach (var item in _topMenuItems)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link @(IsActive(item.Url) ? "active" : "")" href="@item.Url">
+                                        <i class="@item.Icon me-1"></i>@item.DisplayName
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="ms-auto d-flex align-items-center">
+                <AuthorizeView>
+                    <Authorized>
+                        <!-- Notification Dropdown -->
+                        <div class="position-relative me-3">
+                            <button class="btn btn-link position-relative" type="button" @onclick="ToggleNotificationDropdown">
+                                <i class="bi bi-bell"></i>
+                                @if (_notificationCount > 0)
+                                {
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        @_notificationCount
+                                        <span class="visually-hidden">unread notifications</span>
+                                    </span>
+                                }
+                            </button>
+                            @if (_showNotificationDropdown)
+                            {
+                                <div class="dropdown-menu dropdown-menu-end show" style="position: absolute; right: 0;">
+                                    <h6 class="dropdown-header">Notifications</h6>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/notifications">
+                                        <small>No new notifications</small>
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-center" href="/notifications">View All</a>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- User Dropdown -->
+                        <div class="position-relative">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" @onclick="ToggleUserDropdown" @onclick:preventDefault="true">
+                                <i class="bi bi-person-circle"></i> @context.User.Identity?.Name
+                            </a>
+                            @if (_showUserDropdown)
+                            {
+                                <div class="dropdown-menu dropdown-menu-end show" style="position: absolute; right: 0;">
+                                    <div class="dropdown-item-text">
+                                        <strong>@context.User.Identity?.Name</strong>
+                                        <br />
+                                        <small class="text-muted">@_userEmail</small>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/Account/Manage">
+                                        <i class="bi bi-person"></i> My Profile
+                                    </a>
+                                    <a class="dropdown-item" href="/settings">
+                                        <i class="bi bi-gear"></i> Settings
+                                    </a>
+                                    <a class="dropdown-item" href="/Account/Manage/ChangePassword">
+                                        <i class="bi bi-key"></i> Change Password
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/help">
+                                        <i class="bi bi-question-circle"></i> Help & Support
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+
+                                    <form action="/Account/Logout" method="post" class="mb-0">
+                                        <AntiforgeryToken />
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right"></i> Logout
+                                        </button>
+                                    </form>
+
+                                </div>
+                            }
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="/Account/Login" class="btn btn-outline-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+<style>
+    /* Dropdown custom styles */
+    .dropdown-menu {
+        min-width: 250px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        margin-top: 0.5rem;
+        z-index: 1050;
+    }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background-color: #f8d7da;
+    }
+
+    /* Modal backdrop effect */
+    .modal.show {
+        animation: fadeIn 0.15s;
+    }
+
+
+    /* Ensure dropdowns are above other elements */
+    .position-relative {
+        z-index: 1000;
+    }
+</style>
+
+@code {
+    private bool _sidebarCollapsed = false;
+    private List<NavigationItem>? _topMenuItems;
+    private List<NavigationItem>? _sideMenuItems;
+    private int _loadedModulesCount = 0;
+    private string? _currentUrl;
+    private string? _userId;
+    private string? _userEmail;
+    private int _notificationCount = 0;
+
+    // Dropdown states
+    private bool _showUserDropdown = false;
+    private bool _showNotificationDropdown = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentUrl = Navigation.Uri;
+        Navigation.LocationChanged += OnLocationChanged;
+
+        if (NavigationService != null)
+        {
+            NavigationService.NavigationChanged += OnNavigationChanged;
+        }
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            _userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            _userEmail = authState.User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+        }
+
+        await LoadNavigationItems();
+
+        if (ModuleRegistry != null)
+        {
+            _loadedModulesCount = ModuleRegistry.GetModules().Count();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Add click outside handler
+            await JSRuntime.InvokeVoidAsync("eval", @"
+                window.addEventListener('click', function(e) {
+                    if (!e.target.closest('.dropdown-menu') && !e.target.closest('.dropdown-toggle')) {
+                        DotNet.invokeMethodAsync('BlazorShell', 'CloseAllDropdowns');
+                    }
+                });
+            ");
+        }
+    }
+
+    private async Task LoadNavigationItems()
+    {
+        if (NavigationService == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_userId))
+        {
+            _topMenuItems = (await NavigationService.GetNavigationItemsAsync(NavigationType.TopMenu))
+                .Where(n => string.IsNullOrEmpty(n.RequiredPermission) && string.IsNullOrEmpty(n.RequiredRole))
+                .ToList();
+
+            _sideMenuItems = (await NavigationService.GetNavigationItemsAsync(NavigationType.SideMenu))
+                .Where(n => string.IsNullOrEmpty(n.RequiredPermission) && string.IsNullOrEmpty(n.RequiredRole))
+                .ToList();
+        }
+        else
+        {
+            _topMenuItems = (await NavigationService.GetUserNavigationItemsAsync(_userId, NavigationType.TopMenu)).ToList();
+            _sideMenuItems = (await NavigationService.GetUserNavigationItemsAsync(_userId, NavigationType.SideMenu)).ToList();
+        }
+
+        StateHasChanged();
+    }
+
+    private void ToggleSidebar()
+    {
+        _sidebarCollapsed = !_sidebarCollapsed;
+    }
+
+    private void ToggleUserDropdown()
+    {
+        _showUserDropdown = !_showUserDropdown;
+        _showNotificationDropdown = false; // Close other dropdown
+    }
+
+    private void ToggleNotificationDropdown()
+    {
+        _showNotificationDropdown = !_showNotificationDropdown;
+        _showUserDropdown = false; // Close other dropdown
+    }
+
+    private void CloseAllDropdowns()
+    {
+        _showUserDropdown = false;
+        _showNotificationDropdown = false;
+        StateHasChanged();
+    }
+
+    // [JSInvokable]
+    // public static Task CloseAllDropdowns()
+    // {
+    //     // This would need to be handled differently in production
+    //     // For now, we'll handle it through the component instance
+    //     return Task.CompletedTask;
+    // }
+
+    private bool IsActive(string? url)
+    {
+        if (string.IsNullOrEmpty(url)) return false;
+        return _currentUrl?.Contains(url, StringComparison.OrdinalIgnoreCase) ?? false;
+    }
+
+    private bool IsChildActive(NavigationItem parent)
+    {
+        if (parent.Children == null) return false;
+        return parent.Children.Any(c => IsActive(c.Url));
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _currentUrl = e.Location;
+        CloseAllDropdowns();
+        StateHasChanged();
+    }
+
+    private async void OnNavigationChanged(object? sender, EventArgs e)
+    {
+        await LoadNavigationItems();
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+        if (NavigationService != null)
+        {
+            NavigationService.NavigationChanged -= OnNavigationChanged;
+        }
+    }
+}

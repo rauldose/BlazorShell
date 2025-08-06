@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.19" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.19" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\1_Core\BlazorShell.Application\BlazorShell.Application.csproj" />
+    <ProjectReference Include="..\..\1_Core\BlazorShell.Domain\BlazorShell.Domain.csproj" />
+    <ProjectReference Include="..\..\2_Infrastructure\BlazorShell.Infrastructure\BlazorShell.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\2_Infrastructure\BlazorShell.ModuleSystem\BlazorShell.ModuleSystem.csproj" />
+    <ProjectReference Include="..\BlazorShell.SharedUI\BlazorShell.SharedUI.csproj" />
+  </ItemGroup>
+
+</Project>

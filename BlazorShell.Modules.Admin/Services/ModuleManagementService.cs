@@ -7,11 +7,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using BlazorShell.Infrastructure.Data;
 using Newtonsoft.Json;
-using Module = BlazorShell.Core.Entities.Module;
+using Module = BlazorShell.Domain.Entities.Module;
+using BlazorShell.Application.Interfaces;
 
 namespace BlazorShell.Modules.Admin.Services
 {

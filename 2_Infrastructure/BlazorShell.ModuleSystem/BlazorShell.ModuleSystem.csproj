@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.19" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.JSInterop" Version="8.0.13" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\1_Core\BlazorShell.Application\BlazorShell.Application.csproj" />
+    <ProjectReference Include="..\..\1_Core\BlazorShell.Domain\BlazorShell.Domain.csproj" />
+    <ProjectReference Include="..\BlazorShell.Infrastructure\BlazorShell.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,8 +1,9 @@
 ﻿@* Pages/Admin/ModulePerformanceDashboard.razor *@
 @page "/admin/modules/performance"
-@using BlazorShell.Core.Interfaces
+@using BlazorShell.Application.Interfaces
 @using BlazorShell.Infrastructure.Services
 @using BlazorShell.Core.Components
+@using BlazorShell.ModuleSystem.Services
 @using Microsoft.AspNetCore.Authorization
 @inherits ModuleComponentBase
 @attribute [Authorize(Roles = "Administrator")]

@@ -1,0 +1,46 @@
+{
+  "moduleSettings": {
+    "enableDynamicLoading": true,
+    "modulesPath": "Modules",
+    "allowRemoteModules": false,
+    "autoLoadOnStartup": true,
+    "cacheModuleMetadata": true
+  },
+  "modules": [
+    {
+      "name": "Dashboard",
+      "displayName": "Dashboard Module",
+      "description": "Provides dashboard functionality with widgets",
+      "assemblyName": "BlazorShell.Modules.Dashboard.dll",
+      "entryType": "BlazorShell.Modules.Dashboard.DashboardModule",
+      "version": "1.0.0",
+      "author": "BlazorShell Team",
+      "category": "Core",
+      "icon": "bi bi-speedometer2",
+      "enabled": true,
+      "loadOrder": 1,
+      "dependencies": [],
+      "requiredRole": null,
+      "configuration": {
+        "refreshInterval": 30000,
+        "defaultWidgets": [ "stats", "charts", "activities" ],
+        "maxWidgets": 6
+      }
+    },
+    {
+      "Name": "Admin",
+      "DisplayName": "Administration",
+      "Description": "System administration module",
+      "AssemblyName": "BlazorShell.Modules.Admin.dll",
+      "EntryType": "BlazorShell.Modules.Admin.AdminModule",
+      "Version": "1.0.0",
+      "Author": "BlazorShell Team",
+      "Category": "System",
+      "Icon": "bi bi-gear-fill",
+      "Enabled": true,
+      "LoadOrder": 999,
+      "Dependencies": [],
+      "RequiredRole": "Administrator"
+    }
+  ]
+}

@@ -1,0 +1,212 @@
+﻿@page "/Account/Login"
+
+@using System.ComponentModel.DataAnnotations
+@using BlazorShell.Components.Account
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Identity
+@using BlazorShell.Domain.Entities
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject ILogger<Login> Logger
+@inject NavigationManager Navigation
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>Log in</PageTitle>
+
+<h1>Log in</h1>
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <StatusMessage Message="@errorMessage" />
+            <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+                <DataAnnotationsValidator />
+                <h2>Use a local account to log in.</h2>
+                <hr />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <label for="email" class="form-label">Email</label>
+                    <ValidationMessage For="() => Input.Email" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <label for="password" class="form-label">Password</label>
+                    <ValidationMessage For="() => Input.Password" class="text-danger" />
+                </div>
+                <div class="checkbox mb-3">
+                    <label class="form-label">
+                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
+                        Remember me
+                    </label>
+                </div>
+                <div>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                </div>
+                <div>
+                    <p>
+                        <a href="Account/ForgotPassword">Forgot your password?</a>
+                    </p>
+                    <p>
+                        <a href="@(Navigation.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
+                    </p>
+                    <p>
+                        <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
+                    </p>
+                </div>
+            </EditForm>
+        </section>
+    </div>
+    <div class="col-md-6 col-md-offset-2">
+        <section>
+            <h3>Use another service to log in.</h3>
+            <hr />
+            <ExternalLoginPicker />
+        </section>
+    </div>
+</div>
+
+@code {
+    private string? errorMessage;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (HttpMethods.IsGet(HttpContext.Request.Method))
+        {
+            // Clear the existing external cookie to ensure a clean login process
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        }
+    }
+
+    public async Task LoginUser()
+    {
+        // This doesn't count login failures towards account lockout
+        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
+        if (result.Succeeded)
+        {
+            Logger.LogInformation("User logged in.");
+
+            // FIX: For static SSR pages, we need to use HTTP redirect
+            var redirectUrl = GetSafeReturnUrl();
+            Logger.LogInformation("Redirecting to: {RedirectUrl}", redirectUrl);
+
+            // Use HTTP redirect for static SSR pages
+            if (HttpContext != null)
+            {
+                HttpContext.Response.Redirect(redirectUrl);
+                return;
+            }
+
+            // Fallback to RedirectManager (though this shouldn't be reached in static SSR)
+            RedirectManager.RedirectTo(redirectUrl);
+        }
+        else if (result.RequiresTwoFactor)
+        {
+            // For 2FA, use HTTP redirect
+            var twoFactorUrl = Navigation.GetUriWithQueryParameters(
+                "/Account/LoginWith2fa",
+                new Dictionary<string, object?>
+                    {
+                        ["returnUrl"] = ReturnUrl,
+                        ["rememberMe"] = Input.RememberMe
+                    });
+
+            if (HttpContext != null)
+            {
+                HttpContext.Response.Redirect(twoFactorUrl);
+                return;
+            }
+
+            RedirectManager.RedirectTo(
+                "Account/LoginWith2fa",
+                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe }, false);
+        }
+        else if (result.IsLockedOut)
+        {
+            Logger.LogWarning("User account locked out.");
+
+            if (HttpContext != null)
+            {
+                HttpContext.Response.Redirect("/Account/Lockout");
+                return;
+            }
+
+            RedirectManager.RedirectTo("Account/Lockout");
+        }
+        else
+        {
+            errorMessage = "Error: Invalid login attempt.";
+        }
+    }
+
+    private string GetSafeReturnUrl()
+    {
+        // FIX: Properly validate the return URL to prevent loops
+        if (string.IsNullOrEmpty(ReturnUrl))
+        {
+            return "/";
+        }
+
+        // Don't redirect back to login/logout pages
+        var lowerReturnUrl = ReturnUrl.ToLowerInvariant();
+        if (lowerReturnUrl.Contains("/account/login") ||
+            lowerReturnUrl.Contains("/account/logout"))
+        {
+            return "/";
+        }
+
+        // Ensure it's a local URL
+        if (!IsLocalUrl(ReturnUrl))
+        {
+            return "/";
+        }
+
+        return ReturnUrl;
+    }
+
+    private bool IsLocalUrl(string url)
+    {
+        if (string.IsNullOrEmpty(url))
+        {
+            return false;
+        }
+
+        // Check if the URL is relative
+        if (url[0] == '/' && (url.Length == 1 || (url[1] != '/' && url[1] != '\\')))
+        {
+            return true;
+        }
+
+        // Check if the URL is relative and doesn't start with http:// or https://
+        if (url.Length > 1 && url[0] == '~' && url[1] == '/')
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = "";
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = "";
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
+    }
+}

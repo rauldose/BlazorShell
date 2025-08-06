@@ -1,0 +1,263 @@
+﻿[
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\BlazorShell.ModuleSDK.csproj",
+        "Name":  "BlazorShell.ModuleSDK.csproj",
+        "SizeBytes":  355,
+        "Modified":  {
+                         "value":  "\/Date(1754512811966)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 22:40:11"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\Base\\ModuleBase.cs",
+        "Name":  "ModuleBase.cs",
+        "SizeBytes":  2935,
+        "Modified":  {
+                         "value":  "\/Date(1754512811966)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 22:40:11"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\bin\\Debug\\net8.0\\BlazorShell.Application.dll",
+        "Name":  "BlazorShell.Application.dll",
+        "SizeBytes":  24064,
+        "Modified":  {
+                         "value":  "\/Date(1754514025273)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\bin\\Debug\\net8.0\\BlazorShell.Application.pdb",
+        "Name":  "BlazorShell.Application.pdb",
+        "SizeBytes":  18536,
+        "Modified":  {
+                         "value":  "\/Date(1754514025270)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\bin\\Debug\\net8.0\\BlazorShell.Domain.dll",
+        "Name":  "BlazorShell.Domain.dll",
+        "SizeBytes":  18432,
+        "Modified":  {
+                         "value":  "\/Date(1754514025027)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\bin\\Debug\\net8.0\\BlazorShell.Domain.pdb",
+        "Name":  "BlazorShell.Domain.pdb",
+        "SizeBytes":  17624,
+        "Modified":  {
+                         "value":  "\/Date(1754514025025)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\bin\\Debug\\net8.0\\BlazorShell.ModuleSDK.deps.json",
+        "Name":  "BlazorShell.ModuleSDK.deps.json",
+        "SizeBytes":  41475,
+        "Modified":  {
+                         "value":  "\/Date(1754514025596)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\bin\\Debug\\net8.0\\BlazorShell.ModuleSDK.dll",
+        "Name":  "BlazorShell.ModuleSDK.dll",
+        "SizeBytes":  10752,
+        "Modified":  {
+                         "value":  "\/Date(1754514025572)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\bin\\Debug\\net8.0\\BlazorShell.ModuleSDK.pdb",
+        "Name":  "BlazorShell.ModuleSDK.pdb",
+        "SizeBytes":  16168,
+        "Modified":  {
+                         "value":  "\/Date(1754514025570)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\BlazorShell.ModuleSDK.csproj.nuget.dgspec.json",
+        "Name":  "BlazorShell.ModuleSDK.csproj.nuget.dgspec.json",
+        "SizeBytes":  9673,
+        "Modified":  {
+                         "value":  "\/Date(1754514899553)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:14:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\BlazorShell.ModuleSDK.csproj.nuget.g.props",
+        "Name":  "BlazorShell.ModuleSDK.csproj.nuget.g.props",
+        "SizeBytes":  1678,
+        "Modified":  {
+                         "value":  "\/Date(1754512670984)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 22:37:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\BlazorShell.ModuleSDK.csproj.nuget.g.targets",
+        "Name":  "BlazorShell.ModuleSDK.csproj.nuget.g.targets",
+        "SizeBytes":  1547,
+        "Modified":  {
+                         "value":  "\/Date(1754512670984)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 22:37:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\project.assets.json",
+        "Name":  "project.assets.json",
+        "SizeBytes":  99215,
+        "Modified":  {
+                         "value":  "\/Date(1754512670984)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 22:37:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\project.nuget.cache",
+        "Name":  "project.nuget.cache",
+        "SizeBytes":  7966,
+        "Modified":  {
+                         "value":  "\/Date(1754514899538)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:14:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+        "Name":  ".NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+        "SizeBytes":  198,
+        "Modified":  {
+                         "value":  "\/Date(1754509446665)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:44:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorSh.FA5499E8.Up2Date",
+        "Name":  "BlazorSh.FA5499E8.Up2Date",
+        "SizeBytes":  0,
+        "Modified":  {
+                         "value":  "\/Date(1754514025578)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.AssemblyInfo.cs",
+        "Name":  "BlazorShell.ModuleSDK.AssemblyInfo.cs",
+        "SizeBytes":  1077,
+        "Modified":  {
+                         "value":  "\/Date(1754514025467)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.AssemblyInfoInputs.cache",
+        "Name":  "BlazorShell.ModuleSDK.AssemblyInfoInputs.cache",
+        "SizeBytes":  66,
+        "Modified":  {
+                         "value":  "\/Date(1754514025465)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.assets.cache",
+        "Name":  "BlazorShell.ModuleSDK.assets.cache",
+        "SizeBytes":  36922,
+        "Modified":  {
+                         "value":  "\/Date(1754513973354)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 22:59:33"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.csproj.AssemblyReference.cache",
+        "Name":  "BlazorShell.ModuleSDK.csproj.AssemblyReference.cache",
+        "SizeBytes":  31975,
+        "Modified":  {
+                         "value":  "\/Date(1754514025443)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.csproj.CoreCompileInputs.cache",
+        "Name":  "BlazorShell.ModuleSDK.csproj.CoreCompileInputs.cache",
+        "SizeBytes":  66,
+        "Modified":  {
+                         "value":  "\/Date(1754514025468)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.csproj.FileListAbsolute.txt",
+        "Name":  "BlazorShell.ModuleSDK.csproj.FileListAbsolute.txt",
+        "SizeBytes":  2060,
+        "Modified":  {
+                         "value":  "\/Date(1754514025602)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.dll",
+        "Name":  "BlazorShell.ModuleSDK.dll",
+        "SizeBytes":  10752,
+        "Modified":  {
+                         "value":  "\/Date(1754514025572)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.GeneratedMSBuildEditorConfig.editorconfig",
+        "Name":  "BlazorShell.ModuleSDK.GeneratedMSBuildEditorConfig.editorconfig",
+        "SizeBytes":  714,
+        "Modified":  {
+                         "value":  "\/Date(1754514025462)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.GlobalUsings.g.cs",
+        "Name":  "BlazorShell.ModuleSDK.GlobalUsings.g.cs",
+        "SizeBytes":  295,
+        "Modified":  {
+                         "value":  "\/Date(1754509446589)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:44:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.pdb",
+        "Name":  "BlazorShell.ModuleSDK.pdb",
+        "SizeBytes":  16168,
+        "Modified":  {
+                         "value":  "\/Date(1754514025570)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\BlazorShell.ModuleSDK.sourcelink.json",
+        "Name":  "BlazorShell.ModuleSDK.sourcelink.json",
+        "SizeBytes":  151,
+        "Modified":  {
+                         "value":  "\/Date(1754514025473)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\ref\\BlazorShell.ModuleSDK.dll",
+        "Name":  "BlazorShell.ModuleSDK.dll",
+        "SizeBytes":  7680,
+        "Modified":  {
+                         "value":  "\/Date(1754514025572)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\4_ModuleSDK\\BlazorShell.ModuleSDK\\obj\\Debug\\net8.0\\refint\\BlazorShell.ModuleSDK.dll",
+        "Name":  "BlazorShell.ModuleSDK.dll",
+        "SizeBytes":  7680,
+        "Modified":  {
+                         "value":  "\/Date(1754514025572)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 23:00:25"
+                     }
+    }
+]

@@ -1,0 +1,392 @@
+[
+    {
+        "Action":  "CreateProject",
+        "Target":  "BlazorShell.Application",
+        "Details":  "Type: classlib",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776563)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "CreateProject",
+        "Target":  "BlazorShell.Domain",
+        "Details":  "Type: classlib",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776563)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "CreateProject",
+        "Target":  "BlazorShell.Infrastructure",
+        "Details":  "Type: classlib",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776563)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "CreateProject",
+        "Target":  "BlazorShell.ModuleSystem",
+        "Details":  "Type: classlib",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776563)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "CreateProject",
+        "Target":  "BlazorShell.Web",
+        "Details":  "Type: webapp",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776573)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "CreateProject",
+        "Target":  "BlazorShell.SharedUI",
+        "Details":  "Type: razorlib",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776573)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "CreateProject",
+        "Target":  "BlazorShell.ModuleSDK",
+        "Details":  "Type: classlib",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776573)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "CreateProject",
+        "Target":  "BlazorShell.Modules.Dashboard",
+        "Details":  "Type: razorlib",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776573)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "CreateProject",
+        "Target":  "BlazorShell.Modules.Admin",
+        "Details":  "Type: razorlib",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776573)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "LazyModuleLoader.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleHotReloadService.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleLoader.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleMetadataCache.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModulePerformanceMonitor.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleRegistry.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleReloadCoordinator.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleRouteProvider.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleServiceManager.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleServiceProvider.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleTemplateGenerator.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.ModuleSystem\\Services",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ApplicationDbContext.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776590)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleFallbackMiddleware.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "SecurityServices.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "DynamicRouteService.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "LazyModuleLoader.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleHotReloadService.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleLoader.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleMetadataCache.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModulePerformanceMonitor.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleRegistry.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleReloadCoordinator.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleRouteProvider.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleServiceManager.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleServiceProvider.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "ModuleTemplateGenerator.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "PluginAssemblyLoader.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "Services.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\2_Infrastructure\\BlazorShell.Infrastructure",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "Interfaces.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\1_Core\\BlazorShell.Application\\Interfaces",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    },
+    {
+        "Action":  "MoveFile",
+        "Target":  "Entities.cs",
+        "Details":  "To: D:\\temp\\_myProj\\BlazorShell\\1_Core\\BlazorShell.Domain\\Entities",
+        "Timestamp":  {
+                          "value":  "\/Date(1754507776605)\/",
+                          "DisplayHint":  2,
+                          "DateTime":  "Wednesday, August 6, 2025 21:16:16"
+                      }
+    }
+]

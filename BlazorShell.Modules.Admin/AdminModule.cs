@@ -1,10 +1,10 @@
 ﻿// BlazorShell.Modules.Admin/AdminModule.cs
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using BlazorShell.Modules.Admin.Services;
+using BlazorShell.Domain.Entities;
+using BlazorShell.Application.Interfaces;
 
 namespace BlazorShell.Modules.Admin
 {

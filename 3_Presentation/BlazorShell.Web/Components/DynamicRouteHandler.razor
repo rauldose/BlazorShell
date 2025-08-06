@@ -1,0 +1,136 @@
+﻿@* Components/DynamicRouteHandler.razor *@
+@using BlazorShell.Application.Interfaces
+@using BlazorShell.Infrastructure.Services
+@using BlazorShell.ModuleSystem.Services
+
+@inject NavigationManager Navigation
+@inject IServiceProvider ServiceProvider
+@inject ILogger<DynamicRouteHandler> Logger
+
+@if (_componentType != null)
+{
+    <DynamicComponent Type="_componentType" Parameters="_routeParameters" />
+}
+else if (_isSearching)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">Loading page...</p>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Page Not Found</h4>
+        <p>The requested page could not be found: <code>@_currentPath</code></p>
+        <hr>
+        <p class="mb-0">
+            <a href="/" class="btn btn-primary">
+                <i class="bi bi-house"></i> Go Home
+            </a>
+            <button class="btn btn-secondary ms-2" @onclick="RetryLoad">
+                <i class="bi bi-arrow-clockwise"></i> Retry
+            </button>
+        </p>
+    </div>
+}
+
+@code {
+    private Type? _componentType;
+    private IDictionary<string, object>? _routeParameters;
+    private string _currentPath = string.Empty;
+    private bool _isSearching = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SearchForRoute();
+    }
+
+    private async Task SearchForRoute()
+    {
+        _isSearching = true;
+        _currentPath = Navigation.ToBaseRelativePath(Navigation.Uri);
+
+        try
+        {
+            // Small delay to show loading state
+            await Task.Delay(100);
+
+            // Try to get the dynamic route service
+            var dynamicRouteService = ServiceProvider.GetService<IDynamicRouteService>();
+            if (dynamicRouteService == null)
+            {
+                Logger.LogWarning("DynamicRouteService not available");
+                _componentType = null;
+            }
+            else
+            {
+                var routeInfo = dynamicRouteService.FindRoute(_currentPath);
+
+                if (routeInfo != null)
+                {
+                    _componentType = routeInfo.ComponentType;
+                    _routeParameters = ExtractRouteParameters(_currentPath, routeInfo.Template);
+                    Logger.LogInformation("Found dynamic route {Path} -> {Component} from module {Module}",
+                        _currentPath, routeInfo.ComponentType.Name, routeInfo.ModuleName);
+                }
+                else
+                {
+                    Logger.LogWarning("No route found for path: {Path}", _currentPath);
+                    _componentType = null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error searching for route: {Path}", _currentPath);
+            _componentType = null;
+        }
+        finally
+        {
+            _isSearching = false;
+        }
+    }
+
+    private async Task RetryLoad()
+    {
+        // Try to initialize modules if they're not loaded
+        var moduleLoader = ServiceProvider.GetService<IModuleLoader>();
+        if (moduleLoader != null)
+        {
+            await moduleLoader.InitializeModulesAsync();
+        }
+
+        // Retry the route search
+        await SearchForRoute();
+    }
+
+    private IDictionary<string, object> ExtractRouteParameters(string path, string template)
+    {
+        var parameters = new Dictionary<string, object>();
+
+        var pathSegments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var templateSegments = template.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+        for (int i = 0; i < templateSegments.Length && i < pathSegments.Length; i++)
+        {
+            var templateSegment = templateSegments[i];
+
+            if (templateSegment.StartsWith('{') && templateSegment.EndsWith('}'))
+            {
+                var paramName = templateSegment.Trim('{', '}');
+
+                // Remove any constraints (e.g., {id:int})
+                var colonIndex = paramName.IndexOf(':');
+                if (colonIndex > 0)
+                {
+                    paramName = paramName.Substring(0, colonIndex);
+                }
+
+                parameters[paramName] = pathSegments[i];
+            }
+        }
+
+        return parameters;
+    }
+}

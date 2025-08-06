@@ -1,9 +1,9 @@
 ﻿@* BlazorShell.Modules.Admin/Pages/RoleManagement.razor *@
 @page "/admin/roles"
 @using BlazorShell.Core.Components
+@using BlazorShell.Domain.Entities
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
-@using BlazorShell.Core.Entities
 @using Microsoft.JSInterop
 @inherits ModuleComponentBase
 @attribute [Authorize(Roles = "Administrator")]

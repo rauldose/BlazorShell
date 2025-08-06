@@ -1,0 +1,605 @@
+﻿[
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\AdminModule.cs",
+        "Name":  "AdminModule.cs",
+        "SizeBytes":  6480,
+        "Modified":  {
+                         "value":  "\/Date(1754493423031)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 17:17:03"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\BlazorShell.Modules.Admin.csproj",
+        "Name":  "BlazorShell.Modules.Admin.csproj",
+        "SizeBytes":  526,
+        "Modified":  {
+                         "value":  "\/Date(1754459961747)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:59:21"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Component1.razor",
+        "Name":  "Component1.razor",
+        "SizeBytes":  129,
+        "Modified":  {
+                         "value":  "\/Date(1754459435980)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:50:35"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Component1.razor.css",
+        "Name":  "Component1.razor.css",
+        "SizeBytes":  137,
+        "Modified":  {
+                         "value":  "\/Date(1754459435981)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:50:35"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\ExampleJsInterop.cs",
+        "Name":  "ExampleJsInterop.cs",
+        "SizeBytes":  1149,
+        "Modified":  {
+                         "value":  "\/Date(1754459435981)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:50:35"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\_Imports.razor",
+        "Name":  "_Imports.razor",
+        "SizeBytes":  47,
+        "Modified":  {
+                         "value":  "\/Date(1754459435982)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:50:35"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\appsettings.Development.json",
+        "Name":  "appsettings.Development.json",
+        "SizeBytes":  127,
+        "Modified":  {
+                         "value":  "\/Date(1754439240619)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 02:14:00"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\appsettings.json",
+        "Name":  "appsettings.json",
+        "SizeBytes":  601,
+        "Modified":  {
+                         "value":  "\/Date(1754494326298)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 17:32:06"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.deps.json",
+        "Name":  "BlazorShell.deps.json",
+        "SizeBytes":  144756,
+        "Modified":  {
+                         "value":  "\/Date(1754507038135)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.dll",
+        "Name":  "BlazorShell.dll",
+        "SizeBytes":  506880,
+        "Modified":  {
+                         "value":  "\/Date(1754508170153)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.exe",
+        "Name":  "BlazorShell.exe",
+        "SizeBytes":  138752,
+        "Modified":  {
+                         "value":  "\/Date(1754508170231)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.Modules.Admin.deps.json",
+        "Name":  "BlazorShell.Modules.Admin.deps.json",
+        "SizeBytes":  146000,
+        "Modified":  {
+                         "value":  "\/Date(1754507039928)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.Modules.Admin.dll",
+        "Name":  "BlazorShell.Modules.Admin.dll",
+        "SizeBytes":  218624,
+        "Modified":  {
+                         "value":  "\/Date(1754508172153)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.Modules.Admin.pdb",
+        "Name":  "BlazorShell.Modules.Admin.pdb",
+        "SizeBytes":  113740,
+        "Modified":  {
+                         "value":  "\/Date(1754508172137)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.Modules.Admin.staticwebassets.endpoints.json",
+        "Name":  "BlazorShell.Modules.Admin.staticwebassets.endpoints.json",
+        "SizeBytes":  21678,
+        "Modified":  {
+                         "value":  "\/Date(1754507039849)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.Modules.Admin.staticwebassets.runtime.json",
+        "Name":  "BlazorShell.Modules.Admin.staticwebassets.runtime.json",
+        "SizeBytes":  1868,
+        "Modified":  {
+                         "value":  "\/Date(1754507039849)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.pdb",
+        "Name":  "BlazorShell.pdb",
+        "SizeBytes":  257724,
+        "Modified":  {
+                         "value":  "\/Date(1754508170104)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.runtimeconfig.json",
+        "Name":  "BlazorShell.runtimeconfig.json",
+        "SizeBytes":  485,
+        "Modified":  {
+                         "value":  "\/Date(1754507038135)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:58"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.staticwebassets.endpoints.json",
+        "Name":  "BlazorShell.staticwebassets.endpoints.json",
+        "SizeBytes":  73281,
+        "Modified":  {
+                         "value":  "\/Date(1754507037891)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\BlazorShell.staticwebassets.runtime.json",
+        "Name":  "BlazorShell.staticwebassets.runtime.json",
+        "SizeBytes":  10654,
+        "Modified":  {
+                         "value":  "\/Date(1754507037891)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:57"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\bin\\Debug\\net8.0\\modules.json",
+        "Name":  "modules.json",
+        "SizeBytes":  1385,
+        "Modified":  {
+                         "value":  "\/Date(1754460002759)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 08:00:02"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\BlazorShell.Modules.Admin.csproj.nuget.dgspec.json",
+        "Name":  "BlazorShell.Modules.Admin.csproj.nuget.dgspec.json",
+        "SizeBytes":  7285,
+        "Modified":  {
+                         "value":  "\/Date(1754507035955)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:55"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\BlazorShell.Modules.Admin.csproj.nuget.g.props",
+        "Name":  "BlazorShell.Modules.Admin.csproj.nuget.g.props",
+        "SizeBytes":  2507,
+        "Modified":  {
+                         "value":  "\/Date(1754459470386)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:51:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\BlazorShell.Modules.Admin.csproj.nuget.g.targets",
+        "Name":  "BlazorShell.Modules.Admin.csproj.nuget.g.targets",
+        "SizeBytes":  2241,
+        "Modified":  {
+                         "value":  "\/Date(1754459470386)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:51:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\project.assets.json",
+        "Name":  "project.assets.json",
+        "SizeBytes":  418912,
+        "Modified":  {
+                         "value":  "\/Date(1754459470402)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:51:10"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\project.nuget.cache",
+        "Name":  "project.nuget.cache",
+        "SizeBytes":  24582,
+        "Modified":  {
+                         "value":  "\/Date(1754507035955)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:55"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+        "Name":  ".NETCoreApp,Version=v8.0.AssemblyAttributes.cs",
+        "SizeBytes":  198,
+        "Modified":  {
+                         "value":  "\/Date(1754459436565)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:50:36"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorSh.A7462E01.Up2Date",
+        "Name":  "BlazorSh.A7462E01.Up2Date",
+        "SizeBytes":  0,
+        "Modified":  {
+                         "value":  "\/Date(1754508172279)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.AssemblyInfo.cs",
+        "Name":  "BlazorShell.Modules.Admin.AssemblyInfo.cs",
+        "SizeBytes":  1049,
+        "Modified":  {
+                         "value":  "\/Date(1754508170810)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.AssemblyInfoInputs.cache",
+        "Name":  "BlazorShell.Modules.Admin.AssemblyInfoInputs.cache",
+        "SizeBytes":  66,
+        "Modified":  {
+                         "value":  "\/Date(1754508170810)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.assets.cache",
+        "Name":  "BlazorShell.Modules.Admin.assets.cache",
+        "SizeBytes":  126720,
+        "Modified":  {
+                         "value":  "\/Date(1754459471900)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:51:11"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.csproj.AssemblyReference.cache",
+        "Name":  "BlazorShell.Modules.Admin.csproj.AssemblyReference.cache",
+        "SizeBytes":  68926,
+        "Modified":  {
+                         "value":  "\/Date(1754508170654)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.csproj.CoreCompileInputs.cache",
+        "Name":  "BlazorShell.Modules.Admin.csproj.CoreCompileInputs.cache",
+        "SizeBytes":  66,
+        "Modified":  {
+                         "value":  "\/Date(1754507039066)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.csproj.FileListAbsolute.txt",
+        "Name":  "BlazorShell.Modules.Admin.csproj.FileListAbsolute.txt",
+        "SizeBytes":  4346,
+        "Modified":  {
+                         "value":  "\/Date(1754508172293)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.dll",
+        "Name":  "BlazorShell.Modules.Admin.dll",
+        "SizeBytes":  218624,
+        "Modified":  {
+                         "value":  "\/Date(1754508172153)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.GeneratedMSBuildEditorConfig.editorconfig",
+        "Name":  "BlazorShell.Modules.Admin.GeneratedMSBuildEditorConfig.editorconfig",
+        "SizeBytes":  3315,
+        "Modified":  {
+                         "value":  "\/Date(1754507039040)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.GlobalUsings.g.cs",
+        "Name":  "BlazorShell.Modules.Admin.GlobalUsings.g.cs",
+        "SizeBytes":  295,
+        "Modified":  {
+                         "value":  "\/Date(1754459436522)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:50:36"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.pdb",
+        "Name":  "BlazorShell.Modules.Admin.pdb",
+        "SizeBytes":  113740,
+        "Modified":  {
+                         "value":  "\/Date(1754508172137)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\BlazorShell.Modules.Admin.sourcelink.json",
+        "Name":  "BlazorShell.Modules.Admin.sourcelink.json",
+        "SizeBytes":  151,
+        "Modified":  {
+                         "value":  "\/Date(1754508170841)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:50"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets.build.endpoints.json",
+        "Name":  "staticwebassets.build.endpoints.json",
+        "SizeBytes":  21678,
+        "Modified":  {
+                         "value":  "\/Date(1754507039849)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets.build.json",
+        "Name":  "staticwebassets.build.json",
+        "SizeBytes":  37017,
+        "Modified":  {
+                         "value":  "\/Date(1754507039849)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets.development.json",
+        "Name":  "staticwebassets.development.json",
+        "SizeBytes":  1868,
+        "Modified":  {
+                         "value":  "\/Date(1754507039849)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets.pack.json",
+        "Name":  "staticwebassets.pack.json",
+        "SizeBytes":  1702,
+        "Modified":  {
+                         "value":  "\/Date(1754507039865)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets.references.upToDateCheck.txt",
+        "Name":  "staticwebassets.references.upToDateCheck.txt",
+        "SizeBytes":  1360,
+        "Modified":  {
+                         "value":  "\/Date(1754507039833)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets.removed.txt",
+        "Name":  "staticwebassets.removed.txt",
+        "SizeBytes":  0,
+        "Modified":  {
+                         "value":  "\/Date(1754459436600)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:50:36"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\ref\\BlazorShell.Modules.Admin.dll",
+        "Name":  "BlazorShell.Modules.Admin.dll",
+        "SizeBytes":  37888,
+        "Modified":  {
+                         "value":  "\/Date(1754508172153)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\refint\\BlazorShell.Modules.Admin.dll",
+        "Name":  "BlazorShell.Modules.Admin.dll",
+        "SizeBytes":  37888,
+        "Modified":  {
+                         "value":  "\/Date(1754508172153)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:22:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\scopedcss\\Component1.razor.rz.scp.css",
+        "Name":  "Component1.razor.rz.scp.css",
+        "SizeBytes":  148,
+        "Modified":  {
+                         "value":  "\/Date(1754507039833)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\scopedcss\\bundle\\BlazorShell.Modules.Admin.styles.css",
+        "Name":  "BlazorShell.Modules.Admin.styles.css",
+        "SizeBytes":  291,
+        "Modified":  {
+                         "value":  "\/Date(1754507039833)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\BlazorShell.Modules.Admin.bundle.scp.css",
+        "Name":  "BlazorShell.Modules.Admin.bundle.scp.css",
+        "SizeBytes":  218,
+        "Modified":  {
+                         "value":  "\/Date(1754507039849)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.BlazorShell.Modules.Admin.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+        "Name":  "msbuild.BlazorShell.Modules.Admin.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+        "SizeBytes":  5622,
+        "Modified":  {
+                         "value":  "\/Date(1754507039865)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.BlazorShell.Modules.Admin.Microsoft.AspNetCore.StaticWebAssets.props",
+        "Name":  "msbuild.BlazorShell.Modules.Admin.Microsoft.AspNetCore.StaticWebAssets.props",
+        "SizeBytes":  3389,
+        "Modified":  {
+                         "value":  "\/Date(1754507039865)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.BlazorShell.Modules.Admin.props",
+        "Name":  "msbuild.build.BlazorShell.Modules.Admin.props",
+        "SizeBytes":  166,
+        "Modified":  {
+                         "value":  "\/Date(1754507039865)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.BlazorShell.Modules.Admin.props",
+        "Name":  "msbuild.buildMultiTargeting.BlazorShell.Modules.Admin.props",
+        "SizeBytes":  89,
+        "Modified":  {
+                         "value":  "\/Date(1754507039865)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.BlazorShell.Modules.Admin.props",
+        "Name":  "msbuild.buildTransitive.BlazorShell.Modules.Admin.props",
+        "SizeBytes":  103,
+        "Modified":  {
+                         "value":  "\/Date(1754507039865)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:59"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Pages\\AdminDashboard.razor",
+        "Name":  "AdminDashboard.razor",
+        "SizeBytes":  7945,
+        "Modified":  {
+                         "value":  "\/Date(1754459959244)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:59:19"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Pages\\AuditLogs.razor",
+        "Name":  "AuditLogs.razor",
+        "SizeBytes":  10182,
+        "Modified":  {
+                         "value":  "\/Date(1754461815921)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 08:30:15"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Pages\\ModuleManagement.razor",
+        "Name":  "ModuleManagement.razor",
+        "SizeBytes":  29391,
+        "Modified":  {
+                         "value":  "\/Date(1754489615615)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 16:13:35"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Pages\\ModulePerformanceDashboard.razor",
+        "Name":  "ModulePerformanceDashboard.razor",
+        "SizeBytes":  27734,
+        "Modified":  {
+                         "value":  "\/Date(1754507029269)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 21:03:49"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Pages\\RoleManagement.razor",
+        "Name":  "RoleManagement.razor",
+        "SizeBytes":  8632,
+        "Modified":  {
+                         "value":  "\/Date(1754461792010)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 08:29:52"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Pages\\Settings.razor",
+        "Name":  "Settings.razor",
+        "SizeBytes":  12119,
+        "Modified":  {
+                         "value":  "\/Date(1754462420580)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 08:40:20"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Pages\\UserManagement.razor",
+        "Name":  "UserManagement.razor",
+        "SizeBytes":  21881,
+        "Modified":  {
+                         "value":  "\/Date(1754461751936)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 08:29:11"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Services\\AuditService.cs",
+        "Name":  "AuditService.cs",
+        "SizeBytes":  4008,
+        "Modified":  {
+                         "value":  "\/Date(1754459631584)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:53:51"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Services\\ModuleManagementService.cs",
+        "Name":  "ModuleManagementService.cs",
+        "SizeBytes":  27601,
+        "Modified":  {
+                         "value":  "\/Date(1754459843522)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:57:23"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\Services\\UserManagemenService.cs",
+        "Name":  "UserManagemenService.cs",
+        "SizeBytes":  10181,
+        "Modified":  {
+                         "value":  "\/Date(1754459611344)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:53:31"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\wwwroot\\background.png",
+        "Name":  "background.png",
+        "SizeBytes":  378,
+        "Modified":  {
+                         "value":  "\/Date(1754459435984)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:50:35"
+                     }
+    },
+    {
+        "Path":  "D:\\temp\\_myProj\\BlazorShell\\BlazorShell.Modules.Admin\\wwwroot\\exampleJsInterop.js",
+        "Name":  "exampleJsInterop.js",
+        "SizeBytes":  247,
+        "Modified":  {
+                         "value":  "\/Date(1754459435984)\/",
+                         "DateTime":  "Wednesday, August 6, 2025 07:50:35"
+                     }
+    }
+]

@@ -1,0 +1,244 @@
+﻿@* Components/Routes.razor *@
+@using System.Reflection
+@using BlazorShell.Application.Interfaces
+@using BlazorShell.Infrastructure.Services
+@using BlazorShell.ModuleSystem.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@implements IDisposable
+@inject IModuleRegistry ModuleRegistry
+@inject IDynamicRouteService DynamicRouteService
+@inject NavigationManager NavigationManager
+@inject IModuleLoader ModuleLoader
+@inject ILogger<Routes> Logger
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<CascadingValue Value="DynamicRouteService">
+    <Router AppAssembly="typeof(Program).Assembly" 
+            AdditionalAssemblies="@_additionalAssemblies"
+            OnNavigateAsync="OnNavigateAsync">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    @if (context.User.Identity?.IsAuthenticated == false)
+                    {
+                        @* Only redirect if not already on login/register pages *@
+                        @if (!IsAuthenticationPage())
+                        {
+                            <RedirectToLogin />
+                        }
+                        else
+                        {
+                            @* Show the content if we're on an auth page *@
+                            <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">Access Denied</h4>
+                            <p>You are not authorized to access this resource.</p>
+                            <hr>
+                            <a href="/" class="btn btn-primary">Go Home</a>
+                        </div>
+                    }
+                </NotAuthorized>
+                <Authorizing>
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2">Checking authorization...</p>
+                    </div>
+                </Authorizing>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="typeof(Layout.MainLayout)">
+                <DynamicRouteHandler />
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingValue>
+
+@code {
+    private static List<Assembly>? _staticAdditionalAssemblies;
+    private static bool _staticIsInitialized = false;
+    private static readonly object _initLock = new object();
+    
+    private List<Assembly> _additionalAssemblies = new();
+    private bool _disposed = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // FIX: Use static initialization to prevent re-initialization loops
+        // This is especially important when the component is rendered in static SSR mode
+        lock (_initLock)
+        {
+            if (_staticIsInitialized && _staticAdditionalAssemblies != null)
+            {
+                _additionalAssemblies = _staticAdditionalAssemblies;
+                Logger.LogDebug("Using cached module assemblies ({Count} assemblies)", _additionalAssemblies.Count);
+                return;
+            }
+        }
+
+        try
+        {
+            Logger.LogInformation("Routes component initializing (first time)");
+            
+            // Ensure modules are loaded first
+            await ModuleLoader.InitializeModulesAsync();
+            
+            // Load module assemblies
+            await LoadModuleAssemblies();
+            
+            // Cache the assemblies statically
+            lock (_initLock)
+            {
+                _staticAdditionalAssemblies = _additionalAssemblies;
+                _staticIsInitialized = true;
+            }
+            
+            // Subscribe to changes only if we're in InteractiveServer mode
+            // Static SSR doesn't need these subscriptions
+            if (!IsStaticRendering())
+            {
+                if (ModuleRegistry != null)
+                {
+                    ModuleRegistry.ModuleRegistered += OnModuleRegistered;
+                    ModuleRegistry.ModuleUnregistered += OnModuleUnregistered;
+                }
+                
+                if (DynamicRouteService != null)
+                {
+                    DynamicRouteService.RoutesChanged += OnRoutesChanged;
+                }
+            }
+            
+            Logger.LogInformation("Routes component initialized with {Count} additional assemblies", _additionalAssemblies.Count);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error initializing Routes component");
+        }
+    }
+
+    private bool IsStaticRendering()
+    {
+        // Check if we're on an Account page (which uses static rendering)
+        var uri = NavigationManager.Uri.ToLower();
+        return uri.Contains("/account/");
+    }
+
+    private bool IsAuthenticationPage()
+    {
+        var uri = NavigationManager.Uri.ToLower();
+        return uri.Contains("/account/login") || 
+               uri.Contains("/account/register") || 
+               uri.Contains("/account/logout") ||
+               uri.Contains("/account/forgotpassword") ||
+               uri.Contains("/account/resetpassword") ||
+               uri.Contains("/account/confirmemail") ||
+               uri.Contains("/account/externallogin") ||
+               uri.Contains("/account/lockout") ||
+               uri.Contains("/account/loginwith2fa") ||
+               uri.Contains("/account/loginwithrecoverycode");
+    }
+
+    private async Task LoadModuleAssemblies()
+    {
+        try
+        {
+            var modules = ModuleRegistry?.GetModules() ?? Enumerable.Empty<IModule>();
+            
+            foreach (var module in modules)
+            {
+                var assembly = module.GetType().Assembly;
+                if (!_additionalAssemblies.Contains(assembly))
+                {
+                    _additionalAssemblies.Add(assembly);
+                    Logger.LogInformation("Added module assembly: {AssemblyName}", assembly.FullName);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading module assemblies");
+        }
+    }
+
+    private async Task OnNavigateAsync(NavigationContext context)
+    {
+        // Handle navigation events if needed
+        Logger.LogDebug("Navigating to: {Path}", context.Path);
+    }
+
+    private void OnModuleRegistered(object? sender, ModuleEventArgs e)
+    {
+        if (_disposed) return;
+        
+        var assembly = e.Module.GetType().Assembly;
+        if (!_additionalAssemblies.Contains(assembly))
+        {
+            _additionalAssemblies.Add(assembly);
+            
+            // Update static cache
+            lock (_initLock)
+            {
+                if (_staticAdditionalAssemblies != null && !_staticAdditionalAssemblies.Contains(assembly))
+                {
+                    _staticAdditionalAssemblies.Add(assembly);
+                }
+            }
+            
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnModuleUnregistered(object? sender, ModuleEventArgs e)
+    {
+        if (_disposed) return;
+        
+        var assembly = e.Module.GetType().Assembly;
+        if (_additionalAssemblies.Contains(assembly))
+        {
+            _additionalAssemblies.Remove(assembly);
+            
+            // Update static cache
+            lock (_initLock)
+            {
+                _staticAdditionalAssemblies?.Remove(assembly);
+            }
+            
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnRoutesChanged(object? sender, RouteChangedEventArgs e)
+    {
+        if (_disposed) return;
+        
+        Logger.LogDebug("Routes changed for module: {ModuleName}", e.ModuleName);
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+        
+        // Only unsubscribe if we're in interactive mode
+        if (!IsStaticRendering())
+        {
+            if (ModuleRegistry != null)
+            {
+                ModuleRegistry.ModuleRegistered -= OnModuleRegistered;
+                ModuleRegistry.ModuleUnregistered -= OnModuleUnregistered;
+            }
+            
+            if (DynamicRouteService != null)
+            {
+                DynamicRouteService.RoutesChanged -= OnRoutesChanged;
+            }
+        }
+    }
+}

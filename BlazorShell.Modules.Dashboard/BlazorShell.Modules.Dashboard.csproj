@@ -20,7 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlazorShell\BlazorShell.csproj" />
+    <ProjectReference Include="..\1_Core\BlazorShell.Application\BlazorShell.Application.csproj" />
+    <ProjectReference Include="..\1_Core\BlazorShell.Domain\BlazorShell.Domain.csproj" />
+    <ProjectReference Include="..\2_Infrastructure\BlazorShell.Infrastructure\BlazorShell.Infrastructure.csproj" />
+    <ProjectReference Include="..\3_Presentation\BlazorShell.SharedUI\BlazorShell.SharedUI.csproj" />
   </ItemGroup>
 
 </Project>

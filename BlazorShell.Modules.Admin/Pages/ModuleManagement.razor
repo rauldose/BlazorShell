@@ -384,6 +384,11 @@
     private bool _showConfigDialog = false;
     private bool _isUploading = false;
     private int _uploadProgress = 0;
+    private bool _serviceError = false;
+
+    // Add retry mechanism
+    private int _retryCount = 0;
+    private const int MaxRetries = 3;
 
     private string _searchTerm = string.Empty;
     private string _filterCategory = string.Empty;
@@ -423,6 +428,59 @@
 
             return filtered;
         }
+    }
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        await InitializeServices();
+    }
+    private async Task InitializeServices()
+    {
+        try
+        {
+            _serviceError = false;
+
+            // Try to get the service with retry logic
+            for (int i = 0; i <= MaxRetries; i++)
+            {
+                ModuleManagementService = GetService<IModuleManagementService>();
+                Logger = GetService<ILogger<ModuleManagement>>();
+
+                if (ModuleManagementService != null)
+                {
+                    Logger?.LogInformation("Module Management Service successfully initialized");
+                    break;
+                }
+
+                if (i < MaxRetries)
+                {
+                    Logger?.LogWarning("Module Management Service not available, retry {Retry} of {MaxRetries}", i + 1, MaxRetries);
+                    await Task.Delay(500 * (i + 1)); // Progressive delay
+                }
+            }
+
+            if (ModuleManagementService == null)
+            {
+                Logger?.LogError("Module Management Service is not available after {MaxRetries} retries", MaxRetries);
+                _serviceError = true;
+                return;
+            }
+
+            await LoadModules();
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Error initializing Module Management component");
+            _serviceError = true;
+        }
+    }
+
+    private async Task RetryInitialization()
+    {
+        _retryCount++;
+        StateHasChanged(); // Show loading state
+        await InitializeServices();
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()

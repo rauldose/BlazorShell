@@ -1,4 +1,4 @@
-﻿// Infrastructure/Services/ModuleServiceProvider.cs
+﻿// Infrastructure/Services/ImprovedModuleServiceProvider.cs
 using Microsoft.Extensions.DependencyInjection;
 using BlazorShell.Core.Interfaces;
 using System.Collections.Concurrent;
@@ -8,6 +8,7 @@ using BlazorShell.Core.Entities;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Microsoft.Extensions.Logging;
 
 namespace BlazorShell.Infrastructure.Services
 {
@@ -18,15 +19,19 @@ namespace BlazorShell.Infrastructure.Services
         T? GetService<T>() where T : class;
         object? GetService(Type serviceType);
         IServiceProvider GetModuleServiceProvider(string moduleName);
+        bool IsModuleRegistered(string moduleName);
+        void RefreshModuleServices(string moduleName, IServiceModule module);
+        IEnumerable<string> GetRegisteredModules();
     }
 
     public class ModuleServiceProvider : IModuleServiceProvider
     {
-        private readonly ConcurrentDictionary<string, IServiceProvider> _moduleProviders = new();
+        private readonly ConcurrentDictionary<string, ModuleServiceContainer> _moduleContainers = new();
         private readonly ConcurrentDictionary<Type, string> _serviceToModule = new();
         private readonly IServiceProvider _rootProvider;
         private readonly IServiceCollection _rootServices;
         private readonly ILogger<ModuleServiceProvider> _logger;
+        private readonly object _registrationLock = new object();
 
         public ModuleServiceProvider(
             IServiceProvider rootProvider,
@@ -40,54 +45,149 @@ namespace BlazorShell.Infrastructure.Services
 
         public void RegisterModuleServices(string moduleName, IServiceModule module)
         {
-            try
+            lock (_registrationLock)
             {
-                // Create a new service collection for the module
-                var moduleServices = new ServiceCollection();
-
-                // IMPORTANT: Add all core services that modules might need
-                // These services come from the root container
-                AddCoreServicesToModule(moduleServices);
-
-                // Let the module register its own services
-                module.RegisterServices(moduleServices);
-
-                // Build the service provider for this module
-                var moduleProvider = moduleServices.BuildServiceProvider();
-                _moduleProviders[moduleName] = moduleProvider;
-
-                // Track which services belong to which module
-                foreach (var descriptor in moduleServices)
+                try
                 {
-                    if (descriptor.ServiceType != null && !IsCoreService(descriptor.ServiceType))
-                    {
-                        _serviceToModule[descriptor.ServiceType] = moduleName;
-                    }
-                }
+                    _logger.LogInformation("Registering services for module {Module}", moduleName);
 
-                _logger.LogInformation("Registered {Count} services for module {Module}",
-                    moduleServices.Count, moduleName);
+                    // Check if module is already registered
+                    if (_moduleContainers.ContainsKey(moduleName))
+                    {
+                        _logger.LogWarning("Module {Module} is already registered. Refreshing services.", moduleName);
+                        RefreshModuleServices(moduleName, module);
+                        return;
+                    }
+
+                    // Create a new service collection for the module
+                    var moduleServices = new ServiceCollection();
+
+                    // Add all core services that modules might need
+                    AddCoreServicesToModule(moduleServices);
+
+                    // Let the module register its own services
+                    module.RegisterServices(moduleServices);
+
+                    // Build the service provider for this module
+                    var moduleProvider = moduleServices.BuildServiceProvider();
+
+                    // Store the container
+                    var container = new ModuleServiceContainer
+                    {
+                        ServiceProvider = moduleProvider,
+                        ServiceCollection = moduleServices,
+                        RegisteredTypes = new HashSet<Type>()
+                    };
+
+                    // Track which services belong to which module
+                    foreach (var descriptor in moduleServices)
+                    {
+                        if (descriptor.ServiceType != null && !IsCoreService(descriptor.ServiceType))
+                        {
+                            _serviceToModule[descriptor.ServiceType] = moduleName;
+                            container.RegisteredTypes.Add(descriptor.ServiceType);
+                        }
+                    }
+
+                    _moduleContainers[moduleName] = container;
+
+                    _logger.LogInformation("Successfully registered {Count} services for module {Module}",
+                        container.RegisteredTypes.Count, moduleName);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to register services for module {Module}", moduleName);
+                    throw;
+                }
             }
-            catch (Exception ex)
+        }
+
+        public void RefreshModuleServices(string moduleName, IServiceModule module)
+        {
+            lock (_registrationLock)
             {
-                _logger.LogError(ex, "Failed to register services for module {Module}", moduleName);
+                try
+                {
+                    _logger.LogInformation("Refreshing services for module {Module}", moduleName);
+
+                    // Remove old registrations
+                    if (_moduleContainers.TryRemove(moduleName, out var oldContainer))
+                    {
+                        // Clean up old service type mappings
+                        foreach (var type in oldContainer.RegisteredTypes)
+                        {
+                            _serviceToModule.TryRemove(type, out _);
+                        }
+
+                        // Dispose old provider if disposable
+                        if (oldContainer.ServiceProvider is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
+                    }
+
+                    // Re-register the module
+                    RegisterModuleServicesInternal(moduleName, module);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to refresh services for module {Module}", moduleName);
+                }
             }
+        }
+
+        private void RegisterModuleServicesInternal(string moduleName, IServiceModule module)
+        {
+            // Create a new service collection for the module
+            var moduleServices = new ServiceCollection();
+
+            // Add all core services that modules might need
+            AddCoreServicesToModule(moduleServices);
+
+            // Let the module register its own services
+            module.RegisterServices(moduleServices);
+
+            // Build the service provider for this module
+            var moduleProvider = moduleServices.BuildServiceProvider();
+
+            // Store the container
+            var container = new ModuleServiceContainer
+            {
+                ServiceProvider = moduleProvider,
+                ServiceCollection = moduleServices,
+                RegisteredTypes = new HashSet<Type>()
+            };
+
+            // Track which services belong to which module
+            foreach (var descriptor in moduleServices)
+            {
+                if (descriptor.ServiceType != null && !IsCoreService(descriptor.ServiceType))
+                {
+                    _serviceToModule[descriptor.ServiceType] = moduleName;
+                    container.RegisteredTypes.Add(descriptor.ServiceType);
+                }
+            }
+
+            _moduleContainers[moduleName] = container;
         }
 
         private void AddCoreServicesToModule(IServiceCollection moduleServices)
         {
             // Add core framework services that modules need
-            moduleServices.AddSingleton(_rootProvider.GetRequiredService<IModuleLoader>());
-            moduleServices.AddSingleton(_rootProvider.GetRequiredService<IModuleRegistry>());
-            moduleServices.AddSingleton(_rootProvider.GetRequiredService<IPluginAssemblyLoader>());
-            moduleServices.AddSingleton(_rootProvider.GetRequiredService<IDynamicRouteService>());
-            moduleServices.AddSingleton(_rootProvider.GetRequiredService<INavigationService>());
-            moduleServices.AddSingleton(_rootProvider.GetRequiredService<IModuleAuthorizationService>());
 
-            // Add database context
+            // Use factory methods to ensure we get the current instances from root provider
+            moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<IModuleLoader>());
+            moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<IModuleRegistry>());
+            moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<IPluginAssemblyLoader>());
+            moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<IDynamicRouteService>());
+            moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<INavigationService>());
+            moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<IModuleAuthorizationService>());
+            moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<IStateContainer>());
+
+            // Add database context as scoped
             moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<ApplicationDbContext>());
 
-            // Add Identity services
+            // Add Identity services as scoped
             moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<UserManager<ApplicationUser>>());
             moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<RoleManager<ApplicationRole>>());
             moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<SignInManager<ApplicationUser>>());
@@ -100,17 +200,29 @@ namespace BlazorShell.Infrastructure.Services
             moduleServices.AddSingleton(_rootProvider.GetRequiredService<IConfiguration>());
 
             // Add HTTP context accessor
-            moduleServices.AddSingleton(_rootProvider.GetRequiredService<IHttpContextAccessor>());
+            moduleServices.AddSingleton(sp => _rootProvider.GetService<IHttpContextAccessor>());
 
-            // Add other essential services
-            if (_rootProvider.GetService<NavigationManager>() != null)
-                moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<NavigationManager>());
+            // Add Blazor services if available
+            var navigationManager = _rootProvider.GetService<NavigationManager>();
+            if (navigationManager != null)
+            {
+                moduleServices.AddScoped(sp => navigationManager);
+            }
 
-            if (_rootProvider.GetService<IJSRuntime>() != null)
-                moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<IJSRuntime>());
+            var jsRuntime = _rootProvider.GetService<IJSRuntime>();
+            if (jsRuntime != null)
+            {
+                moduleServices.AddScoped(sp => jsRuntime);
+            }
 
-            if (_rootProvider.GetService<AuthenticationStateProvider>() != null)
-                moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<AuthenticationStateProvider>());
+            var authStateProvider = _rootProvider.GetService<AuthenticationStateProvider>();
+            if (authStateProvider != null)
+            {
+                moduleServices.AddScoped(sp => authStateProvider);
+            }
+
+            // Add self reference so modules can access the module service provider
+            moduleServices.AddSingleton<IModuleServiceProvider>(this);
         }
 
         private bool IsCoreService(Type serviceType)
@@ -124,6 +236,7 @@ namespace BlazorShell.Infrastructure.Services
                 typeof(IDynamicRouteService),
                 typeof(INavigationService),
                 typeof(IModuleAuthorizationService),
+                typeof(IStateContainer),
                 typeof(ApplicationDbContext),
                 typeof(UserManager<>),
                 typeof(RoleManager<>),
@@ -131,7 +244,11 @@ namespace BlazorShell.Infrastructure.Services
                 typeof(ILogger<>),
                 typeof(ILoggerFactory),
                 typeof(IConfiguration),
-                typeof(IHttpContextAccessor)
+                typeof(IHttpContextAccessor),
+                typeof(NavigationManager),
+                typeof(IJSRuntime),
+                typeof(AuthenticationStateProvider),
+                typeof(IModuleServiceProvider)
             };
 
             return coreTypes.Any(t =>
@@ -141,20 +258,31 @@ namespace BlazorShell.Infrastructure.Services
 
         public void UnregisterModuleServices(string moduleName)
         {
-            if (_moduleProviders.TryRemove(moduleName, out var provider))
+            lock (_registrationLock)
             {
-                if (provider is IDisposable disposable)
+                try
                 {
-                    disposable.Dispose();
-                }
+                    if (_moduleContainers.TryRemove(moduleName, out var container))
+                    {
+                        // Remove service type mappings
+                        foreach (var type in container.RegisteredTypes)
+                        {
+                            _serviceToModule.TryRemove(type, out _);
+                        }
 
-                var toRemove = _serviceToModule.Where(kvp => kvp.Value == moduleName).Select(kvp => kvp.Key).ToList();
-                foreach (var type in toRemove)
+                        // Dispose the service provider
+                        if (container.ServiceProvider is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
+
+                        _logger.LogInformation("Unregistered services for module {Module}", moduleName);
+                    }
+                }
+                catch (Exception ex)
                 {
-                    _serviceToModule.TryRemove(type, out _);
+                    _logger.LogError(ex, "Error unregistering services for module {Module}", moduleName);
                 }
-
-                _logger.LogInformation("Unregistered services for module {Module}", moduleName);
             }
         }
 
@@ -165,30 +293,67 @@ namespace BlazorShell.Infrastructure.Services
 
         public object? GetService(Type serviceType)
         {
-            // First try to get from module providers
-            if (_serviceToModule.TryGetValue(serviceType, out var moduleName))
+            try
             {
-                if (_moduleProviders.TryGetValue(moduleName, out var provider))
+                // First try to get from module providers
+                if (_serviceToModule.TryGetValue(serviceType, out var moduleName))
                 {
-                    var service = provider.GetService(serviceType);
+                    if (_moduleContainers.TryGetValue(moduleName, out var container))
+                    {
+                        var service = container.ServiceProvider.GetService(serviceType);
+                        if (service != null)
+                        {
+                            return service;
+                        }
+                    }
+                }
+
+                // Try all module containers (in case service wasn't tracked)
+                foreach (var container in _moduleContainers.Values)
+                {
+                    var service = container.ServiceProvider.GetService(serviceType);
                     if (service != null)
                     {
                         return service;
                     }
                 }
-            }
 
-            // Fall back to root provider
-            return _rootProvider.GetService(serviceType);
+                // Fall back to root provider
+                return _rootProvider.GetService(serviceType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting service of type {ServiceType}", serviceType.Name);
+                return null;
+            }
         }
 
         public IServiceProvider GetModuleServiceProvider(string moduleName)
         {
-            if (_moduleProviders.TryGetValue(moduleName, out var provider))
+            if (_moduleContainers.TryGetValue(moduleName, out var container))
             {
-                return provider;
+                return container.ServiceProvider;
             }
+
+            _logger.LogWarning("Module {Module} not found, returning root provider", moduleName);
             return _rootProvider;
+        }
+
+        public bool IsModuleRegistered(string moduleName)
+        {
+            return _moduleContainers.ContainsKey(moduleName);
+        }
+
+        public IEnumerable<string> GetRegisteredModules()
+        {
+            return _moduleContainers.Keys.ToList();
+        }
+
+        private class ModuleServiceContainer
+        {
+            public IServiceProvider ServiceProvider { get; set; } = null!;
+            public IServiceCollection ServiceCollection { get; set; } = null!;
+            public HashSet<Type> RegisteredTypes { get; set; } = new();
         }
     }
 }

@@ -23,7 +23,8 @@
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
-    private IComponentRenderMode? RenderModeForPage => HttpContext.Request.Path.StartsWithSegments("/Account")
-        ? null
-        : InteractiveServer;
+    // FIX: Keep Account pages as static SSR for proper form submissions
+    // This prevents issues with authentication state changes
+    private IComponentRenderMode? RenderModeForPage =>
+        HttpContext.Request.Path.StartsWithSegments("/Account") ? null : InteractiveServer;
 }

@@ -8,49 +8,69 @@ using BlazorShell.Core.Entities;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
+using System.Collections.Concurrent;
 
 namespace BlazorShell.Infrastructure.Services
 {
-    /// <summary>
-    /// Implementation of module loader with assembly isolation
-    /// </summary>
     public class ModuleLoader : IModuleLoader
     {
         private readonly ILogger<ModuleLoader> _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IModuleRegistry _moduleRegistry;
         private readonly IPluginAssemblyLoader _assemblyLoader;
-        private readonly ApplicationDbContext _dbContext;
         private readonly ModuleRouteProvider _routeProvider;
         private readonly IModuleServiceProvider _moduleServiceProvider;
-        private readonly Dictionary<string, ModuleLoadContext> _loadContexts;
+        private readonly ConcurrentDictionary<string, ModuleLoadContext> _loadContexts;
         private readonly string _modulesPath;
         private readonly IDynamicRouteService _dynamicRouteService;
+        private readonly IModulePerformanceMonitor? _performanceMonitor;
+        private static bool _modulesInitialized = false;
+        private static readonly object _initLock = new object();
+
+        // Add metadata cache and synchronization
+        private readonly ModuleMetadataCache _metadataCache;
+        private readonly SemaphoreSlim _reloadSemaphore = new(1, 1);
+
         public ModuleLoader(
             ILogger<ModuleLoader> logger,
             IServiceProvider serviceProvider,
             IModuleRegistry moduleRegistry,
             IPluginAssemblyLoader assemblyLoader,
-            ApplicationDbContext dbContext,
             ModuleRouteProvider routeProvider,
             IModuleServiceProvider moduleServiceProvider,
             IDynamicRouteService dynamicRouteService,
-            IOptions<ModuleConfiguration> options)
+            IOptions<ModuleConfiguration> options,
+            ModuleMetadataCache metadataCache, // Inject metadata cache
+            IModulePerformanceMonitor? performanceMonitor = null)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
             _moduleRegistry = moduleRegistry;
             _assemblyLoader = assemblyLoader;
-            _dbContext = dbContext;
             _routeProvider = routeProvider;
             _moduleServiceProvider = moduleServiceProvider;
-            _loadContexts = new Dictionary<string, ModuleLoadContext>();
+            _loadContexts = new ConcurrentDictionary<string, ModuleLoadContext>();
             _dynamicRouteService = dynamicRouteService;
+            _performanceMonitor = performanceMonitor;
+            _metadataCache = metadataCache;
             _modulesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, options.Value.ModulesPath ?? "Modules");
         }
 
         public async Task InitializeModulesAsync()
         {
+            lock (_initLock)
+            {
+                // Check if modules have already been initialized in this app domain
+                if (_modulesInitialized)
+                {
+                    _logger.LogInformation("Modules already initialized, ensuring routes are registered");
+                    EnsureRoutesRegistered();
+                    return;
+                }
+                _modulesInitialized = true;
+            }
+
             try
             {
                 _logger.LogInformation("Initializing modules from configuration...");
@@ -108,61 +128,25 @@ namespace BlazorShell.Infrastructure.Services
                         {
                             _logger.LogWarning("Module assembly not found: {Path}", assemblyPath);
 
-                            // Update database to reflect module is not available
-                            var dbModule = await _dbContext.Modules
-                                .FirstOrDefaultAsync(m => m.Name == moduleConfig.Name);
-                            if (dbModule != null)
+                            // FIX: Use scoped DbContext for database operations
+                            using (var scope = _serviceProvider.CreateScope())
                             {
-                                dbModule.IsEnabled = false;
-                                await _dbContext.SaveChangesAsync();
+                                var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                                var dbModule = await scopedDbContext.Modules
+                                    .FirstOrDefaultAsync(m => m.Name == moduleConfig.Name);
+
+                                if (dbModule != null)
+                                {
+                                    dbModule.IsEnabled = false;
+                                    await scopedDbContext.SaveChangesAsync();
+                                }
                             }
+
                             continue;
                         }
 
-                        var module = await LoadModuleAsync(assemblyPath);
-                        if (module != null)
-                        {
-                            // Register module services if it implements IServiceModule
-                            if (module is IServiceModule serviceModule)
-                            {
-                                _moduleServiceProvider.RegisterModuleServices(module.Name, serviceModule);
-                                _logger.LogInformation("Registered services for module {Module}", module.Name);
-                            }
-
-                            // Initialize module
-                            var initialized = await module.InitializeAsync(_serviceProvider);
-                            if (initialized)
-                            {
-                                // Register navigation items
-                                var navItems = module.GetNavigationItems();
-                                if (navItems?.Any() == true)
-                                {
-                                    var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
-                                    navigationService.RegisterNavigationItems(navItems);
-                                    _logger.LogInformation("Registered {Count} navigation items for module {Module}",
-                                        navItems.Count(), module.Name);
-                                }
-
-                                // Register module components for routing
-                                var componentTypes = module.GetComponentTypes();
-                                if (componentTypes?.Any() == true)
-                                {
-                                    // Register routes with the route provider
-                                    _routeProvider.RegisterModuleRoutes(module.Name, componentTypes);
-                                    _logger.LogInformation("Registered {Count} components for module {Module}",
-                                        componentTypes.Count(), module.Name);
-                                }
-
-                                // Update or create database entry
-                                await UpdateModuleInDatabase(module, moduleConfig);
-
-                                _logger.LogInformation("Module {Module} loaded successfully", module.Name);
-                            }
-                            else
-                            {
-                                _logger.LogError("Failed to initialize module {Module}", moduleConfig.Name);
-                            }
-                        }
+                        await LoadModuleInternalAsync(assemblyPath, moduleConfig);
                     }
                     catch (Exception ex)
                     {
@@ -180,11 +164,114 @@ namespace BlazorShell.Infrastructure.Services
             }
         }
 
-        public async Task<IModule> LoadModuleAsync(string assemblyPath)
+        private void EnsureRoutesRegistered()
         {
             try
             {
+                var modules = _moduleRegistry.GetModules();
+                foreach (var module in modules)
+                {
+                    // Re-register routes for each module
+                    var componentTypes = module.GetComponentTypes();
+                    if (componentTypes?.Any() == true)
+                    {
+                        _routeProvider.RegisterModuleRoutes(module.Name, componentTypes);
+
+                        // Also register with dynamic route service
+                        var assembly = module.GetType().Assembly;
+                        _dynamicRouteService.RegisterModuleAssembly(module.Name, assembly);
+
+                        _logger.LogDebug("Re-registered {Count} routes for module {Module}",
+                            componentTypes.Count(), module.Name);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error ensuring routes are registered");
+            }
+        }
+
+        private async Task LoadModuleInternalAsync(string assemblyPath, ModuleConfig moduleConfig)
+        {
+            var module = await LoadModuleAsync(assemblyPath);
+            if (module != null)
+            {
+                // Store metadata for future reloads
+                var metadata = new ModuleMetadataCache.ModuleMetadata
+                {
+                    ModuleName = module.Name,
+                    AssemblyPath = assemblyPath,
+                    AssemblyName = moduleConfig.AssemblyName,
+                    Version = module.Version,
+                    LoadedAt = DateTime.UtcNow,
+                    IsEnabled = true,
+                    IsCore = moduleConfig.LoadOrder < 100, // Assume low order = core
+                    Configuration = moduleConfig.Configuration ?? new Dictionary<string, object>(),
+                    Dependencies = moduleConfig.Dependencies ?? new List<string>(),
+                    CurrentState = ModuleMetadataCache.ModuleState.Loaded
+                };
+                _metadataCache.StoreMetadata(module.Name, metadata);
+
+                // Register module services if it implements IServiceModule
+                if (module is IServiceModule serviceModule)
+                {
+                    _moduleServiceProvider.RegisterModuleServices(module.Name, serviceModule);
+                    _logger.LogInformation("Registered services for module {Module}", module.Name);
+                }
+
+                // Initialize module
+                var initialized = await module.InitializeAsync(_serviceProvider);
+                if (initialized)
+                {
+                    // Register navigation items
+                    var navItems = module.GetNavigationItems();
+                    if (navItems?.Any() == true)
+                    {
+                        var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
+                        navigationService.RegisterNavigationItems(navItems);
+                        _logger.LogInformation("Registered {Count} navigation items for module {Module}",
+                            navItems.Count(), module.Name);
+                    }
+
+                    // Register module components for routing
+                    var componentTypes = module.GetComponentTypes();
+                    if (componentTypes?.Any() == true)
+                    {
+                        // Register routes with the route provider
+                        _routeProvider.RegisterModuleRoutes(module.Name, componentTypes);
+                        _logger.LogInformation("Registered {Count} components for module {Module}",
+                            componentTypes.Count(), module.Name);
+                    }
+
+                    // Update or create database entry
+                    await UpdateModuleInDatabase(module, moduleConfig);
+
+                    _logger.LogInformation("Module {Module} loaded successfully", module.Name);
+                }
+                else
+                {
+                    _logger.LogError("Failed to initialize module {Module}", moduleConfig.Name);
+                    _metadataCache.UpdateState(module.Name, ModuleMetadataCache.ModuleState.Error, "Initialization failed");
+                }
+            }
+        }
+
+        public async Task<IModule> LoadModuleAsync(string assemblyPath)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            try
+            {
                 _logger.LogDebug("Loading module from {Path}", assemblyPath);
+
+                var fileName = Path.GetFileNameWithoutExtension(assemblyPath);
+
+                // Check if already loaded
+                if (_loadContexts.ContainsKey(fileName))
+                {
+                    _logger.LogWarning("Module {Module} is already loaded", fileName);
+                    return _loadContexts[fileName].Module;
+                }
 
                 // Load assembly
                 var assembly = _assemblyLoader.LoadPlugin(assemblyPath);
@@ -211,38 +298,118 @@ namespace BlazorShell.Infrastructure.Services
                     _logger.LogError("Failed to create instance of {Type}", moduleType.FullName);
                     return null;
                 }
-              
+
                 var componentTypes = module.GetComponentTypes()?.ToList() ?? new List<Type>();
+
                 // Store load context for unloading
                 _loadContexts[module.Name] = new ModuleLoadContext
                 {
                     Assembly = assembly,
                     Module = module,
                     LoadedAt = DateTime.UtcNow,
-                    ComponentTypes = componentTypes
+                    ComponentTypes = componentTypes,
+                    AssemblyPath = assemblyPath // Store the path for reload
                 };
+
+                // Store/update metadata
+                var metadata = _metadataCache.GetMetadata(module.Name) ?? new ModuleMetadataCache.ModuleMetadata();
+                metadata.ModuleName = module.Name;
+                metadata.AssemblyPath = assemblyPath;
+                metadata.AssemblyName = Path.GetFileName(assemblyPath);
+                metadata.Version = module.Version;
+                metadata.LoadedAt = DateTime.UtcNow;
+                metadata.IsEnabled = true;
+                metadata.CurrentState = ModuleMetadataCache.ModuleState.Loaded;
+                _metadataCache.StoreMetadata(module.Name, metadata);
 
                 // Register module
                 _moduleRegistry.RegisterModule(module);
 
+                // Register with dynamic route service
                 _dynamicRouteService.RegisterModuleAssembly(module.Name, assembly);
+
                 // Activate module
                 await module.ActivateAsync();
+                stopwatch.Stop();
+                _performanceMonitor?.RecordModuleLoad(module.Name, stopwatch.Elapsed);
 
                 return module;
             }
             catch (Exception ex)
             {
+                stopwatch.Stop();
                 _logger.LogError(ex, "Error loading module from {Path}", assemblyPath);
+
+                // Update metadata with error state
+                var fileName = Path.GetFileNameWithoutExtension(assemblyPath);
+                _metadataCache.UpdateState(fileName, ModuleMetadataCache.ModuleState.Error, ex.Message);
+
                 return null;
             }
         }
 
         public async Task<bool> UnloadModuleAsync(string moduleName)
         {
+            await _reloadSemaphore.WaitAsync();
             try
             {
                 _logger.LogInformation("Unloading module {Module}", moduleName);
+
+                // Update metadata state
+                _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Unloading);
+
+                // Get current metadata and preserve it
+                var metadata = _metadataCache.GetMetadata(moduleName);
+                if (metadata == null && _loadContexts.TryGetValue(moduleName, out var ctx))
+                {
+                    // Create metadata from existing context
+                    metadata = new ModuleMetadataCache.ModuleMetadata
+                    {
+                        ModuleName = moduleName,
+                        AssemblyPath = ctx.AssemblyPath ?? ctx.Assembly?.Location ?? string.Empty,
+                        Version = ctx.Module?.Version ?? "Unknown",
+                        IsEnabled = false,
+                        CurrentState = ModuleMetadataCache.ModuleState.Unloading
+                    };
+
+                    // Try to get additional info from database
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                        var dbModule = await scopedDbContext.Modules
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(m => m.Name == moduleName);
+
+                        if (dbModule != null)
+                        {
+                            metadata.AssemblyPath = Path.Combine(_modulesPath, dbModule.AssemblyName);
+                            metadata.AssemblyName = dbModule.AssemblyName;
+
+                            // Parse configuration and dependencies if stored as JSON
+                            if (!string.IsNullOrEmpty(dbModule.Configuration))
+                            {
+                                try
+                                {
+                                    metadata.Configuration = JsonConvert.DeserializeObject<Dictionary<string, object>>(dbModule.Configuration)
+                                        ?? new Dictionary<string, object>();
+                                }
+                                catch { }
+                            }
+
+                            if (!string.IsNullOrEmpty(dbModule.Dependencies))
+                            {
+                                try
+                                {
+                                    metadata.Dependencies = JsonConvert.DeserializeObject<List<string>>(dbModule.Dependencies)
+                                        ?? new List<string>();
+                                }
+                                catch { }
+                            }
+                        }
+                    }
+
+                    _metadataCache.StoreMetadata(moduleName, metadata);
+                }
 
                 var module = _moduleRegistry.GetModule(moduleName);
                 if (module == null)
@@ -264,6 +431,7 @@ namespace BlazorShell.Infrastructure.Services
                     _routeProvider.UnregisterModuleRoutes(moduleName, context.ComponentTypes);
                 }
                 _dynamicRouteService.UnregisterModuleAssembly(moduleName);
+
                 // Unregister from registry
                 _moduleRegistry.UnregisterModule(moduleName);
 
@@ -271,17 +439,26 @@ namespace BlazorShell.Infrastructure.Services
                 if (context != null)
                 {
                     _assemblyLoader.UnloadPlugin(moduleName);
-                    _loadContexts.Remove(moduleName);
+                    _loadContexts.TryRemove(moduleName, out _);
                 }
 
                 // Update database
-                var dbModule = await _dbContext.Modules
-                    .FirstOrDefaultAsync(m => m.Name == moduleName);
-                if (dbModule != null)
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    dbModule.IsEnabled = false;
-                    await _dbContext.SaveChangesAsync();
+                    var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                    var dbModule = await scopedDbContext.Modules
+                        .FirstOrDefaultAsync(m => m.Name == moduleName);
+
+                    if (dbModule != null)
+                    {
+                        dbModule.IsEnabled = false;
+                        await scopedDbContext.SaveChangesAsync();
+                    }
                 }
+
+                // Update metadata state (keep in cache for reload)
+                _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Unloaded);
 
                 _logger.LogInformation("Module {Module} unloaded successfully", moduleName);
                 return true;
@@ -289,7 +466,12 @@ namespace BlazorShell.Infrastructure.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error unloading module {Module}", moduleName);
+                _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Error, ex.Message);
                 return false;
+            }
+            finally
+            {
+                _reloadSemaphore.Release();
             }
         }
 
@@ -305,75 +487,172 @@ namespace BlazorShell.Infrastructure.Services
 
         public async Task ReloadModuleAsync(string moduleName)
         {
-            _logger.LogInformation("Reloading module {Module}", moduleName);
-
-            // Get current module info
-            var currentModule = _moduleRegistry.GetModule(moduleName);
-            if (currentModule == null)
+            await _reloadSemaphore.WaitAsync();
+            try
             {
-                _logger.LogWarning("Module {Module} not found for reload", moduleName);
-                return;
+                _logger.LogInformation("Starting reload of module {Module}", moduleName);
+
+                // Update state to reloading
+                _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Reloading);
+
+                // Get metadata (should be preserved from unload)
+                var metadata = _metadataCache.GetMetadata(moduleName);
+                string assemblyPath = null;
+
+                // Priority 1: Use cached metadata
+                if (metadata != null && !string.IsNullOrEmpty(metadata.AssemblyPath))
+                {
+                    assemblyPath = metadata.AssemblyPath;
+                    _logger.LogDebug("Using cached assembly path: {Path}", assemblyPath);
+                }
+
+                // Priority 2: Get from current load context
+                if (string.IsNullOrEmpty(assemblyPath) && _loadContexts.TryGetValue(moduleName, out var context))
+                {
+                    assemblyPath = context.AssemblyPath ?? context.Assembly?.Location;
+                    _logger.LogDebug("Using load context assembly path: {Path}", assemblyPath);
+                }
+
+                // Priority 3: Get from database
+                if (string.IsNullOrEmpty(assemblyPath))
+                {
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                        var dbModule = await scopedDbContext.Modules
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(m => m.Name == moduleName);
+
+                        if (dbModule != null)
+                        {
+                            assemblyPath = Path.Combine(_modulesPath, dbModule.AssemblyName);
+                            _logger.LogDebug("Using database assembly path: {Path}", assemblyPath);
+                        }
+                    }
+                }
+
+                if (string.IsNullOrEmpty(assemblyPath))
+                {
+                    _logger.LogError("Cannot find assembly path for module {Module}", moduleName);
+                    _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Error,
+                        "Assembly path not found");
+                    return;
+                }
+
+                // Verify file exists
+                if (!File.Exists(assemblyPath))
+                {
+                    _logger.LogError("Assembly file not found at {Path}", assemblyPath);
+                    _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Error,
+                        $"Assembly file not found: {assemblyPath}");
+                    return;
+                }
+
+                // Unload if currently loaded
+                if (_moduleRegistry.GetModule(moduleName) != null)
+                {
+                    _logger.LogDebug("Unloading module {Module} before reload", moduleName);
+                    var unloadSuccess = await UnloadModuleAsync(moduleName);
+                    if (!unloadSuccess)
+                    {
+                        _logger.LogError("Failed to unload module {Module} for reload", moduleName);
+                        _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Error,
+                            "Failed to unload for reload");
+                        return;
+                    }
+
+                    // Wait for cleanup
+                    await Task.Delay(500);
+
+                    // Force garbage collection
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect();
+                }
+
+                // Reload the module
+                _logger.LogDebug("Loading module {Module} from {Path}", moduleName, assemblyPath);
+                var module = await LoadModuleAsync(assemblyPath);
+
+                if (module != null)
+                {
+                    // Restore configuration if available
+                    if (metadata?.Configuration != null)
+                    {
+                        // Create ModuleConfig for initialization
+                        var config = new ModuleConfig
+                        {
+                            Name = moduleName,
+                            AssemblyName = metadata.AssemblyName ?? Path.GetFileName(assemblyPath),
+                            Version = module.Version,
+                            Dependencies = metadata.Dependencies,
+                            Configuration = metadata.Configuration,
+                            Enabled = true
+                        };
+
+                        // Initialize with restored configuration
+                        await LoadModuleInternalAsync(assemblyPath, config);
+                    }
+
+                    _logger.LogInformation("Module {Module} reloaded successfully", moduleName);
+                    _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Loaded);
+                }
+                else
+                {
+                    _logger.LogError("Failed to reload module {Module}", moduleName);
+                    _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Error,
+                        "Reload failed");
+                }
             }
-
-            // Store assembly path
-            string assemblyPath = null;
-            if (_loadContexts.TryGetValue(moduleName, out var context))
+            catch (Exception ex)
             {
-                assemblyPath = context.Assembly.Location;
+                _logger.LogError(ex, "Error reloading module {Module}", moduleName);
+                _metadataCache.UpdateState(moduleName, ModuleMetadataCache.ModuleState.Error, ex.Message);
             }
-
-            // Unload module
-            await UnloadModuleAsync(moduleName);
-
-            // Wait a bit for cleanup
-            await Task.Delay(500);
-
-            // Reload module
-            if (!string.IsNullOrEmpty(assemblyPath))
+            finally
             {
-                await LoadModuleAsync(assemblyPath);
+                _reloadSemaphore.Release();
             }
         }
 
         private async Task UpdateModuleInDatabase(IModule module, ModuleConfig config)
         {
-            var dbModule = await _dbContext.Modules
-                .FirstOrDefaultAsync(m => m.Name == module.Name);
-
-            if (dbModule == null)
+            // FIX: Create a new scope for database operations
+            using (var scope = _serviceProvider.CreateScope())
             {
-                dbModule = new Core.Entities.Module
+                var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                var dbModule = await scopedDbContext.Modules
+                    .FirstOrDefaultAsync(m => m.Name == module.Name);
+
+                if (dbModule == null)
                 {
-                    Name = module.Name,
-                    CreatedDate = DateTime.UtcNow,
-                    CreatedBy = "System"
-                };
-                _dbContext.Modules.Add(dbModule);
+                    dbModule = new Core.Entities.Module
+                    {
+                        Name = module.Name,
+                        CreatedDate = DateTime.UtcNow,
+                        CreatedBy = "System"
+                    };
+                    scopedDbContext.Modules.Add(dbModule);
+                }
+
+                dbModule.DisplayName = module.DisplayName;
+                dbModule.Description = module.Description;
+                dbModule.Version = module.Version;
+                dbModule.Author = module.Author;
+                dbModule.Icon = module.Icon;
+                dbModule.Category = module.Category;
+                dbModule.LoadOrder = module.Order;
+                dbModule.IsEnabled = true;
+                dbModule.AssemblyName = config.AssemblyName;
+                dbModule.EntryType = config.EntryType;
+                dbModule.Configuration = JsonConvert.SerializeObject(config.Configuration);
+                dbModule.Dependencies = JsonConvert.SerializeObject(config.Dependencies);
+                dbModule.ModifiedDate = DateTime.UtcNow;
+                dbModule.ModifiedBy = "System";
+
+                await scopedDbContext.SaveChangesAsync();
             }
-
-            dbModule.DisplayName = module.DisplayName;
-            dbModule.Description = module.Description;
-            dbModule.Version = module.Version;
-            dbModule.Author = module.Author;
-            dbModule.Icon = module.Icon;
-            dbModule.Category = module.Category;
-            dbModule.LoadOrder = module.Order;
-            dbModule.IsEnabled = true;
-            dbModule.AssemblyName = config.AssemblyName;
-            dbModule.EntryType = config.EntryType;
-            dbModule.Configuration = JsonConvert.SerializeObject(config.Configuration);
-            dbModule.Dependencies = JsonConvert.SerializeObject(config.Dependencies);
-            dbModule.ModifiedDate = DateTime.UtcNow;
-            dbModule.ModifiedBy = "System";
-
-            await _dbContext.SaveChangesAsync();
-        }
-
-        private void RegisterModuleComponents(string moduleName, IEnumerable<Type> componentTypes)
-        {
-            // This method is no longer needed as we use ModuleRouteProvider
-            // Kept for backward compatibility
-            _logger.LogDebug("RegisterModuleComponents called for module {Module}", moduleName);
         }
 
         private class ModuleLoadContext
@@ -382,12 +661,11 @@ namespace BlazorShell.Infrastructure.Services
             public IModule Module { get; set; }
             public DateTime LoadedAt { get; set; }
             public List<Type> ComponentTypes { get; set; }
+            public string AssemblyPath { get; set; } // Added to store the path
         }
     }
 
-    /// <summary>
-    /// Configuration classes for JSON deserialization
-    /// </summary>
+    // Keep your existing configuration classes as they are
     public class ModulesConfiguration
     {
         public ModuleSettings ModuleSettings { get; set; }

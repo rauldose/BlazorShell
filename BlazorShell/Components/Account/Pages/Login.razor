@@ -7,7 +7,7 @@
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
-@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
 @inject IdentityRedirectManager RedirectManager
 
 <PageTitle>Log in</PageTitle>
@@ -46,7 +46,7 @@
                         <a href="Account/ForgotPassword">Forgot your password?</a>
                     </p>
                     <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
+                        <a href="@(Navigation.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
                     </p>
                     <p>
                         <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
@@ -90,26 +90,109 @@
         // This doesn't count login failures towards account lockout
         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+
+            // FIX: For static SSR pages, we need to use HTTP redirect
+            var redirectUrl = GetSafeReturnUrl();
+            Logger.LogInformation("Redirecting to: {RedirectUrl}", redirectUrl);
+
+            // Use HTTP redirect for static SSR pages
+            if (HttpContext != null)
+            {
+                HttpContext.Response.Redirect(redirectUrl);
+                return;
+            }
+
+            // Fallback to RedirectManager (though this shouldn't be reached in static SSR)
+            RedirectManager.RedirectTo(redirectUrl);
         }
         else if (result.RequiresTwoFactor)
         {
+            // For 2FA, use HTTP redirect
+            var twoFactorUrl = Navigation.GetUriWithQueryParameters(
+                "/Account/LoginWith2fa",
+                new Dictionary<string, object?>
+                    {
+                        ["returnUrl"] = ReturnUrl,
+                        ["rememberMe"] = Input.RememberMe
+                    });
+
+            if (HttpContext != null)
+            {
+                HttpContext.Response.Redirect(twoFactorUrl);
+                return;
+            }
+
             RedirectManager.RedirectTo(
                 "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe }, false);
         }
         else if (result.IsLockedOut)
         {
             Logger.LogWarning("User account locked out.");
+
+            if (HttpContext != null)
+            {
+                HttpContext.Response.Redirect("/Account/Lockout");
+                return;
+            }
+
             RedirectManager.RedirectTo("Account/Lockout");
         }
         else
         {
             errorMessage = "Error: Invalid login attempt.";
         }
+    }
+
+    private string GetSafeReturnUrl()
+    {
+        // FIX: Properly validate the return URL to prevent loops
+        if (string.IsNullOrEmpty(ReturnUrl))
+        {
+            return "/";
+        }
+
+        // Don't redirect back to login/logout pages
+        var lowerReturnUrl = ReturnUrl.ToLowerInvariant();
+        if (lowerReturnUrl.Contains("/account/login") ||
+            lowerReturnUrl.Contains("/account/logout"))
+        {
+            return "/";
+        }
+
+        // Ensure it's a local URL
+        if (!IsLocalUrl(ReturnUrl))
+        {
+            return "/";
+        }
+
+        return ReturnUrl;
+    }
+
+    private bool IsLocalUrl(string url)
+    {
+        if (string.IsNullOrEmpty(url))
+        {
+            return false;
+        }
+
+        // Check if the URL is relative
+        if (url[0] == '/' && (url.Length == 1 || (url[1] != '/' && url[1] != '\\')))
+        {
+            return true;
+        }
+
+        // Check if the URL is relative and doesn't start with http:// or https://
+        if (url.Length > 1 && url[0] == '~' && url[1] == '/')
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private sealed class InputModel

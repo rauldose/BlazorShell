@@ -1,0 +1,722 @@
+﻿@* Pages/Admin/ModulePerformanceDashboard.razor *@
+@page "/admin/modules/performance"
+@using BlazorShell.Core.Interfaces
+@using BlazorShell.Infrastructure.Services
+@using BlazorShell.Core.Components
+@using Microsoft.AspNetCore.Authorization
+@inherits ModuleComponentBase
+@attribute [Authorize(Roles = "Administrator")]
+@implements IDisposable
+
+<PageTitle>Module Performance Dashboard</PageTitle>
+
+<div class="container-fluid">
+    @if (_isDisposed)
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle"></i> This page needs to be refreshed after module reload.
+            <a href="javascript:location.reload()" class="alert-link">Click here to refresh</a>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-speedometer2"></i> Module Performance Dashboard</h1>
+            <div>
+                <button class="btn btn-primary" @onclick="RefreshStats" disabled="@_isDisposed">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
+                <button class="btn btn-success" @onclick="GenerateReport" disabled="@_isDisposed">
+                    <i class="bi bi-download"></i> Generate Report
+                </button>
+            </div>
+        </div>
+
+        @* Alert Messages *@
+        @if (!string.IsNullOrEmpty(_alertMessage))
+        {
+            <div class="alert @_alertClass alert-dismissible fade show" role="alert">
+                <i class="bi @_alertIcon me-2"></i>@_alertMessage
+                <button type="button" class="btn-close" @onclick="() => _alertMessage = string.Empty"></button>
+            </div>
+        }
+
+        <!-- Load Strategy Controls -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-gear"></i> Module Loading Strategy
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">Current Strategy:</label>
+                        <select class="form-select" @bind="_currentStrategy" @bind:after="OnStrategyChanged" disabled="@_isDisposed">
+                            <option value="OnDemand">On Demand (Lazy)</option>
+                            <option value="PreloadCore">Preload Core Modules</option>
+                            <option value="PreloadAll">Preload All Modules</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Auto-Unload Inactive After:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" @bind="_inactiveMinutes" min="5" max="60" disabled="@_isDisposed">
+                            <span class="input-group-text">minutes</span>
+                            <button class="btn btn-outline-secondary" @onclick="ApplyAutoUnload" disabled="@_isDisposed">Apply</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Hot Reload:</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" @bind="_hotReloadEnabled" @bind:after="ToggleHotReload" disabled="@_isDisposed">
+                            <label class="form-check-label">
+                                @(_hotReloadEnabled ? "Enabled" : "Disabled")
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module Status Overview -->
+        <div class="row mb-3">
+            @foreach (var status in _moduleStatuses)
+            {
+                <div class="col-md-3 mb-2">
+                    <div class="card @(status.State == ModuleState.Error ? "border-danger" : "")">
+                        <div class="card-body p-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">@status.ModuleName</h6>
+                                    <small class="text-muted">
+                                        @GetStatusBadge(status.State)
+                                        @if (status.IsCore)
+                                        {
+                                            <span class="badge bg-info ms-1">Core</span>
+                                        }
+                                    </small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        @if (status.State == ModuleState.NotLoaded)
+                                        {
+                                            <button class="btn btn-success" 
+                                            @onclick="() => LoadModule(status.ModuleName)"
+                                            disabled="@(_processingModules.Contains(status.ModuleName) || _isDisposed)"
+                                            title="Load Module">
+                                                @if (_processingModules.Contains(status.ModuleName))
+                                                {
+                                                    <span class="spinner-border spinner-border-sm"></span>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-play"></i>
+                                                }
+                                            </button>
+                                        }
+                                        else if (status.State == ModuleState.Loaded)
+                                        {
+                                            @if (CanSafelyReload(status.ModuleName))
+                                            {
+                                                <button class="btn btn-info" 
+                                                @onclick="() => SafeReloadModule(status.ModuleName)"
+                                                disabled="@(_processingModules.Contains(status.ModuleName) || _isDisposed)"
+                                                title="Safe Reload Module">
+                                                    @if (_processingModules.Contains(status.ModuleName))
+                                                    {
+                                                        <span class="spinner-border spinner-border-sm"></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-arrow-repeat"></i>
+                                                    }
+                                                </button>
+                                            }
+                                            <button class="btn btn-warning" 
+                                            @onclick="() => UnloadModule(status.ModuleName)"
+                                            disabled="@(_processingModules.Contains(status.ModuleName) || status.IsCore || _isDisposed)"
+                                            title="Unload Module">
+                                                @if (_processingModules.Contains(status.ModuleName))
+                                                {
+                                                    <span class="spinner-border spinner-border-sm"></span>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-stop"></i>
+                                                }
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            @if (status.LastError != null)
+                            {
+                                <small class="text-danger d-block mt-1">
+                                    <i class="bi bi-exclamation-triangle"></i> @status.LastError
+                                </small>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @* Quick Actions Bar *@
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-lightning"></i> Quick Actions
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-2">
+                    <i class="bi bi-info-circle"></i> <strong>Note:</strong> Reloading the Admin module will require a page refresh.
+                </div>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-outline-primary" @onclick="TestSafeReloadCycle" disabled="@(_isProcessing || _isDisposed)">
+                        <i class="bi bi-shield-check"></i> Test Safe Reload
+                    </button>
+                    <button class="btn btn-outline-success" @onclick="LoadAllModules" disabled="@(_isProcessing || _isDisposed)">
+                        <i class="bi bi-collection-play"></i> Load All
+                    </button>
+                    <button class="btn btn-outline-warning" @onclick="UnloadAllNonCore" disabled="@(_isProcessing || _isDisposed)">
+                        <i class="bi bi-collection"></i> Unload Non-Core
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        @* Operation Log *@
+        @if (_operationLogs.Any())
+        {
+            <div class="card mt-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-journal-text"></i> Operation Log</span>
+                    <button class="btn btn-sm btn-outline-secondary" @onclick="ClearLogs" disabled="@_isDisposed">Clear</button>
+                </div>
+                <div class="card-body" style="max-height: 200px; overflow-y: auto;">
+                    @foreach (var log in _operationLogs.Take(20))
+                    {
+                        <div class="small @GetLogClass(log.Level)">
+                            <span class="text-muted">[@log.Timestamp:HH:mm:ss]</span> 
+                            <strong>@log.Module:</strong> @log.Message
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private ILazyModuleLoader? _lazyLoader;
+    private IModuleLoader? _moduleLoader;
+    private IModulePerformanceMonitor? _performanceMonitor;
+    private IModuleHotReloadService? _hotReloadService;
+    private ModuleMetadataCache? _metadataCache;
+    private ModuleReloadCoordinator? _reloadCoordinator;
+
+    private List<ModuleLoadStatus> _moduleStatuses = new();
+    private List<ModulePerformanceStats> _performanceStats = new();
+    private List<OperationLog> _operationLogs = new();
+    private PerformanceReport? _performanceReport;
+
+    private ModuleLoadingStrategy _currentStrategy = ModuleLoadingStrategy.OnDemand;
+    private int _inactiveMinutes = 30;
+    private bool _hotReloadEnabled = false;
+    private bool _showReport = false;
+    private bool _isProcessing = false;
+    private bool _isDisposed = false;
+    private HashSet<string> _processingModules = new();
+
+    private string _alertMessage = string.Empty;
+    private string _alertClass = "alert-info";
+    private string _alertIcon = "bi-info-circle";
+
+    private System.Threading.Timer? _refreshTimer;
+    private CancellationTokenSource _cancellationTokenSource = new();
+
+    // System modules that should not be reloaded while this page is active
+    private readonly HashSet<string> _systemModules = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Admin", "Core", "Authentication", "Navigation"
+    };
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        try
+        {
+            _lazyLoader = GetService<ILazyModuleLoader>();
+            _moduleLoader = GetService<IModuleLoader>();
+            _performanceMonitor = GetService<IModulePerformanceMonitor>();
+            _hotReloadService = GetService<IModuleHotReloadService>();
+            _metadataCache = GetService<ModuleMetadataCache>();
+            _reloadCoordinator = GetService<ModuleReloadCoordinator>();
+
+            // Subscribe to reload events if coordinator is available
+            if (_reloadCoordinator != null)
+            {
+                _reloadCoordinator.ModuleReloading += OnModuleReloading;
+                _reloadCoordinator.ModuleReloaded += OnModuleReloaded;
+            }
+
+            await LoadData();
+
+            // Start auto-refresh timer with cancellation support
+            _refreshTimer = new System.Threading.Timer(async _ => 
+            {
+                if (!_isDisposed && !_cancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    await InvokeAsync(async () =>
+                    {
+                        if (!_isDisposed)
+                        {
+                            await LoadData();
+                            StateHasChanged();
+                        }
+                    });
+                }
+            }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+        }
+        catch (ObjectDisposedException)
+        {
+            _isDisposed = true;
+        }
+    }
+
+    private async Task LoadData()
+    {
+        if (_isDisposed) return;
+
+        try
+        {
+            if (_lazyLoader != null)
+            {
+                _moduleStatuses = _lazyLoader.GetAllModuleStatuses().ToList();
+            }
+
+            if (_performanceMonitor != null)
+            {
+                _performanceStats = _performanceMonitor.GetAllStats().ToList();
+            }
+        }
+        catch (ObjectDisposedException)
+        {
+            _isDisposed = true;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private bool CanSafelyReload(string moduleName)
+    {
+        // Don't allow reloading system modules from this page
+        return !_systemModules.Contains(moduleName);
+    }
+
+    private async Task SafeReloadModule(string moduleName)
+    {
+        if (_isDisposed) return;
+
+        _processingModules.Add(moduleName);
+        try
+        {
+            AddLog(moduleName, "Starting safe reload...", LogLevel.Info);
+
+            // Check if this is the Admin module (current module)
+            if (moduleName.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                ShowAlert("Admin module will be reloaded. Page refresh required after completion.", "alert-warning", "bi-exclamation-triangle");
+            }
+
+            if (_reloadCoordinator != null)
+            {
+                // Check if module can be reloaded
+                var status = await _reloadCoordinator.CanReloadModuleAsync(moduleName);
+                if (!status.CanReload)
+                {
+                    AddLog(moduleName, $"Cannot reload: {status.Reason}", LogLevel.Warning);
+                    ShowAlert($"Cannot reload {moduleName}: {status.Reason}", "alert-warning", "bi-exclamation-triangle");
+                    return;
+                }
+
+                // Perform safe reload
+                var result = await _reloadCoordinator.SafeReloadModuleAsync(moduleName);
+                if (result)
+                {
+                    AddLog(moduleName, "Module safely reloaded", LogLevel.Success);
+                    ShowAlert($"Module {moduleName} safely reloaded", "alert-success", "bi-check-circle");
+                }
+                else
+                {
+                    AddLog(moduleName, "Safe reload failed", LogLevel.Error);
+                    ShowAlert($"Failed to safely reload {moduleName}", "alert-danger", "bi-x-circle");
+                }
+            }
+            else if (_moduleLoader != null)
+            {
+                // Fallback to regular reload
+                await ReloadModule(moduleName);
+            }
+
+            await LoadData();
+        }
+        catch (ObjectDisposedException)
+        {
+            _isDisposed = true;
+            ShowAlert("The application context was disposed. Please refresh the page.", "alert-danger", "bi-x-circle");
+        }
+        catch (Exception ex)
+        {
+            AddLog(moduleName, $"Error: {ex.Message}", LogLevel.Error);
+            ShowAlert($"Error reloading {moduleName}: {ex.Message}", "alert-danger", "bi-x-circle");
+        }
+        finally
+        {
+            _processingModules.Remove(moduleName);
+        }
+    }
+
+    private async Task ReloadModule(string moduleName)
+    {
+        if (_isDisposed) return;
+
+        try
+        {
+            if (_moduleLoader != null)
+            {
+                await _moduleLoader.ReloadModuleAsync(moduleName);
+                AddLog(moduleName, "Module reloaded", LogLevel.Success);
+            }
+        }
+        catch (ObjectDisposedException)
+        {
+            _isDisposed = true;
+        }
+    }
+
+    private async Task LoadModule(string moduleName)
+    {
+        if (_isDisposed) return;
+
+        _processingModules.Add(moduleName);
+        try
+        {
+            AddLog(moduleName, "Loading module...", LogLevel.Info);
+
+            if (_lazyLoader != null)
+            {
+                await _lazyLoader.LoadModuleOnDemandAsync(moduleName);
+                await LoadData();
+                AddLog(moduleName, "Module loaded successfully", LogLevel.Success);
+                ShowAlert($"Module {moduleName} loaded", "alert-success", "bi-check-circle");
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog(moduleName, $"Failed to load: {ex.Message}", LogLevel.Error);
+            ShowAlert($"Failed to load {moduleName}: {ex.Message}", "alert-danger", "bi-x-circle");
+        }
+        finally
+        {
+            _processingModules.Remove(moduleName);
+        }
+    }
+
+    private async Task UnloadModule(string moduleName)
+    {
+        if (_isDisposed) return;
+
+        _processingModules.Add(moduleName);
+        try
+        {
+            AddLog(moduleName, "Unloading module...", LogLevel.Info);
+
+            if (_moduleLoader != null)
+            {
+                var result = await _moduleLoader.UnloadModuleAsync(moduleName);
+                if (result)
+                {
+                    await LoadData();
+                    AddLog(moduleName, "Module unloaded successfully", LogLevel.Success);
+                    ShowAlert($"Module {moduleName} unloaded", "alert-success", "bi-check-circle");
+                }
+                else
+                {
+                    AddLog(moduleName, "Failed to unload module", LogLevel.Error);
+                    ShowAlert($"Failed to unload {moduleName}", "alert-danger", "bi-x-circle");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog(moduleName, $"Failed to unload: {ex.Message}", LogLevel.Error);
+            ShowAlert($"Error unloading {moduleName}: {ex.Message}", "alert-danger", "bi-x-circle");
+        }
+        finally
+        {
+            _processingModules.Remove(moduleName);
+        }
+    }
+
+    private async Task TestSafeReloadCycle()
+    {
+        _isProcessing = true;
+        try
+        {
+            var testModule = _moduleStatuses.FirstOrDefault(m => 
+                m.State == ModuleState.Loaded && 
+                !m.IsCore && 
+                !_systemModules.Contains(m.ModuleName));
+
+            if (testModule == null)
+            {
+                ShowAlert("No suitable module found for safe reload test", "alert-warning", "bi-exclamation-triangle");
+                return;
+            }
+
+            AddLog(testModule.ModuleName, "Starting safe reload test", LogLevel.Info);
+            await SafeReloadModule(testModule.ModuleName);
+            AddLog(testModule.ModuleName, "Safe reload test completed", LogLevel.Success);
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+
+    private async Task LoadAllModules()
+    {
+        if (_isDisposed) return;
+
+        _isProcessing = true;
+        try
+        {
+            var unloadedModules = _moduleStatuses.Where(m => m.State == ModuleState.NotLoaded).ToList();
+            foreach (var module in unloadedModules)
+            {
+                await LoadModule(module.ModuleName);
+            }
+            ShowAlert($"Loaded {unloadedModules.Count} modules", "alert-success", "bi-check-circle");
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+
+    private async Task UnloadAllNonCore()
+    {
+        if (_isDisposed) return;
+
+        _isProcessing = true;
+        try
+        {
+            var nonCoreModules = _moduleStatuses.Where(m => 
+                m.State == ModuleState.Loaded && 
+                !m.IsCore && 
+                !_systemModules.Contains(m.ModuleName)).ToList();
+
+            foreach (var module in nonCoreModules)
+            {
+                await UnloadModule(module.ModuleName);
+            }
+            ShowAlert($"Unloaded {nonCoreModules.Count} non-core modules", "alert-success", "bi-check-circle");
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+
+    private void OnModuleReloading(object? sender, ModuleReloadEventArgs e)
+    {
+        if (_isDisposed) return;
+
+        InvokeAsync(() =>
+        {
+            AddLog(e.ModuleName, "Module is being reloaded...", LogLevel.Info);
+            StateHasChanged();
+        });
+    }
+
+    private void OnModuleReloaded(object? sender, ModuleReloadEventArgs e)
+    {
+        if (_isDisposed) return;
+
+        InvokeAsync(() =>
+        {
+            if (e.Success)
+            {
+                AddLog(e.ModuleName, "Module reload completed", LogLevel.Success);
+            }
+            else
+            {
+                AddLog(e.ModuleName, $"Module reload failed: {e.Error}", LogLevel.Error);
+            }
+            _ = LoadData();
+            StateHasChanged();
+        });
+    }
+
+    private async Task RefreshStats()
+    {
+        if (_isDisposed) return;
+        await LoadData();
+        ShowAlert("Stats refreshed", "alert-success", "bi-check-circle");
+    }
+
+    private async Task OnStrategyChanged()
+    {
+        if (_isDisposed) return;
+        _lazyLoader?.SetModuleLoadingStrategy(_currentStrategy);
+        AddLog("System", $"Loading strategy changed to {_currentStrategy}", LogLevel.Info);
+        await Task.CompletedTask;
+    }
+
+    private async Task ApplyAutoUnload()
+    {
+        if (_isDisposed) return;
+
+        if (_lazyLoader != null)
+        {
+            await _lazyLoader.UnloadInactiveModulesAsync(TimeSpan.FromMinutes(_inactiveMinutes));
+            await LoadData();
+            ShowAlert($"Auto-unload set to {_inactiveMinutes} minutes", "alert-success", "bi-check-circle");
+        }
+    }
+
+    private async Task ToggleHotReload()
+    {
+        if (_isDisposed) return;
+        AddLog("System", $"Hot reload {(_hotReloadEnabled ? "enabled" : "disabled")}", LogLevel.Info);
+        await Task.CompletedTask;
+    }
+
+    private async Task GenerateReport()
+    {
+        if (_isDisposed) return;
+
+        if (_performanceMonitor != null)
+        {
+            _performanceReport = await _performanceMonitor.GenerateReportAsync();
+            _showReport = true;
+        }
+    }
+
+    private void ShowComponentDetails(string moduleName)
+    {
+        if (_isDisposed) return;
+        AddLog(moduleName, "Viewing component details", LogLevel.Info);
+    }
+
+    private void ShowAlert(string message, string alertClass, string icon)
+    {
+        if (_isDisposed) return;
+
+        _alertMessage = message;
+        _alertClass = alertClass;
+        _alertIcon = icon;
+    }
+
+    private void AddLog(string module, string message, LogLevel level)
+    {
+        if (_isDisposed) return;
+
+        _operationLogs.Insert(0, new OperationLog
+        {
+            Module = module,
+            Message = message,
+            Level = level,
+            Timestamp = DateTime.Now
+        });
+
+        if (_operationLogs.Count > 100)
+        {
+            _operationLogs = _operationLogs.Take(100).ToList();
+        }
+    }
+
+    private void ClearLogs()
+    {
+        if (_isDisposed) return;
+        _operationLogs.Clear();
+    }
+
+    private RenderFragment GetStatusBadge(ModuleState state) => builder =>
+    {
+        var (cssClass, text) = state switch
+        {
+            ModuleState.Loaded => ("bg-success", "Loaded"),
+            ModuleState.Loading => ("bg-warning", "Loading"),
+            ModuleState.NotLoaded => ("bg-secondary", "Not Loaded"),
+            ModuleState.Error => ("bg-danger", "Error"),
+            _ => ("bg-light text-dark", "Unknown")
+        };
+
+        builder.OpenElement(0, "span");
+        builder.AddAttribute(1, "class", $"badge {cssClass}");
+        builder.AddContent(2, text);
+        builder.CloseElement();
+    };
+
+    private string GetPerformanceClass(double milliseconds)
+    {
+        if (milliseconds < 100)
+        {
+            return "text-success"; 
+        } 
+        else if (milliseconds < 500)
+        {
+            return "text-warning";
+        }
+        else
+        {
+            return "text-danger";
+        }
+    }
+
+    private string GetLogClass(LogLevel level)
+    {
+        return level switch
+        {
+            LogLevel.Success => "text-success",
+            LogLevel.Error => "text-danger",
+            LogLevel.Warning => "text-warning",
+            _ => ""
+        };
+    }
+
+    private class OperationLog
+    {
+        public string Module { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+        public LogLevel Level { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
+
+    private enum LogLevel
+    {
+        Info,
+        Success,
+        Warning,
+        Error
+    }
+
+    public override void Dispose()
+    {
+        _isDisposed = true;
+        
+        // Cancel and dispose timer
+        _cancellationTokenSource?.Cancel();
+        _refreshTimer?.Dispose();
+        
+        // Unsubscribe from events
+        if (_reloadCoordinator != null)
+        {
+            _reloadCoordinator.ModuleReloading -= OnModuleReloading;
+            _reloadCoordinator.ModuleReloaded -= OnModuleReloaded;
+        }
+        
+        _cancellationTokenSource?.Dispose();
+        
+        base.Dispose();
+    }
+}

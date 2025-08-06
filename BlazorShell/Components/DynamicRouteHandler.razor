@@ -1,7 +1,8 @@
 ﻿@* Components/DynamicRouteHandler.razor *@
 @using BlazorShell.Infrastructure.Services
+@using BlazorShell.Core.Interfaces
 @inject NavigationManager Navigation
-@inject IDynamicRouteService DynamicRouteService
+@inject IServiceProvider ServiceProvider
 @inject ILogger<DynamicRouteHandler> Logger
 
 @if (_componentType != null)
@@ -12,7 +13,7 @@ else if (_isSearching)
 {
     <div class="text-center py-5">
         <div class="spinner-border text-primary" role="status"></div>
-        <p class="mt-2">Loading module page...</p>
+        <p class="mt-2">Loading page...</p>
     </div>
 }
 else
@@ -20,21 +21,15 @@ else
     <div class="alert alert-warning" role="alert">
         <h4 class="alert-heading">Page Not Found</h4>
         <p>The requested page could not be found: <code>@_currentPath</code></p>
-        @if (_availableRoutes.Any())
-        {
-            <hr>
-            <p class="mb-2">Did you mean one of these?</p>
-            <ul>
-                @foreach (var route in _availableRoutes.Take(5))
-                {
-                    <li><a href="/@route">@route</a></li>
-                }
-            </ul>
-        }
         <hr>
-        <a href="/" class="btn btn-primary">
-            <i class="bi bi-house"></i> Go Home
-        </a>
+        <p class="mb-0">
+            <a href="/" class="btn btn-primary">
+                <i class="bi bi-house"></i> Go Home
+            </a>
+            <button class="btn btn-secondary ms-2" @onclick="RetryLoad">
+                <i class="bi bi-arrow-clockwise"></i> Retry
+            </button>
+        </p>
     </div>
 }
 
@@ -43,12 +38,10 @@ else
     private IDictionary<string, object>? _routeParameters;
     private string _currentPath = string.Empty;
     private bool _isSearching = true;
-    private List<string> _availableRoutes = new();
 
     protected override async Task OnInitializedAsync()
     {
         await SearchForRoute();
-        Navigation.LocationChanged += OnLocationChanged;
     }
 
     private async Task SearchForRoute()
@@ -56,27 +49,58 @@ else
         _isSearching = true;
         _currentPath = Navigation.ToBaseRelativePath(Navigation.Uri);
 
-        // Small delay to show loading state
-        await Task.Delay(100);
-
-        var routeInfo = DynamicRouteService?.FindRoute(_currentPath);
-
-        if (routeInfo != null)
+        try
         {
-            _componentType = routeInfo.ComponentType;
-            _routeParameters = ExtractRouteParameters(_currentPath, routeInfo.Template);
-            Logger.LogInformation("Found dynamic route {Path} -> {Component} from module {Module}",
-                _currentPath, routeInfo.ComponentType.Name, routeInfo.ModuleName);
+            // Small delay to show loading state
+            await Task.Delay(100);
+
+            // Try to get the dynamic route service
+            var dynamicRouteService = ServiceProvider.GetService<IDynamicRouteService>();
+            if (dynamicRouteService == null)
+            {
+                Logger.LogWarning("DynamicRouteService not available");
+                _componentType = null;
+            }
+            else
+            {
+                var routeInfo = dynamicRouteService.FindRoute(_currentPath);
+
+                if (routeInfo != null)
+                {
+                    _componentType = routeInfo.ComponentType;
+                    _routeParameters = ExtractRouteParameters(_currentPath, routeInfo.Template);
+                    Logger.LogInformation("Found dynamic route {Path} -> {Component} from module {Module}",
+                        _currentPath, routeInfo.ComponentType.Name, routeInfo.ModuleName);
+                }
+                else
+                {
+                    Logger.LogWarning("No route found for path: {Path}", _currentPath);
+                    _componentType = null;
+                }
+            }
         }
-        else
+        catch (Exception ex)
         {
+            Logger.LogError(ex, "Error searching for route: {Path}", _currentPath);
             _componentType = null;
-            // Get available routes for suggestions
-            _availableRoutes = DynamicRouteService?.Routes.Keys.ToList() ?? new List<string>();
-            Logger.LogWarning("No route found for path: {Path}", _currentPath);
+        }
+        finally
+        {
+            _isSearching = false;
+        }
+    }
+
+    private async Task RetryLoad()
+    {
+        // Try to initialize modules if they're not loaded
+        var moduleLoader = ServiceProvider.GetService<IModuleLoader>();
+        if (moduleLoader != null)
+        {
+            await moduleLoader.InitializeModulesAsync();
         }
 
-        _isSearching = false;
+        // Retry the route search
+        await SearchForRoute();
     }
 
     private IDictionary<string, object> ExtractRouteParameters(string path, string template)
@@ -106,19 +130,5 @@ else
         }
 
         return parameters;
-    }
-
-    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        await InvokeAsync(async () =>
-        {
-            await SearchForRoute();
-            StateHasChanged();
-        });
-    }
-
-    public void Dispose()
-    {
-        Navigation.LocationChanged -= OnLocationChanged;
     }
 }

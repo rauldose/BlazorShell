@@ -1,8 +1,41 @@
-﻿@inject NavigationManager NavigationManager
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        NavigationManager.NavigateTo($"Account/Login?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}", forceLoad: true);
+        // FIX: Better loop detection - check multiple conditions
+        var currentUri = NavigationManager.Uri;
+        var currentPath = new Uri(currentUri).LocalPath.ToLowerInvariant();
+
+        // Don't redirect if we're already on any authentication-related page
+        var authPages = new[] {
+            "/account/login",
+            "/account/logout",
+            "/account/register",
+            "/account/forgotpassword",
+            "/account/resetpassword",
+            "/account/confirmemail",
+            "/account/externallogin",
+            "/account/lockout"
+        };
+
+        if (authPages.Any(page => currentPath.StartsWith(page)))
+        {
+            return; // Already on an auth page, don't redirect
+        }
+
+        // Check authentication state
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity?.IsAuthenticated ?? true)
+        {
+            // FIX: Create proper return URL and use forceLoad
+            var returnUrl = Uri.EscapeDataString(NavigationManager.Uri);
+            var loginUrl = $"/Account/Login?returnUrl={returnUrl}";
+
+            // Use forceLoad to ensure the page fully reloads and clears any state
+            NavigationManager.NavigateTo(loginUrl, forceLoad: true);
+        }
     }
 }

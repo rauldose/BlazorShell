@@ -9,6 +9,7 @@ using Microsoft.Extensions.Primitives;
 using BlazorShell.Components.Account.Pages;
 using BlazorShell.Components.Account.Pages.Manage;
 using BlazorShell.Core.Entities;
+using Microsoft.AspNetCore.Builder;
 
 namespace Microsoft.AspNetCore.Routing;
 
@@ -40,16 +41,21 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
             return TypedResults.Challenge(properties, [provider]);
         });
 
+        // FIX: Updated Logout endpoint to prevent redirect loops
         accountGroup.MapPost("/Logout", async (
-            ClaimsPrincipal user,
-            SignInManager<ApplicationUser> signInManager,
-            [FromForm] string returnUrl) =>
+            HttpContext httpContext,
+            SignInManager<ApplicationUser> signInManager) =>
         {
+            // Sign out from Identity
             await signInManager.SignOutAsync();
-            return TypedResults.LocalRedirect($"~/{returnUrl}");
+
+            // FIX: Always redirect to home page after logout
+            // Never accept returnUrl for logout to prevent redirect loops
+            return TypedResults.LocalRedirect("~/");
         });
 
-        var manageGroup = accountGroup.MapGroup("/Manage").RequireAuthorization();
+        // Create manage endpoints
+        var manageGroup = endpoints.MapGroup("/Account/Manage").RequireAuthorization();
 
         manageGroup.MapPost("/LinkExternalLogin", async (
             HttpContext context,
@@ -64,12 +70,31 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
                 "/Account/Manage/ExternalLogins",
                 QueryString.Create("Action", ExternalLogins.LinkLoginCallbackAction));
 
-            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, signInManager.UserManager.GetUserId(context.User));
+            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return TypedResults.Challenge(properties, [provider]);
         });
 
-        var loggerFactory = endpoints.ServiceProvider.GetRequiredService<ILoggerFactory>();
-        var downloadLogger = loggerFactory.CreateLogger("DownloadPersonalData");
+        //manageGroup.MapPost("/RemoveLogin", async (
+        //    HttpContext context,
+        //    [FromServices] SignInManager<ApplicationUser> signInManager,
+        //    [FromForm] string loginProvider,
+        //    [FromForm] string providerKey) =>
+        //{
+        //    var user = await signInManager.GetUserAsync(context.User);
+        //    if (user == null)
+        //    {
+        //        return TypedResults.NotFound();
+        //    }
+
+        //    var result = await signInManager.UserManager.RemoveLoginAsync(user, loginProvider, providerKey);
+        //    if (!result.Succeeded)
+        //    {
+        //        return TypedResults.Problem("The external login was not removed.");
+        //    }
+
+        //    await signInManager.RefreshSignInAsync(user);
+        //    return TypedResults.LocalRedirect("~/Account/Manage/ExternalLogins");
+        //});
 
         manageGroup.MapPost("/DownloadPersonalData", async (
             HttpContext context,
@@ -77,15 +102,12 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
             [FromServices] AuthenticationStateProvider authenticationStateProvider) =>
         {
             var user = await userManager.GetUserAsync(context.User);
-            if (user is null)
+            if (user == null)
             {
                 return Results.NotFound($"Unable to load user with ID '{userManager.GetUserId(context.User)}'.");
             }
 
             var userId = await userManager.GetUserIdAsync(user);
-            downloadLogger.LogInformation("User with ID '{UserId}' asked for their personal data.", userId);
-
-            // Only include personal data for download
             var personalData = new Dictionary<string, string>();
             var personalDataProps = typeof(ApplicationUser).GetProperties().Where(
                 prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));

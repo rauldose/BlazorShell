@@ -2,12 +2,14 @@
 @using BlazorShell.Core.Entities
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
 @inherits LayoutComponentBase
 @implements IDisposable
 @inject INavigationService NavigationService
 @inject IModuleRegistry ModuleRegistry
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
 
 <div class="page">
     <div class="sidebar @(_sidebarCollapsed ? "collapsed" : "")">
@@ -69,103 +71,98 @@
                     }
                 </ul>
             }
-            else
-            {
-                <!-- Default navigation when no modules loaded -->
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">
-                            <i class="bi bi-house-door"></i>
-                            <span class="nav-text">Home</span>
-                        </a>
-                    </li>
-                </ul>
-            }
         </nav>
-
-        <!-- Module Information -->
-        <div class="sidebar-footer">
-            <div class="text-muted small">
-                <i class="bi bi-puzzle"></i> Modules: @_loadedModulesCount
-            </div>
-        </div>
     </div>
 
     <main>
-        <!-- Top Navigation Bar -->
         <div class="top-row px-4">
-            <button class="btn btn-link sidebar-toggle-top" @onclick="ToggleSidebar">
+            <button class="btn btn-link sidebar-toggle d-md-inline-block" @onclick="ToggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
-            <!-- Top Menu Items -->
             @if (_topMenuItems != null && _topMenuItems.Any())
             {
-                <ul class="top-nav-menu">
+                <nav class="top-nav ms-3">
                     @foreach (var item in _topMenuItems)
                     {
-                        @if (item.Children?.Any() == true)
-                        {
-                            <li class="dropdown">
-                                <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    <i class="@item.Icon"></i> @item.DisplayName
-                                </a>
-                                <ul class="dropdown-menu">
-                                    @foreach (var child in item.Children)
-                                    {
-                                        <li>
-                                            <a class="dropdown-item" href="@child.Url">
-                                                <i class="@child.Icon"></i> @child.DisplayName
-                                            </a>
-                                        </li>
-                                    }
-                                </ul>
-                            </li>
-                        }
-                        else
-                        {
-                            <li>
-                                <a href="@item.Url">
-                                    <i class="@item.Icon"></i> @item.DisplayName
-                                </a>
-                            </li>
-                        }
+                        <a class="nav-link @(IsActive(item.Url) ? "active" : "")" href="@item.Url">
+                            <i class="@item.Icon"></i> @item.DisplayName
+                        </a>
                     }
-                </ul>
+                </nav>
             }
 
-            <!-- User Menu -->
-            <div class="ms-auto">
+            <div class="ms-auto d-flex align-items-center">
                 <AuthorizeView>
                     <Authorized>
-                        <div class="dropdown">
-                            <a class="dropdown-toggle user-menu" href="#" role="button" data-bs-toggle="dropdown">
+                        <!-- Notification Dropdown -->
+                        <div class="position-relative me-3">
+                            <button class="btn btn-link position-relative" type="button" @onclick="ToggleNotificationDropdown">
+                                <i class="bi bi-bell"></i>
+                                @if (_notificationCount > 0)
+                                {
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        @_notificationCount
+                                        <span class="visually-hidden">unread notifications</span>
+                                    </span>
+                                }
+                            </button>
+                            @if (_showNotificationDropdown)
+                            {
+                                <div class="dropdown-menu dropdown-menu-end show" style="position: absolute; right: 0;">
+                                    <h6 class="dropdown-header">Notifications</h6>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/notifications">
+                                        <small>No new notifications</small>
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-center" href="/notifications">View All</a>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- User Dropdown -->
+                        <div class="position-relative">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" @onclick="ToggleUserDropdown" @onclick:preventDefault="true">
                                 <i class="bi bi-person-circle"></i> @context.User.Identity?.Name
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="/profile">
-                                        <i class="bi bi-person"></i> Profile
+                            @if (_showUserDropdown)
+                            {
+                                <div class="dropdown-menu dropdown-menu-end show" style="position: absolute; right: 0;">
+                                    <div class="dropdown-item-text">
+                                        <strong>@context.User.Identity?.Name</strong>
+                                        <br />
+                                        <small class="text-muted">@_userEmail</small>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/Account/Manage">
+                                        <i class="bi bi-person"></i> My Profile
                                     </a>
-                                </li>
-                                <li>
                                     <a class="dropdown-item" href="/settings">
                                         <i class="bi bi-gear"></i> Settings
                                     </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="post" action="/Account/Logout">
-                                        <button type="submit" class="dropdown-item">
+                                    <a class="dropdown-item" href="/Account/Manage/ChangePassword">
+                                        <i class="bi bi-key"></i> Change Password
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/help">
+                                        <i class="bi bi-question-circle"></i> Help & Support
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+
+                                    <form action="/Account/Logout" method="post" class="mb-0">
+                                        <AntiforgeryToken />
+                                        <button type="submit" class="dropdown-item text-danger">
                                             <i class="bi bi-box-arrow-right"></i> Logout
                                         </button>
                                     </form>
-                                </li>
-                            </ul>
+
+                                </div>
+                            }
                         </div>
                     </Authorized>
                     <NotAuthorized>
-                        <a href="/Account/Login">
+                        <a href="/Account/Login" class="btn btn-outline-primary">
                             <i class="bi bi-box-arrow-in-right"></i> Login
                         </a>
                     </NotAuthorized>
@@ -185,6 +182,40 @@
     <a class="dismiss">🗙</a>
 </div>
 
+<style>
+    /* Dropdown custom styles */
+    .dropdown-menu {
+        min-width: 250px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        margin-top: 0.5rem;
+        z-index: 1050;
+    }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background-color: #f8d7da;
+    }
+
+    /* Modal backdrop effect */
+    .modal.show {
+        animation: fadeIn 0.15s;
+    }
+
+
+    /* Ensure dropdowns are above other elements */
+    .position-relative {
+        z-index: 1000;
+    }
+</style>
+
 @code {
     private bool _sidebarCollapsed = false;
     private List<NavigationItem>? _topMenuItems;
@@ -192,13 +223,18 @@
     private int _loadedModulesCount = 0;
     private string? _currentUrl;
     private string? _userId;
+    private string? _userEmail;
+    private int _notificationCount = 0;
+
+    // Dropdown states
+    private bool _showUserDropdown = false;
+    private bool _showNotificationDropdown = false;
 
     protected override async Task OnInitializedAsync()
     {
         _currentUrl = Navigation.Uri;
         Navigation.LocationChanged += OnLocationChanged;
 
-        // Check if navigation service is available
         if (NavigationService != null)
         {
             NavigationService.NavigationChanged += OnNavigationChanged;
@@ -208,6 +244,7 @@
         if (authState.User.Identity?.IsAuthenticated == true)
         {
             _userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            _userEmail = authState.User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
         }
 
         await LoadNavigationItems();
@@ -218,9 +255,23 @@
         }
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Add click outside handler
+            await JSRuntime.InvokeVoidAsync("eval", @"
+                window.addEventListener('click', function(e) {
+                    if (!e.target.closest('.dropdown-menu') && !e.target.closest('.dropdown-toggle')) {
+                        DotNet.invokeMethodAsync('BlazorShell', 'CloseAllDropdowns');
+                    }
+                });
+            ");
+        }
+    }
+
     private async Task LoadNavigationItems()
     {
-        // Only load if navigation service is available
         if (NavigationService == null)
         {
             return;
@@ -228,7 +279,6 @@
 
         if (string.IsNullOrEmpty(_userId))
         {
-            // Load public navigation items
             _topMenuItems = (await NavigationService.GetNavigationItemsAsync(NavigationType.TopMenu))
                 .Where(n => string.IsNullOrEmpty(n.RequiredPermission) && string.IsNullOrEmpty(n.RequiredRole))
                 .ToList();
@@ -239,7 +289,6 @@
         }
         else
         {
-            // Load user-specific navigation items
             _topMenuItems = (await NavigationService.GetUserNavigationItemsAsync(_userId, NavigationType.TopMenu)).ToList();
             _sideMenuItems = (await NavigationService.GetUserNavigationItemsAsync(_userId, NavigationType.SideMenu)).ToList();
         }
@@ -251,6 +300,33 @@
     {
         _sidebarCollapsed = !_sidebarCollapsed;
     }
+
+    private void ToggleUserDropdown()
+    {
+        _showUserDropdown = !_showUserDropdown;
+        _showNotificationDropdown = false; // Close other dropdown
+    }
+
+    private void ToggleNotificationDropdown()
+    {
+        _showNotificationDropdown = !_showNotificationDropdown;
+        _showUserDropdown = false; // Close other dropdown
+    }
+
+    private void CloseAllDropdowns()
+    {
+        _showUserDropdown = false;
+        _showNotificationDropdown = false;
+        StateHasChanged();
+    }
+
+    // [JSInvokable]
+    // public static Task CloseAllDropdowns()
+    // {
+    //     // This would need to be handled differently in production
+    //     // For now, we'll handle it through the component instance
+    //     return Task.CompletedTask;
+    // }
 
     private bool IsActive(string? url)
     {
@@ -267,16 +343,13 @@
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         _currentUrl = e.Location;
-        InvokeAsync(StateHasChanged);
+        CloseAllDropdowns();
+        StateHasChanged();
     }
 
     private async void OnNavigationChanged(object? sender, EventArgs e)
     {
-        await InvokeAsync(async () =>
-        {
-            await LoadNavigationItems();
-            StateHasChanged();
-        });
+        await LoadNavigationItems();
     }
 
     public void Dispose()

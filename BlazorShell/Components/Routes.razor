@@ -2,10 +2,14 @@
 @using System.Reflection
 @using BlazorShell.Core.Interfaces
 @using BlazorShell.Infrastructure.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @implements IDisposable
 @inject IModuleRegistry ModuleRegistry
 @inject IDynamicRouteService DynamicRouteService
 @inject NavigationManager NavigationManager
+@inject IModuleLoader ModuleLoader
+@inject ILogger<Routes> Logger
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <CascadingValue Value="DynamicRouteService">
     <Router AppAssembly="typeof(Program).Assembly" 
@@ -14,9 +18,18 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
                 <NotAuthorized>
-                    @if (!context.User.Identity?.IsAuthenticated ?? false)
+                    @if (context.User.Identity?.IsAuthenticated == false)
                     {
-                        <RedirectToLogin />
+                        @* Only redirect if not already on login/register pages *@
+                        @if (!IsAuthenticationPage())
+                        {
+                            <RedirectToLogin />
+                        }
+                        else
+                        {
+                            @* Show the content if we're on an auth page *@
+                            <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+                        }
                     }
                     else
                     {
@@ -47,125 +60,184 @@
 </CascadingValue>
 
 @code {
+    private static List<Assembly>? _staticAdditionalAssemblies;
+    private static bool _staticIsInitialized = false;
+    private static readonly object _initLock = new object();
+    
     private List<Assembly> _additionalAssemblies = new();
-    private bool _isRefreshing = false;
+    private bool _disposed = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        LoadModuleAssemblies();
-        
-        // Subscribe to changes
-        if (ModuleRegistry != null)
+        // FIX: Use static initialization to prevent re-initialization loops
+        // This is especially important when the component is rendered in static SSR mode
+        lock (_initLock)
         {
-            ModuleRegistry.ModuleRegistered += OnModuleRegistered;
-            ModuleRegistry.ModuleUnregistered += OnModuleUnregistered;
+            if (_staticIsInitialized && _staticAdditionalAssemblies != null)
+            {
+                _additionalAssemblies = _staticAdditionalAssemblies;
+                Logger.LogDebug("Using cached module assemblies ({Count} assemblies)", _additionalAssemblies.Count);
+                return;
+            }
         }
-        
-        if (DynamicRouteService != null)
+
+        try
         {
-            DynamicRouteService.RoutesChanged += OnRoutesChanged;
+            Logger.LogInformation("Routes component initializing (first time)");
+            
+            // Ensure modules are loaded first
+            await ModuleLoader.InitializeModulesAsync();
+            
+            // Load module assemblies
+            await LoadModuleAssemblies();
+            
+            // Cache the assemblies statically
+            lock (_initLock)
+            {
+                _staticAdditionalAssemblies = _additionalAssemblies;
+                _staticIsInitialized = true;
+            }
+            
+            // Subscribe to changes only if we're in InteractiveServer mode
+            // Static SSR doesn't need these subscriptions
+            if (!IsStaticRendering())
+            {
+                if (ModuleRegistry != null)
+                {
+                    ModuleRegistry.ModuleRegistered += OnModuleRegistered;
+                    ModuleRegistry.ModuleUnregistered += OnModuleUnregistered;
+                }
+                
+                if (DynamicRouteService != null)
+                {
+                    DynamicRouteService.RoutesChanged += OnRoutesChanged;
+                }
+            }
+            
+            Logger.LogInformation("Routes component initialized with {Count} additional assemblies", _additionalAssemblies.Count);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error initializing Routes component");
         }
     }
 
-    private void LoadModuleAssemblies()
+    private bool IsStaticRendering()
     {
-        var modules = ModuleRegistry?.GetModules() ?? Enumerable.Empty<IModule>();
-        _additionalAssemblies.Clear();
-        
-        foreach (var module in modules)
+        // Check if we're on an Account page (which uses static rendering)
+        var uri = NavigationManager.Uri.ToLower();
+        return uri.Contains("/account/");
+    }
+
+    private bool IsAuthenticationPage()
+    {
+        var uri = NavigationManager.Uri.ToLower();
+        return uri.Contains("/account/login") || 
+               uri.Contains("/account/register") || 
+               uri.Contains("/account/logout") ||
+               uri.Contains("/account/forgotpassword") ||
+               uri.Contains("/account/resetpassword") ||
+               uri.Contains("/account/confirmemail") ||
+               uri.Contains("/account/externallogin") ||
+               uri.Contains("/account/lockout") ||
+               uri.Contains("/account/loginwith2fa") ||
+               uri.Contains("/account/loginwithrecoverycode");
+    }
+
+    private async Task LoadModuleAssemblies()
+    {
+        try
         {
-            var assembly = module.GetType().Assembly;
-            if (!_additionalAssemblies.Contains(assembly))
+            var modules = ModuleRegistry?.GetModules() ?? Enumerable.Empty<IModule>();
+            
+            foreach (var module in modules)
             {
-                _additionalAssemblies.Add(assembly);
-                DynamicRouteService?.RegisterModuleAssembly(module.Name, assembly);
+                var assembly = module.GetType().Assembly;
+                if (!_additionalAssemblies.Contains(assembly))
+                {
+                    _additionalAssemblies.Add(assembly);
+                    Logger.LogInformation("Added module assembly: {AssemblyName}", assembly.FullName);
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading module assemblies");
         }
     }
 
     private async Task OnNavigateAsync(NavigationContext context)
     {
-        // Custom navigation handling if needed
-        await Task.CompletedTask;
+        // Handle navigation events if needed
+        Logger.LogDebug("Navigating to: {Path}", context.Path);
     }
 
     private void OnModuleRegistered(object? sender, ModuleEventArgs e)
     {
-        if (_isRefreshing) return;
+        if (_disposed) return;
         
-        InvokeAsync(async () =>
+        var assembly = e.Module.GetType().Assembly;
+        if (!_additionalAssemblies.Contains(assembly))
         {
-            _isRefreshing = true;
-            try
+            _additionalAssemblies.Add(assembly);
+            
+            // Update static cache
+            lock (_initLock)
             {
-                var assembly = e.Module.GetType().Assembly;
-                if (!_additionalAssemblies.Contains(assembly))
+                if (_staticAdditionalAssemblies != null && !_staticAdditionalAssemblies.Contains(assembly))
                 {
-                    _additionalAssemblies.Add(assembly);
-                    DynamicRouteService?.RegisterModuleAssembly(e.Module.Name, assembly);
+                    _staticAdditionalAssemblies.Add(assembly);
                 }
-                
-                StateHasChanged();
-                
-                // Force router refresh
-                await Task.Delay(100);
-                NavigationManager.Refresh();
             }
-            finally
-            {
-                _isRefreshing = false;
-            }
-        });
+            
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     private void OnModuleUnregistered(object? sender, ModuleEventArgs e)
     {
-        if (_isRefreshing) return;
+        if (_disposed) return;
         
-        InvokeAsync(async () =>
+        var assembly = e.Module.GetType().Assembly;
+        if (_additionalAssemblies.Contains(assembly))
         {
-            _isRefreshing = true;
-            try
+            _additionalAssemblies.Remove(assembly);
+            
+            // Update static cache
+            lock (_initLock)
             {
-                var assembly = e.Module.GetType().Assembly;
-                _additionalAssemblies.Remove(assembly);
-                DynamicRouteService?.UnregisterModuleAssembly(e.Module.Name);
-                
-                StateHasChanged();
-                
-                // Force router refresh
-                await Task.Delay(100);
-                NavigationManager.Refresh();
+                _staticAdditionalAssemblies?.Remove(assembly);
             }
-            finally
-            {
-                _isRefreshing = false;
-            }
-        });
+            
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     private void OnRoutesChanged(object? sender, RouteChangedEventArgs e)
     {
-        InvokeAsync(() =>
-        {
-            if (!_isRefreshing)
-            {
-                StateHasChanged();
-            }
-        });
+        if (_disposed) return;
+        
+        Logger.LogDebug("Routes changed for module: {ModuleName}", e.ModuleName);
+        InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        if (ModuleRegistry != null)
-        {
-            ModuleRegistry.ModuleRegistered -= OnModuleRegistered;
-            ModuleRegistry.ModuleUnregistered -= OnModuleUnregistered;
-        }
+        _disposed = true;
         
-        if (DynamicRouteService != null)
+        // Only unsubscribe if we're in interactive mode
+        if (!IsStaticRendering())
         {
-            DynamicRouteService.RoutesChanged -= OnRoutesChanged;
+            if (ModuleRegistry != null)
+            {
+                ModuleRegistry.ModuleRegistered -= OnModuleRegistered;
+                ModuleRegistry.ModuleUnregistered -= OnModuleUnregistered;
+            }
+            
+            if (DynamicRouteService != null)
+            {
+                DynamicRouteService.RoutesChanged -= OnRoutesChanged;
+            }
         }
     }
 }

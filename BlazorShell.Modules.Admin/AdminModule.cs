@@ -121,7 +121,19 @@ namespace BlazorShell.Modules.Admin
                     RequiredRole = "Administrator",
                     ParentId = null,
                     IsVisible = true
-                }
+                },
+                new NavigationItem
+        {
+            Name = "admin-performance",
+            DisplayName = "Module Performance",
+            Url = "/admin/modules/performance",
+            Icon = "bi bi-speedometer2",
+            Order = 906,
+            Type = NavigationType.SideMenu,
+            RequiredRole = "Administrator",
+            ParentId = null,
+            IsVisible = true
+        }
             };
         }
 

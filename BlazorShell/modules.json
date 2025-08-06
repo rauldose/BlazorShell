@@ -23,7 +23,11 @@
       "requiredRole": null,
       "configuration": {
         "refreshInterval": 30000,
-        "defaultWidgets": [ "stats", "charts", "activities" ],
+        "defaultWidgets": [
+          "stats",
+          "charts",
+          "activities"
+        ],
         "maxWidgets": 6
       },
       "navigationItems": [
@@ -174,6 +178,45 @@
       ]
     },
     {
+      "name": "Permissions",
+      "displayName": "Permissions Management",
+      "description": "Manages permissions for other modules",
+      "assemblyName": "BlazorShell.Modules.Permissions.dll",
+      "entryType": "BlazorShell.Modules.Permissions.PermissionsModule",
+      "version": "1.0.0",
+      "author": "BlazorShell Team",
+      "category": "Administration",
+      "icon": "bi bi-shield-lock",
+      "enabled": true,
+      "loadOrder": 3,
+      "dependencies": [],
+      "requiredRole": "Administrator",
+      "configuration": {},
+      "navigationItems": [
+        {
+          "name": "permissions",
+          "displayName": "Permissions",
+          "url": "/admin/permissions",
+          "icon": "bi bi-shield-lock",
+          "order": 30,
+          "type": "Both",
+          "requiredPermission": "Permissions.Manage"
+        }
+      ],
+      "permissions": [
+        {
+          "name": "Permissions.Read",
+          "displayName": "View Permissions",
+          "description": "Allows viewing module permissions"
+        },
+        {
+          "name": "Permissions.Manage",
+          "displayName": "Manage Permissions",
+          "description": "Allows managing module permissions"
+        }
+      ]
+    },
+    {
       "name": "Reports",
       "displayName": "Reports Module",
       "description": "Provides reporting functionality",
@@ -185,10 +228,16 @@
       "icon": "bi bi-file-earmark-bar-graph",
       "enabled": false,
       "loadOrder": 5,
-      "dependencies": [ "Dashboard" ],
+      "dependencies": [
+        "Dashboard"
+      ],
       "requiredRole": null,
       "configuration": {
-        "exportFormats": [ "pdf", "excel", "csv" ],
+        "exportFormats": [
+          "pdf",
+          "excel",
+          "csv"
+        ],
         "schedulingEnabled": true,
         "maxScheduledReports": 10
       },

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using BlazorShell.Modules.Admin.Services.Models;
 using BlazorShell.Modules.Admin.Services.Interfaces;
 using BlazorShell.Domain.Events;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorShell.Modules.Admin.Services.Implementations
 {
@@ -204,6 +205,13 @@ namespace BlazorShell.Modules.Admin.Services.Implementations
                 Success = false,
                 Message = string.Join(", ", result.Errors.Select(e => e.Description))
             };
+        }
+
+        public async Task<IEnumerable<string>> GetAvailableRolesAsync()
+        {
+            return await _roleManager.Roles
+                .Select(r => r.Name!)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<string>> GetUserRolesAsync(string userId)

@@ -43,9 +43,10 @@
             <div class="col-md-3">
                 <select class="form-select" @bind="_filterRole">
                     <option value="">All Roles</option>
-                    <option value="Administrator">Administrator</option>
-                    <option value="ModuleAdmin">Module Admin</option>
-                    <option value="User">User</option>
+                    @foreach (var role in _allRoles)
+                    {
+                        <option value="@role">@role</option>
+                    }
                 </select>
             </div>
             <div class="col-md-3">
@@ -211,21 +212,15 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Roles</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="roleAdmin"
-                                   @bind="_createRoleAdmin">
-                            <label class="form-check-label" for="roleAdmin">Administrator</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="roleModuleAdmin"
-                                   @bind="_createRoleModuleAdmin">
-                            <label class="form-check-label" for="roleModuleAdmin">Module Admin</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="roleUser"
-                                   @bind="_createRoleUser">
-                            <label class="form-check-label" for="roleUser">User</label>
-                        </div>
+                        @foreach (var role in _allRoles)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="createRole_@role"
+                                       checked="@_createSelectedRoles.Contains(role)"
+                                       @onchange="(e) => ToggleCreateRole(role, (bool?)e.Value ?? false)">
+                                <label class="form-check-label" for="createRole_@role">@role</label>
+                            </div>
+                        }
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -281,24 +276,15 @@
                     <button type="button" class="btn-close" @onclick="CloseDialogs"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="userRoleAdmin"
-                               checked="@_selectedUserRoles.Contains("Administrator")"
-                               @onchange='(e) => ToggleRole(" Administrator", (bool?)e.Value ?? false)'>
-                        <label class="form-check-label" for="userRoleAdmin">Administrator</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="userRoleModuleAdmin"
-                               checked="@_selectedUserRoles.Contains("ModuleAdmin")"
-                               @onchange='(e) => ToggleRole(" ModuleAdmin", (bool?)e.Value ?? false)'>
-                        <label class="form-check-label" for="userRoleModuleAdmin">Module Admin</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="userRoleUser"
-                               checked="@_selectedUserRoles.Contains("User")"
-                               @onchange='(e) => ToggleRole(" User", (bool?)e.Value ?? false)'>
-                        <label class="form-check-label" for="userRoleUser">User</label>
-                    </div>
+                    @foreach (var role in _allRoles)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="userRole_@role"
+                                   checked="@_selectedUserRoles.Contains(role)"
+                                   @onchange="(e) => ToggleRole(role, (bool?)e.Value ?? false)">
+                            <label class="form-check-label" for="userRole_@role">@role</label>
+                        </div>
+                    }
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="CloseDialogs">Cancel</button>
@@ -340,9 +326,8 @@
 
     private CreateUserModel _createModel = new();
     private UpdateUserModel? _editModel;
-    private bool _createRoleAdmin = false;
-    private bool _createRoleModuleAdmin = false;
-    private bool _createRoleUser = true;
+    private List<string> _allRoles = new() { "Administrator", "ModuleAdmin", "User" };
+    private HashSet<string> _createSelectedRoles = new();
 
     private string? _message;
     private bool _isError = false;
@@ -385,7 +370,28 @@
             return;
         }
 
+        await LoadRoles();
         await LoadUsers();
+    }
+
+    private async Task LoadRoles()
+    {
+        try
+        {
+            var roles = await UserManagementService!.GetAvailableRolesAsync();
+            foreach (var role in roles)
+            {
+                if (!_allRoles.Contains(role))
+                {
+                    _allRoles.Add(role);
+                }
+            }
+            _allRoles = _allRoles.Distinct().OrderBy(r => r).ToList();
+        }
+        catch (Exception ex)
+        {
+            ShowMessage($"Error loading roles: {ex.Message}", true);
+        }
     }
 
     private async Task LoadUsers(int page = 1)
@@ -416,9 +422,11 @@
     private void ShowCreateUserDialog()
     {
         _createModel = new CreateUserModel();
-        _createRoleAdmin = false;
-        _createRoleModuleAdmin = false;
-        _createRoleUser = true;
+        _createSelectedRoles = new HashSet<string>();
+        if (_allRoles.Contains("User"))
+        {
+            _createSelectedRoles.Add("User");
+        }
         _showCreateDialog = true;
     }
 
@@ -442,12 +450,7 @@
 
     private async Task CreateUser()
     {
-        var roles = new List<string>();
-        if (_createRoleAdmin) roles.Add("Administrator");
-        if (_createRoleModuleAdmin) roles.Add("ModuleAdmin");
-        if (_createRoleUser) roles.Add("User");
-
-        _createModel.Roles = roles;
+        _createModel.Roles = _createSelectedRoles.ToList();
 
         var result = await UserManagementService!.CreateUserAsync(_createModel);
         ShowMessage(result.Message, !result.Success);
@@ -501,6 +504,18 @@
     private void NavigateToAccess(UserInfo user)
     {
         NavigationManager.NavigateTo($"/admin/access/user/{user.Id}");
+    }
+
+    private void ToggleCreateRole(string role, bool isChecked)
+    {
+        if (isChecked)
+        {
+            _createSelectedRoles.Add(role);
+        }
+        else
+        {
+            _createSelectedRoles.Remove(role);
+        }
     }
 
     private void ToggleRole(string role, bool isChecked)

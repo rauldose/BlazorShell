@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using BlazorShell.Infrastructure.Data;
-using BlazorShell.Core.Services;
 using BlazorShell.Core.Interfaces;
 using BlazorShell.Core.Entities;
 using BlazorShell.Infrastructure.Services;
-using BlazorShell.Infrastructure.Security;
 using BlazorShell.Components;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -529,8 +527,8 @@ public class InfrastructureModule : Module
     protected override void Load(ContainerBuilder builder)
     {
         // Register infrastructure services
-        builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
-        builder.RegisterType<FileStorageService>().As<IFileStorageService>().InstancePerLifetimeScope();
-        builder.RegisterType<CacheService>().As<ICacheService>().SingleInstance();
+        builder.RegisterType<BlazorShell.Infrastructure.Services.EmailService>().As<IEmailService>().InstancePerLifetimeScope();
+        builder.RegisterType<BlazorShell.Infrastructure.Services.FileStorageService>().As<IFileStorageService>().InstancePerLifetimeScope();
+        builder.RegisterType<BlazorShell.Infrastructure.Services.CacheService>().As<ICacheService>().SingleInstance();
     }
 }

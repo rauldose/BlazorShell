@@ -20,6 +20,7 @@ namespace BlazorShell.Infrastructure.Data
         // Core entities
         public DbSet<Module> Modules { get; set; }
         public DbSet<ModulePermission> ModulePermissions { get; set; }
+        public DbSet<PagePermission> PagePermissions { get; set; }
         public DbSet<NavigationItem> NavigationItems { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<Setting> Settings { get; set; }

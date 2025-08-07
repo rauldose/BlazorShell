@@ -6,7 +6,7 @@
 @using Microsoft.Extensions.Logging
 @using Microsoft.JSInterop
 @inherits ModuleComponentBase
-@attribute [Authorize(Roles = "Administrator,ModuleAdmin")]
+@attribute [Authorize(Policy = "ModuleAccess:Admin:Admin")]
 
 
 <PageTitle>Module Management</PageTitle>

@@ -40,7 +40,7 @@
       "Enabled": true,
       "LoadOrder": 999,
       "Dependencies": [],
-      "RequiredRole": "Administrator"
+      "RequiredRole": null
     }
   ]
 }

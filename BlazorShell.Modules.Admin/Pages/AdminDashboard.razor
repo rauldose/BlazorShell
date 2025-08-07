@@ -4,7 +4,7 @@
 @using BlazorShell.Core.Interfaces
 @using Microsoft.AspNetCore.Authorization
 @inherits ModuleComponentBase
-@attribute [Authorize(Roles = "Administrator")]
+@attribute [Authorize(Policy = "ModuleAccess:Admin:Admin")]
 
 <PageTitle>Administration Dashboard</PageTitle>
 

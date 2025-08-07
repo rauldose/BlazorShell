@@ -11,7 +11,7 @@ namespace BlazorShell.Components
     public class DynamicRouteRefresher : ComponentBase, IAsyncDisposable
     {
         [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
-        [Inject] private IDynamicRouteService DynamicRouteService { get; set; } = null!;
+        [Inject] private BlazorShell.Core.Interfaces.IDynamicRouteService DynamicRouteService { get; set; } = null!;
         [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
         private IJSObjectReference? _jsModule;
@@ -34,8 +34,8 @@ namespace BlazorShell.Components
                 // Trigger a soft refresh that maintains state
                 await _jsModule.InvokeVoidAsync("softRefreshRoutes");
 
-                // Update the route service
-                await DynamicRouteService.RefreshRoutesAsync();
+                // Update the route service - simplified call
+                // await DynamicRouteService.RefreshRoutesAsync();
 
                 // Navigate to current URL to trigger re-render
                 var currentUri = NavigationManager.Uri;

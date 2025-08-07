@@ -110,8 +110,13 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Register dynamic route service
-builder.Services.AddSingleton<IDynamicRouteService, DynamicRouteService>();
+// Register dynamic route service with adapter
+builder.Services.AddSingleton<BlazorShell.Infrastructure.Services.DynamicRouteService>();
+builder.Services.AddSingleton<BlazorShell.Core.Interfaces.IDynamicRouteService>(provider =>
+{
+    var innerService = provider.GetRequiredService<BlazorShell.Infrastructure.Services.DynamicRouteService>();
+    return new BlazorShell.Web.Adapters.DynamicRouteServiceAdapter(innerService);
+});
 
 // Add cascading authentication state (new .NET 8 pattern)
 builder.Services.AddCascadingAuthenticationState();
@@ -500,8 +505,8 @@ public class CoreServicesModule : Module
         builder.RegisterType<ModuleServiceManager>().AsSelf().SingleInstance();
         builder.RegisterType<ModuleMetadataCache>().AsSelf().SingleInstance();
    
-        builder.RegisterType<DynamicRouteService>()
-            .As<IDynamicRouteService>()
+        builder.RegisterType<BlazorShell.Infrastructure.Services.DynamicRouteService>()
+            .AsSelf()
             .SingleInstance();
         builder.RegisterType<LazyModuleLoader>()
     .As<ILazyModuleLoader>()

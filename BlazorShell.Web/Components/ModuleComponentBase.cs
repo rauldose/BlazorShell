@@ -23,7 +23,7 @@ namespace BlazorShell.Core.Components
         [Inject] protected IStateContainer? StateContainer { get; set; }
 
         // Fallback to old provider
-        [Inject] protected IModuleServiceProvider? ModuleServiceProvider { get; set; }
+        [Inject] protected BlazorShell.Core.Interfaces.IModuleServiceProvider? ModuleServiceProvider { get; set; }
 
         protected string? UserId { get; private set; }
         protected bool IsAuthenticated { get; private set; }

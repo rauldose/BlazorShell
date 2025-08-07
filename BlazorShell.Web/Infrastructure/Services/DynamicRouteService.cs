@@ -12,7 +12,7 @@ using BlazorShell.Core.Interfaces;
 namespace BlazorShell.Infrastructure.Services
 {
 
-    public class DynamicRouteService : IDynamicRouteService
+    public class DynamicRouteService
     {
         private readonly ILogger<DynamicRouteService> _logger;
         private readonly Dictionary<string, Assembly> _moduleAssemblies = new();

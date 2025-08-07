@@ -9,6 +9,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorShell.Modules.Dashboa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorShell.Modules.Admin", "BlazorShell.Modules.Admin\BlazorShell.Modules.Admin.csproj", "{D333380E-D191-48AE-A825-D45AA37D06B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorShell.Core", "BlazorShell.Core\BlazorShell.Core.csproj", "{E14EB014-8053-4324-AB1D-476E6DBDB226}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorShell.Domain", "BlazorShell.Domain\BlazorShell.Domain.csproj", "{0BD08F80-383E-4E8B-A67D-6E49ECE57001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorShell.Infrastructure", "BlazorShell.Infrastructure\BlazorShell.Infrastructure.csproj", "{58749C03-36C0-442E-96FD-2B7BF2AF6CC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorShell.Application", "BlazorShell.Application\BlazorShell.Application.csproj", "{473B84E3-3D90-446C-979C-2BC4347B05BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +35,22 @@ Global
 		{D333380E-D191-48AE-A825-D45AA37D06B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D333380E-D191-48AE-A825-D45AA37D06B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D333380E-D191-48AE-A825-D45AA37D06B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E14EB014-8053-4324-AB1D-476E6DBDB226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E14EB014-8053-4324-AB1D-476E6DBDB226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E14EB014-8053-4324-AB1D-476E6DBDB226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E14EB014-8053-4324-AB1D-476E6DBDB226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BD08F80-383E-4E8B-A67D-6E49ECE57001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BD08F80-383E-4E8B-A67D-6E49ECE57001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BD08F80-383E-4E8B-A67D-6E49ECE57001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BD08F80-383E-4E8B-A67D-6E49ECE57001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58749C03-36C0-442E-96FD-2B7BF2AF6CC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58749C03-36C0-442E-96FD-2B7BF2AF6CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58749C03-36C0-442E-96FD-2B7BF2AF6CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58749C03-36C0-442E-96FD-2B7BF2AF6CC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{473B84E3-3D90-446C-979C-2BC4347B05BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{473B84E3-3D90-446C-979C-2BC4347B05BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{473B84E3-3D90-446C-979C-2BC4347B05BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{473B84E3-3D90-446C-979C-2BC4347B05BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

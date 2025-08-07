@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>BlazorShell.Components</RootNamespace>
   </PropertyGroup>
 
 
@@ -13,12 +14,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.19" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="..\BlazorShell.Core\BlazorShell.Core.csproj" />
     <ProjectReference Include="..\BlazorShell.Infrastructure\BlazorShell.Infrastructure.csproj" />
-    <ProjectReference Include="..\BlazorShell.SharedUI\BlazorShell.SharedUI.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <CascadingValue Value="DynamicRouteService">
-    <Router AppAssembly="typeof(Program).Assembly" 
+    <Router AppAssembly="typeof(App).Assembly"
             AdditionalAssemblies="@_additionalAssemblies"
             OnNavigateAsync="OnNavigateAsync">
         <Found Context="routeData">

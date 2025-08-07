@@ -201,63 +201,6 @@ builder.Services.AddAntiforgery(options =>
 //                             BlazorShell.Modules.Admin.Services.AuditService>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 var app = builder.Build();
-// Initialize modules BEFORE configuring the pipeline
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<Program>>();
-
-    try
-    {
-        // NEW: Use lazy loader for initialization
-        var lazyLoader = services.GetRequiredService<ILazyModuleLoader>();
-        var moduleRegistry = services.GetRequiredService<IModuleRegistry>();
-
-        // Set loading strategy based on environment
-        var loadingStrategy = app.Environment.IsDevelopment()
-            ? ModuleLoadingStrategy.PreloadCore  // In dev, only load core modules
-            : ModuleLoadingStrategy.OnDemand;     // In prod, pure lazy loading
-
-        lazyLoader.SetModuleLoadingStrategy(loadingStrategy);
-
-        // Only preload absolutely essential modules
-        logger.LogInformation("Initializing with lazy loading strategy: {Strategy}", loadingStrategy);
-
-        // Load ONLY the Admin module at startup (it's required for module management)
-        await lazyLoader.LoadModuleOnDemandAsync("Admin");
-
-        // Optionally preload Dashboard if it's your default landing page
-        if (app.Environment.IsDevelopment())
-        {
-            await lazyLoader.LoadModuleOnDemandAsync("Dashboard");
-        }
-
-        logger.LogInformation("Lazy initialization complete. Loaded modules: {Count}",
-            moduleRegistry.GetModules().Count());
-
-        // Start hot reload monitoring in development
-        if (app.Environment.IsDevelopment())
-        {
-            var hotReload = services.GetRequiredService<IModuleHotReloadService>();
-            var modules = moduleRegistry.GetModules();
-
-            foreach (var module in modules)
-            {
-                var assemblyPath = module.GetType().Assembly.Location;
-                if (!string.IsNullOrEmpty(assemblyPath))
-                {
-                    await hotReload.StartWatchingAsync(module.Name, assemblyPath);
-                    logger.LogInformation("Hot reload watching enabled for {Module}", module.Name);
-                }
-            }
-        }
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "Error during lazy initialization");
-        throw;
-    }
-}
 
 // Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
@@ -316,32 +259,9 @@ app.MapRazorPages();
 app.MapHealthChecks("/health");
 
 // Initialize application
-await InitializeApplication(app);
+await app.Services.GetRequiredService<IApplicationStartupService>().InitializeApplicationAsync();
 
 app.Run();
-
-async Task InitializeModulesEarly(WebApplication app)
-{
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-
-    try
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogInformation("Starting early module initialization");
-
-        // Initialize modules first - this ensures routes are available
-        var moduleLoader = services.GetRequiredService<IModuleLoader>();
-        await moduleLoader.InitializeModulesAsync();
-
-        logger.LogInformation("Early module initialization completed");
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Error during early module initialization");
-    }
-}
 // Add this helper method
 IEnumerable<Assembly> GetModuleAssemblies(IServiceProvider services)
 {
@@ -383,107 +303,6 @@ IEnumerable<Assembly> GetModuleAssemblies(IServiceProvider services)
     }
 
     return assemblies;
-}
-// Update your existing InitializeApplication method
-async Task InitializeApplication(WebApplication app)
-{
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-
-        // Apply migrations
-        if (app.Environment.IsProduction())
-        {
-            await context.Database.MigrateAsync();
-        }
-        else
-        {
-            await context.Database.EnsureCreatedAsync();
-        }
-
-        // Seed roles
-        var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
-        await SeedRoles(roleManager);
-
-        // Seed default admin user (only in development)
-        if (app.Environment.IsDevelopment())
-        {
-            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-            await SeedDefaultAdmin(userManager, roleManager);
-        }
-
-        // REMOVED: Module loading - it's handled by lazy loader now
-
-        // Log module status
-        var moduleRegistry = services.GetRequiredService<IModuleRegistry>();
-        var lazyLoader = services.GetRequiredService<ILazyModuleLoader>();
-        var logger = services.GetRequiredService<ILogger<Program>>();
-
-        var loadedCount = moduleRegistry.GetModules().Count();
-        var totalCount = lazyLoader.GetAllModuleStatuses().Count();
-
-        logger.LogInformation(
-            "Application initialized with {LoadedCount}/{TotalCount} modules loaded (lazy loading enabled)",
-            loadedCount, totalCount);
-
-        // Start background cleanup service
-        if (services.GetService<IHostedService>() is ModuleCleanupService cleanupService)
-        {
-            logger.LogInformation("Module cleanup service started");
-        }
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while initializing the application");
-        throw;
-    }
-}
-async Task SeedRoles(RoleManager<ApplicationRole> roleManager)
-{
-    var roles = new[]
-    {
-        new ApplicationRole { Name = "Administrator", Description = "Full system access", IsSystemRole = true },
-        new ApplicationRole { Name = "ModuleAdmin", Description = "Can manage modules", IsSystemRole = true },
-        new ApplicationRole { Name = "User", Description = "Standard user access", IsSystemRole = true }
-    };
-
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role.Name))
-        {
-            await roleManager.CreateAsync(role);
-        }
-    }
-}
-
-async Task SeedDefaultAdmin(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
-{
-    const string adminEmail = "admin@blazorshell.local";
-    const string adminPassword = "Admin@123456";
-
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser == null)
-    {
-        adminUser = new ApplicationUser
-        {
-            UserName = adminEmail,
-            Email = adminEmail,
-            EmailConfirmed = true,
-            FullName = "System Administrator",
-            CreatedDate = DateTime.UtcNow,
-            IsActive = true
-        };
-
-        var result = await userManager.CreateAsync(adminUser, adminPassword);
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(adminUser, "Administrator");
-        }
-    }
 }
 
 // Module registration for Autofac - NO CONSTRUCTOR PARAMETERS
@@ -528,6 +347,11 @@ public class InfrastructureModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
+        // Register startup services
+        builder.RegisterType<ApplicationStartupService>().As<IApplicationStartupService>().InstancePerLifetimeScope();
+        builder.RegisterType<DatabaseInitializationService>().As<IDatabaseInitializationService>().InstancePerLifetimeScope();
+        builder.RegisterType<ModuleInitializationService>().As<IModuleInitializationService>().InstancePerLifetimeScope();
+
         // Register infrastructure services
         builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
         builder.RegisterType<FileStorageService>().As<IFileStorageService>().InstancePerLifetimeScope();

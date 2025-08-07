@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using BlazorShell.Core.Entities;
 using BlazorShell.Core.Interfaces;
+using BlazorShell.Core.Enums;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

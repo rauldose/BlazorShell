@@ -1,5 +1,6 @@
 ﻿using BlazorShell.Core.Interfaces;
 using BlazorShell.Core.Entities;
+using BlazorShell.Core.Enums;
 using BlazorShell.Core.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;

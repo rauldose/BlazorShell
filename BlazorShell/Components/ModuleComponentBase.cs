@@ -6,6 +6,7 @@ using BlazorShell.Infrastructure.Services;
 using System.Security.Claims;
 using Microsoft.Extensions.DependencyInjection;
 using BlazorShell.Core.Entities;
+using BlazorShell.Core.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace BlazorShell.Core.Components

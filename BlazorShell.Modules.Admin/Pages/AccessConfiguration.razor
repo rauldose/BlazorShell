@@ -10,6 +10,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @inject IModuleAuthorizationService ModuleAuthorization
+@inject IPageAuthorizationService PageAuthorization
 @inject ApplicationDbContext DbContext
 @inject RoleManager<ApplicationRole> RoleManager
 @inject UserManager<ApplicationUser> UserManager
@@ -76,6 +77,15 @@
                             <input type="checkbox" checked="@HasAccess(module)" @onchange="() => ToggleAccess(module)" />
                         </td>
                     </tr>
+                    @foreach (var nav in module.NavigationItems.Where(n => !string.IsNullOrEmpty(n.Url)).OrderBy(n => n.Order))
+                    {
+                        <tr>
+                            <td class="ps-4">- @nav.DisplayName</td>
+                            <td class="text-center">
+                                <input type="checkbox" checked="@HasPageAccess(nav)" @onchange="() => TogglePageAccess(nav)" />
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
@@ -91,6 +101,7 @@
     private List<ApplicationUser> _users = new();
     private List<Module> _modules = new();
     private HashSet<int> _granted = new();
+    private HashSet<int> _pageGranted = new();
     private ApplicationRole? _role;
     private ApplicationUser? _user;
     private bool _loading = true;
@@ -116,19 +127,35 @@
     private async Task LoadRolePermissions(string roleId)
     {
         _role = await RoleManager.FindByIdAsync(roleId);
-        _modules = await DbContext.Modules.Where(m => m.IsEnabled).OrderBy(m => m.DisplayName).ToListAsync();
+        _modules = await DbContext.Modules
+            .Where(m => m.IsEnabled)
+            .Include(m => m.NavigationItems)
+            .OrderBy(m => m.DisplayName)
+            .ToListAsync();
         var permissions = await ModuleAuthorization.GetRolePermissionsAsync(roleId);
         _granted = permissions.Where(p => p.PermissionType == PermissionType.View.ToString())
                               .Select(p => p.ModuleId).ToHashSet();
+        var pagePermissions = await PageAuthorization.GetRolePermissionsAsync(roleId);
+        _pageGranted = pagePermissions.Where(p => p.PermissionType == PermissionType.View.ToString())
+                                      .Select(p => p.NavigationItemId)
+                                      .ToHashSet();
     }
 
     private async Task LoadUserPermissions(string userId)
     {
         _user = await UserManager.FindByIdAsync(userId);
-        _modules = await DbContext.Modules.Where(m => m.IsEnabled).OrderBy(m => m.DisplayName).ToListAsync();
+        _modules = await DbContext.Modules
+            .Where(m => m.IsEnabled)
+            .Include(m => m.NavigationItems)
+            .OrderBy(m => m.DisplayName)
+            .ToListAsync();
         var permissions = await ModuleAuthorization.GetUserPermissionsAsync(userId);
         _granted = permissions.Where(p => p.PermissionType == PermissionType.View.ToString())
                               .Select(p => p.ModuleId).ToHashSet();
+        var pagePermissions = await PageAuthorization.GetUserPermissionsAsync(userId);
+        _pageGranted = pagePermissions.Where(p => p.PermissionType == PermissionType.View.ToString())
+                                      .Select(p => p.NavigationItemId)
+                                      .ToHashSet();
     }
 
     private bool HasAccess(Module module) => _granted.Contains(module.Id);
@@ -159,6 +186,38 @@
             {
                 await ModuleAuthorization.GrantPermissionAsync(UserId!, module.Name!, PermissionType.View);
                 _granted.Add(module.Id);
+            }
+        }
+    }
+
+    private bool HasPageAccess(NavigationItem item) => _pageGranted.Contains(item.Id);
+
+    private async Task TogglePageAccess(NavigationItem item)
+    {
+        if (RoleId != null)
+        {
+            if (HasPageAccess(item))
+            {
+                await PageAuthorization.RevokeRolePermissionAsync(RoleId!, item.Id, PermissionType.View);
+                _pageGranted.Remove(item.Id);
+            }
+            else
+            {
+                await PageAuthorization.GrantRolePermissionAsync(RoleId!, item.Id, PermissionType.View);
+                _pageGranted.Add(item.Id);
+            }
+        }
+        else if (UserId != null)
+        {
+            if (HasPageAccess(item))
+            {
+                await PageAuthorization.RevokePermissionAsync(UserId!, item.Id, PermissionType.View);
+                _pageGranted.Remove(item.Id);
+            }
+            else
+            {
+                await PageAuthorization.GrantPermissionAsync(UserId!, item.Id, PermissionType.View);
+                _pageGranted.Add(item.Id);
             }
         }
     }

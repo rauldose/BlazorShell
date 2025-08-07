@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BlazorShell.Components.Account;
 
-internal sealed class IdentityRedirectManager(NavigationManager navigationManager, IHttpContextAccessor httpContextAccessor)
+public sealed class IdentityRedirectManager(NavigationManager navigationManager, IHttpContextAccessor httpContextAccessor)
 {
     public const string StatusCookieName = "Identity.StatusMessage";
 

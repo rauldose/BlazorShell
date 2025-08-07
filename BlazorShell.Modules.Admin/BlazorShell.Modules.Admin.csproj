@@ -12,11 +12,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.19" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlazorShell\BlazorShell.csproj" />
+    <ProjectReference Include="..\BlazorShell.Core\BlazorShell.Core.csproj" />
+    <ProjectReference Include="..\BlazorShell.Infrastructure\BlazorShell.Infrastructure.csproj" />
+    <ProjectReference Include="..\BlazorShell.SharedUI\BlazorShell.SharedUI.csproj" />
   </ItemGroup>
 
 </Project>

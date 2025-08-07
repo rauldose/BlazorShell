@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using BlazorShell.Core.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BlazorShell.Infrastructure.Services
 {

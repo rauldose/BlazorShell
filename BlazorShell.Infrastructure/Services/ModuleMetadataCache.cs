@@ -22,6 +22,7 @@ namespace BlazorShell.Infrastructure.Services
             public DateTime? UnloadedAt { get; set; }
             public bool IsEnabled { get; set; }
             public bool IsCore { get; set; }
+            public string? RequiredRole { get; set; }
             public Dictionary<string, object> Configuration { get; set; } = new();
             public List<string> Dependencies { get; set; } = new();
             public ModuleState CurrentState { get; set; } = ModuleState.NotLoaded;

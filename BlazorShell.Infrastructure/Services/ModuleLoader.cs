@@ -208,6 +208,7 @@ namespace BlazorShell.Infrastructure.Services
                     LoadedAt = DateTime.UtcNow,
                     IsEnabled = true,
                     IsCore = moduleConfig.LoadOrder < 100, // Assume low order = core
+                    RequiredRole = moduleConfig.RequiredRole,
                     Configuration = moduleConfig.Configuration ?? new Dictionary<string, object>(),
                     Dependencies = moduleConfig.Dependencies ?? new List<string>(),
                     CurrentState = ModuleMetadataCache.ModuleState.Loaded
@@ -385,6 +386,7 @@ namespace BlazorShell.Infrastructure.Services
                         {
                             metadata.AssemblyPath = Path.Combine(_modulesPath, dbModule.AssemblyName);
                             metadata.AssemblyName = dbModule.AssemblyName;
+                            metadata.RequiredRole = dbModule.RequiredRole;
 
                             // Parse configuration and dependencies if stored as JSON
                             if (!string.IsNullOrEmpty(dbModule.Configuration))
@@ -643,6 +645,7 @@ namespace BlazorShell.Infrastructure.Services
                 dbModule.Author = module.Author;
                 dbModule.Icon = module.Icon;
                 dbModule.Category = module.Category;
+                dbModule.RequiredRole = config.RequiredRole;
                 dbModule.LoadOrder = module.Order;
                 dbModule.IsEnabled = true;
                 dbModule.AssemblyName = config.AssemblyName;

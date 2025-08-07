@@ -1,0 +1,179 @@
+@using BlazorShell.Modules.Admin.Services
+@inject IModuleUIService ModuleUIService
+@inject INotificationService NotificationService
+@inject IModuleOperationStateService OperationStateService
+
+@if (Module != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="card-title mb-1">@Module.DisplayName</h5>
+                    <p class="card-text text-muted small mb-2">@Module.Description</p>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-@GetStatusBadgeClass()">@Module.Status</span>
+                        <span class="badge bg-secondary">@Module.Category</span>
+                        <span class="badge bg-info">v@Module.Version</span>
+                    </div>
+                </div>
+                <div class="btn-group" role="group">
+                    @if (Module.Status == ModuleStatus.Running)
+                    {
+                        <button class="btn btn-warning btn-sm" 
+                                disabled="@IsOperating" 
+                                @onclick="() => DisableModuleAsync()">
+                            @if (IsOperating)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            }
+                            Disable
+                        </button>
+                        <button class="btn btn-primary btn-sm" 
+                                disabled="@IsOperating" 
+                                @onclick="() => ReloadModuleAsync()">
+                            @if (IsOperating)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            }
+                            Reload
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-success btn-sm" 
+                                disabled="@IsOperating" 
+                                @onclick="() => EnableModuleAsync()">
+                            @if (IsOperating)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            }
+                            Enable
+                        </button>
+                    }
+                    <button class="btn btn-danger btn-sm" 
+                            disabled="@IsOperating" 
+                            @onclick="() => UninstallModuleAsync()">
+                        @if (IsOperating)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        }
+                        Uninstall
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public ModuleInfo? Module { get; set; }
+    [Parameter] public EventCallback<ModuleInfo> OnModuleChanged { get; set; }
+
+    private bool IsOperating => Module != null && OperationStateService.IsOperating(Module.Name);
+
+    protected override void OnInitialized()
+    {
+        OperationStateService.StateChanged += (_, _) => InvokeAsync(StateHasChanged);
+        NotificationService.NotificationAdded += (_, notification) => 
+        {
+            // Notifications are handled by parent component or global notification system
+            InvokeAsync(StateHasChanged);
+        };
+    }
+
+    private async Task EnableModuleAsync()
+    {
+        if (Module == null) return;
+
+        await OperationStateService.ExecuteOperationAsync(Module.Name, async () =>
+        {
+            var operationResult = await ModuleUIService.EnableModuleAsync(Module.Name);
+            if (operationResult.Success)
+            {
+                NotificationService.ShowSuccess($"Module '{Module.DisplayName}' enabled successfully");
+                await OnModuleChanged.InvokeAsync(Module);
+            }
+            else
+            {
+                NotificationService.ShowError($"Failed to enable module: {operationResult.Message}");
+            }
+        });
+    }
+
+    private async Task DisableModuleAsync()
+    {
+        if (Module == null) return;
+
+        await OperationStateService.ExecuteOperationAsync(Module.Name, async () =>
+        {
+            var result = await ModuleUIService.DisableModuleAsync(Module.Name);
+            if (result.Success)
+            {
+                NotificationService.ShowSuccess($"Module '{Module.DisplayName}' disabled successfully");
+                await OnModuleChanged.InvokeAsync(Module);
+            }
+            else
+            {
+                NotificationService.ShowError($"Failed to disable module: {result.Message}");
+            }
+        });
+    }
+
+    private async Task ReloadModuleAsync()
+    {
+        if (Module == null) return;
+
+        await OperationStateService.ExecuteOperationAsync(Module.Name, async () =>
+        {
+            var result = await ModuleUIService.ReloadModuleAsync(Module.Name);
+            if (result.Success)
+            {
+                NotificationService.ShowSuccess($"Module '{Module.DisplayName}' reloaded successfully");
+                await OnModuleChanged.InvokeAsync(Module);
+            }
+            else
+            {
+                NotificationService.ShowError($"Failed to reload module: {result.Message}");
+            }
+        });
+    }
+
+    private async Task UninstallModuleAsync()
+    {
+        if (Module == null) return;
+
+        await OperationStateService.ExecuteOperationAsync(Module.Name, async () =>
+        {
+            var result = await ModuleUIService.UninstallModuleAsync(Module.Name);
+            if (result.Success)
+            {
+                NotificationService.ShowSuccess($"Module '{Module.DisplayName}' uninstalled successfully");
+                await OnModuleChanged.InvokeAsync(Module);
+            }
+            else
+            {
+                NotificationService.ShowError($"Failed to uninstall module: {result.Message}");
+            }
+        });
+    }
+
+    private string GetStatusBadgeClass()
+    {
+        return Module?.Status switch
+        {
+            ModuleStatus.Running => "success",
+            ModuleStatus.Disabled => "secondary",
+            ModuleStatus.Stopped => "warning",
+            ModuleStatus.Error => "danger",
+            ModuleStatus.Missing => "danger",
+            ModuleStatus.Unregistered => "secondary",
+            _ => "secondary"
+        };
+    }
+
+    public void Dispose()
+    {
+        OperationStateService.StateChanged -= (_, _) => InvokeAsync(StateHasChanged);
+    }
+}

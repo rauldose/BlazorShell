@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace BlazorShell.Infrastructure.Services
 {
@@ -654,6 +655,49 @@ namespace BlazorShell.Infrastructure.Services
                 dbModule.Dependencies = JsonConvert.SerializeObject(config.Dependencies);
                 dbModule.ModifiedDate = DateTime.UtcNow;
                 dbModule.ModifiedBy = "System";
+
+                // Persist navigation items to database so that access configuration
+                // can load them for permission management. Previously navigation
+                // items were only registered in memory and never stored, which
+                // meant the AccessConfiguration page could not display page level
+                // permissions. We now synchronize the module's navigation items
+                // with the database, creating missing entries and updating existing
+                // ones.
+
+                var navItems = module.GetNavigationItems()?.ToList() ?? new List<NavigationItem>();
+
+                // Load existing items for this module to preserve IDs and permissions
+                var existingItems = await scopedDbContext.NavigationItems
+                    .Where(n => n.ModuleId == dbModule.Id)
+                    .ToListAsync();
+
+                foreach (var item in navItems)
+                {
+                    var existing = existingItems.FirstOrDefault(n => n.Name == item.Name);
+                    if (existing == null)
+                    {
+                        item.ModuleId = dbModule.Id;
+                        item.CreatedDate = DateTime.UtcNow;
+                        item.CreatedBy = "System";
+                        scopedDbContext.NavigationItems.Add(item);
+                    }
+                    else
+                    {
+                        existing.DisplayName = item.DisplayName;
+                        existing.Url = item.Url;
+                        existing.Icon = item.Icon;
+                        existing.ParentId = item.ParentId;
+                        existing.Order = item.Order;
+                        existing.IsVisible = item.IsVisible;
+                        existing.RequiredPermission = item.RequiredPermission;
+                        existing.RequiredRole = item.RequiredRole;
+                        existing.Target = item.Target;
+                        existing.CssClass = item.CssClass;
+                        existing.Type = item.Type;
+                        existing.ModifiedDate = DateTime.UtcNow;
+                        existing.ModifiedBy = "System";
+                    }
+                }
 
                 await scopedDbContext.SaveChangesAsync();
             }

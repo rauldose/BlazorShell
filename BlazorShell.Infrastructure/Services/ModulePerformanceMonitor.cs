@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using BlazorShell.Core.Interfaces;
+using BlazorShell.Application.Interfaces;
 
 namespace BlazorShell.Infrastructure.Services
 {

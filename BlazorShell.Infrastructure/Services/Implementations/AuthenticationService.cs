@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using BlazorShell.Application.Models;
+using BlazorShell.Application.Services;
 
-namespace BlazorShell.Core.Services;
+namespace BlazorShell.Infrastructure.Services;
 
 public class AuthenticationService : IAuthenticationService
 {

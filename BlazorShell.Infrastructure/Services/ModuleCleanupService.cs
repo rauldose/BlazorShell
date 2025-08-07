@@ -2,8 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using BlazorShell.Application.Services;
 
-namespace BlazorShell.Core.Services
+namespace BlazorShell.Infrastructure.Services
 {
     public class ModuleCleanupService : BackgroundService
     {

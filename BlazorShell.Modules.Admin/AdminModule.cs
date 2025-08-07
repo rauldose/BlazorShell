@@ -1,6 +1,6 @@
 ﻿// BlazorShell.Modules.Admin/AdminModule.cs
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Entities;
+using BlazorShell.Application.Interfaces;
+using BlazorShell.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;

@@ -1,6 +1,6 @@
 ﻿// BlazorShell.Modules.Admin/Services/AuditService.cs
 using Microsoft.EntityFrameworkCore;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

@@ -100,8 +100,8 @@ namespace BlazorShell.Infrastructure.Services
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine("using BlazorShell.Core.Interfaces;");
-            sb.AppendLine("using BlazorShell.Core.Entities;");
+            sb.AppendLine("using BlazorShell.Application.Interfaces;");
+            sb.AppendLine("using BlazorShell.Domain.Entities;");
             sb.AppendLine("using Microsoft.Extensions.Logging;");
             sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
             sb.AppendLine("using System.Reflection;");
@@ -214,7 +214,7 @@ namespace BlazorShell.Infrastructure.Services
             var sb = new StringBuilder();
 
             sb.AppendLine($"@page \"/{moduleName.ToLower()}\"");
-            sb.AppendLine("@using BlazorShell.Core.Components");
+            sb.AppendLine("@using BlazorShell.Components");
             sb.AppendLine($"@using BlazorShell.Modules.{moduleName}.Services");
             sb.AppendLine("@inherits ModuleComponentBase");
             sb.AppendLine();
@@ -330,7 +330,8 @@ namespace BlazorShell.Infrastructure.Services
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include=""..\..\BlazorShell.Core\BlazorShell.Core.csproj"" />
+    <ProjectReference Include=""..\..\BlazorShell.Application\BlazorShell.Application.csproj"" />
+    <ProjectReference Include=""..\..\BlazorShell.Domain\BlazorShell.Domain.csproj"" />
   </ItemGroup>
 
 </Project>";

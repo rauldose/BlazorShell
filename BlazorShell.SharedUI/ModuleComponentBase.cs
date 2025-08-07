@@ -1,14 +1,14 @@
 ﻿// Core/Components/ImprovedModuleComponentBase.cs
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Services;
+using BlazorShell.Application.Interfaces;
+using BlazorShell.Application.Services;
 using System.Security.Claims;
 using Microsoft.Extensions.DependencyInjection;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace BlazorShell.Core.Components
+namespace BlazorShell.Components
 {
     public abstract class ModuleComponentBase : ComponentBase, IDisposable
     {

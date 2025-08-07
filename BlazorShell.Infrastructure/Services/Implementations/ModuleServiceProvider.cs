@@ -1,13 +1,13 @@
 ﻿// Infrastructure/Services/ImprovedModuleServiceProvider.cs
 using Microsoft.Extensions.DependencyInjection;
-using BlazorShell.Core.Interfaces;
+using BlazorShell.Application.Interfaces;
 using System.Collections.Concurrent;
 using System;
 using System.Collections.Generic;
-using BlazorShell.Core.Services;
+using BlazorShell.Application.Services;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;

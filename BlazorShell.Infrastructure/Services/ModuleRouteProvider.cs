@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Reflection;
-using BlazorShell.Core.Interfaces;
+using BlazorShell.Application.Interfaces;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Logging;
 

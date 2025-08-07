@@ -3,8 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Services;
+using BlazorShell.Application.Interfaces;
+using BlazorShell.Application.Services;
+using BlazorShell.Application.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 

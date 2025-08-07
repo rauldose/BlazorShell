@@ -1,5 +1,5 @@
 // BlazorShell.Modules.Admin/Services/Interfaces/IModuleManagementService.cs
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using System.Collections.Generic;
 using System.IO;
 

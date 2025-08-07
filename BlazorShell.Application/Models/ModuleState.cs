@@ -1,4 +1,4 @@
-namespace BlazorShell.Core.Services;
+namespace BlazorShell.Application.Models;
 
 public enum ModuleState
 {

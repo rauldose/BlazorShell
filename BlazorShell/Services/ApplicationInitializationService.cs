@@ -1,7 +1,8 @@
-using BlazorShell.Core.Entities;
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Services;
+using BlazorShell.Domain.Entities;
+using BlazorShell.Application.Interfaces;
+using BlazorShell.Application.Services;
 using BlazorShell.Infrastructure.Data;
+using BlazorShell.Infrastructure.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

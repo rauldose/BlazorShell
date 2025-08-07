@@ -1,5 +1,5 @@
 ﻿// Infrastructure/Services/ModuleRegistry.cs - Ensure it maintains state as singleton
-using BlazorShell.Core.Interfaces;
+using BlazorShell.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 

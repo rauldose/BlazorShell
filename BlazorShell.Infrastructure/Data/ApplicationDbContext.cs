@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Reflection.Emit;
-using Module = BlazorShell.Core.Entities.Module;
+using Module = BlazorShell.Domain.Entities.Module;
 
 namespace BlazorShell.Infrastructure.Data
 {

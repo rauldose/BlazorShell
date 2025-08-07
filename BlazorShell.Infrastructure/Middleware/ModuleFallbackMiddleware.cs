@@ -1,6 +1,6 @@
 ﻿// Infrastructure/Middleware/ModuleFallbackMiddleware.cs
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Services;
+using BlazorShell.Application.Interfaces;
+using BlazorShell.Application.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

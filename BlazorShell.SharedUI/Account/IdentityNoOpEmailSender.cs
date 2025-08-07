@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 
 namespace BlazorShell.Components.Account;
 

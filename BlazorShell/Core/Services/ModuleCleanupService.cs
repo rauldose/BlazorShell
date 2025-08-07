@@ -1,4 +1,4 @@
-﻿using BlazorShell.Infrastructure.Services;
+﻿using BlazorShell.Core.Services;
 
 namespace BlazorShell.Core.Services
 {

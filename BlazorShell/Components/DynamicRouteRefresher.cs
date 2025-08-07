@@ -1,7 +1,7 @@
 ﻿// Components/DynamicRouteRefresher.cs
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using BlazorShell.Infrastructure.Services;
+using BlazorShell.Core.Services;
 
 namespace BlazorShell.Components
 {

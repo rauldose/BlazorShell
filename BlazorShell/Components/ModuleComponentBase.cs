@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using BlazorShell.Core.Interfaces;
-using BlazorShell.Infrastructure.Services;
+using BlazorShell.Core.Services;
 using System.Security.Claims;
 using Microsoft.Extensions.DependencyInjection;
 using BlazorShell.Core.Entities;

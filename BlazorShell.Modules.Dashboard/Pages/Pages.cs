@@ -1,3 +1,5 @@
+using BlazorShell.Modules.Dashboard.Services.Interfaces;
+using BlazorShell.Modules.Dashboard.Models;
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 

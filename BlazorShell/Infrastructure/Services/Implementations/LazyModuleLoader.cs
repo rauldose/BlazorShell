@@ -1,25 +1,21 @@
 ﻿// Infrastructure/Services/LazyModuleLoader.cs
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Reflection;
 using BlazorShell.Core.Interfaces;
 using BlazorShell.Core.Entities;
+using BlazorShell.Core.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
 namespace BlazorShell.Infrastructure.Services
 {
-    public interface ILazyModuleLoader
-    {
-        Task<IModule?> LoadModuleOnDemandAsync(string moduleName);
-        Task PreloadModulesAsync(params string[] moduleNames);
-        Task<bool> IsModuleLoadedAsync(string moduleName);
-        Task<ModuleLoadStatus> GetModuleStatusAsync(string moduleName);
-        void SetModuleLoadingStrategy(ModuleLoadingStrategy strategy);
-        Task UnloadInactiveModulesAsync(TimeSpan inactiveThreshold);
-        IEnumerable<ModuleLoadStatus> GetAllModuleStatuses();
-    }
-
+    
     public class LazyModuleLoader : ILazyModuleLoader
     {
         private readonly IModuleLoader _moduleLoader;
@@ -307,35 +303,6 @@ namespace BlazorShell.Infrastructure.Services
             _lastAccessTimes[moduleName] = DateTime.UtcNow;
         }
     }
-
-    public class ModuleLoadStatus
-    {
-        public string ModuleName { get; set; } = string.Empty;
-        public ModuleState State { get; set; }
-        public bool IsCore { get; set; }
-        public int Priority { get; set; }
-        public string? LastError { get; set; }
-        public DateTime LastStateChange { get; set; }
-        public DateTime? LastAccessTime { get; set; }
-    }
-
-    public enum ModuleState
-    {
-        NotConfigured,
-        NotLoaded,
-        Loading,
-        Loaded,
-        Unloading,
-        Error
-    }
-
-    public enum ModuleLoadingStrategy
-    {
-        OnDemand,       // Load modules only when accessed
-        PreloadCore,    // Preload core modules, lazy load others
-        PreloadAll      // Preload all modules at startup
-    }
-
     public class ModuleMetadata
     {
         public string Name { get; set; } = string.Empty;

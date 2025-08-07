@@ -167,6 +167,11 @@ namespace BlazorShell.Modules.Admin
             services.AddScoped<IModuleManagementService, ModuleManagementService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
             services.AddScoped<IAuditService, AuditService>();
+            
+            // Register new UI services following SOLID principles
+            services.AddScoped<IModuleUIService, ModuleUIService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IModuleOperationStateService, ModuleOperationStateService>();
 
             _logger?.LogInformation("Admin module services registered");
         }

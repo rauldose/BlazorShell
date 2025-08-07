@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using BlazorShell.Core.Interfaces;
+using BlazorShell.Core.Services;
 using BlazorShell.Core.Entities;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

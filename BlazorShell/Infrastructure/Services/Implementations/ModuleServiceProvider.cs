@@ -2,6 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using BlazorShell.Core.Interfaces;
 using System.Collections.Concurrent;
+using System;
+using System.Collections.Generic;
+using BlazorShell.Core.Services;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using BlazorShell.Core.Entities;
@@ -12,18 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BlazorShell.Infrastructure.Services
 {
-    public interface IModuleServiceProvider
-    {
-        void RegisterModuleServices(string moduleName, IServiceModule module);
-        void UnregisterModuleServices(string moduleName);
-        T? GetService<T>() where T : class;
-        object? GetService(Type serviceType);
-        IServiceProvider GetModuleServiceProvider(string moduleName);
-        bool IsModuleRegistered(string moduleName);
-        void RefreshModuleServices(string moduleName, IServiceModule module);
-        IEnumerable<string> GetRegisteredModules();
-    }
-
+    
     public class ModuleServiceProvider : IModuleServiceProvider
     {
         private readonly ConcurrentDictionary<string, ModuleServiceContainer> _moduleContainers = new();

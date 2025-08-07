@@ -1,6 +1,6 @@
 ﻿// Infrastructure/Middleware/ModuleFallbackMiddleware.cs
 using BlazorShell.Core.Interfaces;
-using BlazorShell.Infrastructure.Services;
+using BlazorShell.Core.Services;
 
 namespace BlazorShell.Infrastructure.Middleware
 {

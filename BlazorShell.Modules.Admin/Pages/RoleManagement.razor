@@ -46,6 +46,9 @@
                                 @if (!role.IsSystemRole)
                                 {
                                     <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-secondary" title="Access" @onclick="() => NavigateToAccess(role)">
+                                            <i class="bi bi-lock"></i>
+                                        </button>
                                         <button class="btn btn-outline-primary" @onclick="() => ShowEditRoleDialog(role)">
                                             <i class="bi bi-pencil"></i>
                                         </button>
@@ -106,6 +109,7 @@
 @code {
     [Inject] private RoleManager<ApplicationRole> RoleManager { get; set; } = null!;
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
     private List<ApplicationRole>? _roles;
     private ApplicationRole? _editingRole;
@@ -132,6 +136,11 @@
         {
             _isLoading = false;
         }
+    }
+
+    private void NavigateToAccess(ApplicationRole role)
+    {
+        NavigationManager.NavigateTo($"/admin/access/role/{role.Id}");
     }
 
     private void ShowCreateRoleDialog()

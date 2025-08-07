@@ -1,0 +1,158 @@
+@* BlazorShell.Modules.Admin/Pages/AccessConfiguration.razor *@
+@page "/admin/access"
+@page "/admin/access/role/{RoleId}"
+@page "/admin/access/user/{UserId}"
+@using BlazorShell.Components
+@using BlazorShell.Domain.Entities
+@using BlazorShell.Infrastructure.Data
+@using BlazorShell.Application.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject IModuleAuthorizationService ModuleAuthorization
+@inject ApplicationDbContext DbContext
+@inject RoleManager<ApplicationRole> RoleManager
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager NavigationManager
+@inherits ModuleComponentBase
+@attribute [Authorize(Roles = "Administrator")]
+
+<PageTitle>Access Configuration</PageTitle>
+
+<div class="container-fluid">
+    @if (UserId == null && RoleId == null)
+    {
+        <h1><i class="bi bi-lock"></i> Access Configuration</h1>
+        <p>Select a role to configure module access:</p>
+        <ul class="list-group">
+            @foreach (var role in _roles)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>@role.Name</span>
+                    <button class="btn btn-sm btn-primary" @onclick="() => NavigateToRole(role.Id)">Configure</button>
+                </li>
+            }
+        </ul>
+    }
+    else if (_loading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading access configuration...</p>
+        </div>
+    }
+    else
+    {
+        <h1><i class="bi bi-lock"></i> Access for @EntityName</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th class="text-center">Access</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var module in _modules)
+                {
+                    <tr>
+                        <td>@module.DisplayName</td>
+                        <td class="text-center">
+                            <input type="checkbox" checked="@HasAccess(module)" @onchange="() => ToggleAccess(module)" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button class="btn btn-secondary" @onclick="Back">Back</button>
+    }
+</div>
+
+@code {
+    [Parameter] public string? RoleId { get; set; }
+    [Parameter] public new string? UserId { get; set; }
+
+    private List<ApplicationRole> _roles = new();
+    private List<Module> _modules = new();
+    private HashSet<int> _granted = new();
+    private ApplicationRole? _role;
+    private ApplicationUser? _user;
+    private bool _loading = true;
+
+    private string EntityName => _role?.Name ?? _user?.UserName ?? string.Empty;
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        _roles = await RoleManager.Roles.OrderBy(r => r.Name).ToListAsync();
+
+        if (RoleId != null)
+        {
+            await LoadRolePermissions(RoleId);
+        }
+        else if (UserId != null)
+        {
+            await LoadUserPermissions(UserId);
+        }
+        _loading = false;
+    }
+
+    private async Task LoadRolePermissions(string roleId)
+    {
+        _role = await RoleManager.FindByIdAsync(roleId);
+        _modules = await DbContext.Modules.Where(m => m.IsEnabled).OrderBy(m => m.DisplayName).ToListAsync();
+        var permissions = await ModuleAuthorization.GetRolePermissionsAsync(roleId);
+        _granted = permissions.Where(p => p.PermissionType == PermissionType.View.ToString())
+                              .Select(p => p.ModuleId).ToHashSet();
+    }
+
+    private async Task LoadUserPermissions(string userId)
+    {
+        _user = await UserManager.FindByIdAsync(userId);
+        _modules = await DbContext.Modules.Where(m => m.IsEnabled).OrderBy(m => m.DisplayName).ToListAsync();
+        var permissions = await ModuleAuthorization.GetUserPermissionsAsync(userId);
+        _granted = permissions.Where(p => p.PermissionType == PermissionType.View.ToString())
+                              .Select(p => p.ModuleId).ToHashSet();
+    }
+
+    private bool HasAccess(Module module) => _granted.Contains(module.Id);
+
+    private async Task ToggleAccess(Module module)
+    {
+        if (RoleId != null)
+        {
+            if (HasAccess(module))
+            {
+                await ModuleAuthorization.RevokeRolePermissionAsync(RoleId!, module.Name!, PermissionType.View);
+                _granted.Remove(module.Id);
+            }
+            else
+            {
+                await ModuleAuthorization.GrantRolePermissionAsync(RoleId!, module.Name!, PermissionType.View);
+                _granted.Add(module.Id);
+            }
+        }
+        else if (UserId != null)
+        {
+            if (HasAccess(module))
+            {
+                await ModuleAuthorization.RevokePermissionAsync(UserId!, module.Name!, PermissionType.View);
+                _granted.Remove(module.Id);
+            }
+            else
+            {
+                await ModuleAuthorization.GrantPermissionAsync(UserId!, module.Name!, PermissionType.View);
+                _granted.Add(module.Id);
+            }
+        }
+    }
+
+    private void Back()
+    {
+        NavigationManager.NavigateTo("/admin/access");
+    }
+
+    private void NavigateToRole(string id)
+    {
+        NavigationManager.NavigateTo($"/admin/access/role/{id}");
+    }
+}
+

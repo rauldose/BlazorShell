@@ -134,7 +134,19 @@ namespace BlazorShell.Modules.Admin
             RequiredRole = "Administrator",
             ParentId = null,
             IsVisible = true
-        }
+        },
+                new NavigationItem
+                {
+                    Name = "admin-access",
+                    DisplayName = "Access Control",
+                    Url = "/admin/access",
+                    Icon = "bi bi-lock",
+                    Order = 907,
+                    Type = NavigationType.SideMenu,
+                    RequiredRole = "Administrator",
+                    ParentId = null,
+                    IsVisible = true
+                }
             };
         }
 

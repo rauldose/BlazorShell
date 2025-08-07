@@ -263,7 +263,7 @@ namespace BlazorShell.Infrastructure.Services
 
                 if (pageAuth != null)
                 {
-                    if (!await pageAuth.CanAccessPageAsync(userId, item.Id, PermissionType.Read))
+                    if (!await pageAuth.CanAccessPageAsync(userId, item.Id, PermissionType.View))
                         return false;
                 }
 

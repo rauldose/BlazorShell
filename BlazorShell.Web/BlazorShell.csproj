@@ -23,4 +23,10 @@
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.19" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorShell.Core\BlazorShell.Core.csproj" />
+    <ProjectReference Include="..\BlazorShell.Application\BlazorShell.Application.csproj" />
+    <ProjectReference Include="..\BlazorShell.Infrastructure\BlazorShell.Infrastructure.csproj" />
+  </ItemGroup>
 </Project>

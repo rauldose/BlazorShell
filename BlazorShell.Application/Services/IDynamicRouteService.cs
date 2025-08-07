@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using BlazorShell.Application.Models;
 
-namespace BlazorShell.Core.Services;
+namespace BlazorShell.Application.Services;
 
 public interface IDynamicRouteService
 {

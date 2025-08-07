@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace BlazorShell.Components.Account;

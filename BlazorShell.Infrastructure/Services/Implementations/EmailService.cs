@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
-using BlazorShell.Core.Services;
+using BlazorShell.Application.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 

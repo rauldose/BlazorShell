@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
-using BlazorShell.Core.Interfaces;
+using System.Threading.Tasks;
+using BlazorShell.Application.Interfaces;
+using BlazorShell.Application.Models;
 
-namespace BlazorShell.Core.Services;
+namespace BlazorShell.Application.Services;
 
 public interface ILazyModuleLoader
 {

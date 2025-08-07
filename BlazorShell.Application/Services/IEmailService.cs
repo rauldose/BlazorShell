@@ -1,4 +1,4 @@
-namespace BlazorShell.Core.Services;
+namespace BlazorShell.Application.Services;
 
 public interface IEmailService
 {

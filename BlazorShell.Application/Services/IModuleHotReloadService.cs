@@ -1,4 +1,8 @@
-namespace BlazorShell.Core.Services;
+using System;
+using System.Threading.Tasks;
+using BlazorShell.Application.Models;
+
+namespace BlazorShell.Application.Services;
 
 public interface IModuleHotReloadService
 {

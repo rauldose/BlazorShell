@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 
-namespace BlazorShell.Core.Entities
+namespace BlazorShell.Domain.Entities
 {
     // Enhanced User entity
     public class ApplicationUser : IdentityUser, IAuditableEntity

@@ -1,7 +1,7 @@
 ﻿// BlazorShell.Modules.Admin/Services/UserManagementService.cs
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.Extensions.Logging;
 

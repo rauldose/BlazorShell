@@ -3,9 +3,9 @@ using System.Runtime.Loader;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Services;
-using BlazorShell.Core.Entities;
+using BlazorShell.Application.Interfaces;
+using BlazorShell.Application.Services;
+using BlazorShell.Domain.Entities;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -628,7 +628,7 @@ namespace BlazorShell.Infrastructure.Services
 
                 if (dbModule == null)
                 {
-                    dbModule = new Core.Entities.Module
+                    dbModule = new BlazorShell.Domain.Entities.Module
                     {
                         Name = module.Name,
                         CreatedDate = DateTime.UtcNow,

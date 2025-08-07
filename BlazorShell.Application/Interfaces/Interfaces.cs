@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Authorization;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace BlazorShell.Core.Interfaces
+namespace BlazorShell.Application.Interfaces
 {
     /// <summary>
     /// Base interface that all modules must implement

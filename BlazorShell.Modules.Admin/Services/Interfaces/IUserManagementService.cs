@@ -1,5 +1,5 @@
 // BlazorShell.Modules.Admin/Services/Interfaces/IUserManagementService.cs
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using System.Collections.Generic;
 
 namespace BlazorShell.Modules.Admin.Services;

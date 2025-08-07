@@ -3,8 +3,8 @@ using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Entities;
+using BlazorShell.Application.Interfaces;
+using BlazorShell.Domain.Entities;
 
 namespace BlazorShell.Infrastructure.Services
 {

@@ -1,6 +1,6 @@
 ﻿// Components/ModuleServiceScope.cs
 using Microsoft.AspNetCore.Components;
-using BlazorShell.Core.Services;
+using BlazorShell.Application.Services;
 
 namespace BlazorShell.Components
 {

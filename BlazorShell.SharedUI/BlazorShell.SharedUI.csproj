@@ -15,8 +15,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.19" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <ProjectReference Include="..\BlazorShell.Core\BlazorShell.Core.csproj" />
     <ProjectReference Include="..\BlazorShell.Infrastructure\BlazorShell.Infrastructure.csproj" />
+    <ProjectReference Include="..\BlazorShell.Application\BlazorShell.Application.csproj" />
+    <ProjectReference Include="..\BlazorShell.Domain\BlazorShell.Domain.csproj" />
   </ItemGroup>
 
 </Project>

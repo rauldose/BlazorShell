@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using BlazorShell.Core.Services;
+using BlazorShell.Application.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 

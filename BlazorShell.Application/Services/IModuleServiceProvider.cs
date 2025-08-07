@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using BlazorShell.Core.Interfaces;
+using BlazorShell.Application.Interfaces;
 
-namespace BlazorShell.Core.Services;
+namespace BlazorShell.Application.Services;
 
 public interface IModuleServiceProvider
 {

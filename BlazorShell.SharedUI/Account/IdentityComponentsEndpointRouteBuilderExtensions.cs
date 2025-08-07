@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using BlazorShell.Components.Account.Pages;
 using BlazorShell.Components.Account.Pages.Manage;
-using BlazorShell.Core.Entities;
+using BlazorShell.Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 

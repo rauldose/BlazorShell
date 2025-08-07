@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace BlazorShell.Core.Services;
+namespace BlazorShell.Application.Models;
 
 public class RouteInfo
 {

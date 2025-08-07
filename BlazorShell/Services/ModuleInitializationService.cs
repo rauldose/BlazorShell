@@ -1,5 +1,6 @@
-using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Services;
+using BlazorShell.Application.Interfaces;
+using BlazorShell.Application.Services;
+using BlazorShell.Application.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 

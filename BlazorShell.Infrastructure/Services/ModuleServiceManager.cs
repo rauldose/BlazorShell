@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using BlazorShell.Core.Interfaces;
+using BlazorShell.Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

@@ -1,7 +1,7 @@
-﻿using BlazorShell.Core.Interfaces;
-using BlazorShell.Core.Entities;
+﻿using BlazorShell.Application.Interfaces;
+using BlazorShell.Domain.Entities;
 using System.Collections.Generic;
-using BlazorShell.Core.Components;
+using BlazorShell.Components;
 using BlazorShell.Modules.Dashboard.Services.Interfaces;
 using BlazorShell.Modules.Dashboard.Services.Implementations;
 using Microsoft.Extensions.Logging;

@@ -2,6 +2,7 @@
 using System.Reflection;
 using BlazorShell.Core.Interfaces;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace BlazorShell.Infrastructure.Services
 {

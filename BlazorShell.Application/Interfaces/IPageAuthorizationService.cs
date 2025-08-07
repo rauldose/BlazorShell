@@ -4,7 +4,7 @@ namespace BlazorShell.Application.Interfaces;
 
 public interface IPageAuthorizationService
 {
-    Task<bool> CanAccessPageAsync(string userId, int pageId);
+    Task<bool> CanAccessPageAsync(string userId, int pageId, PermissionType permission);
     Task GrantPermissionAsync(string userId, int pageId, PermissionType permission);
     Task RevokePermissionAsync(string userId, int pageId, PermissionType permission);
     Task<IEnumerable<PagePermission>> GetUserPermissionsAsync(string userId);

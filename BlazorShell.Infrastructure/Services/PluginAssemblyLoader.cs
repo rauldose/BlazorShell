@@ -242,6 +242,7 @@ namespace BlazorShell.Infrastructure.Services
                     return false;
 
                 var authService = _serviceProvider.GetService<IModuleAuthorizationService>();
+                var pageAuth = _serviceProvider.GetService<IPageAuthorizationService>();
                 if (authService == null)
                     return false;
 
@@ -258,6 +259,12 @@ namespace BlazorShell.Infrastructure.Services
                                 return false;
                         }
                     }
+                }
+
+                if (pageAuth != null)
+                {
+                    if (!await pageAuth.CanAccessPageAsync(userId, item.Id, PermissionType.Read))
+                        return false;
                 }
 
                 // Check role

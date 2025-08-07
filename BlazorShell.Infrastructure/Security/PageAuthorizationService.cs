@@ -26,7 +26,7 @@ public class PageAuthorizationService : IPageAuthorizationService
         _logger = logger;
     }
 
-    public async Task<bool> CanAccessPageAsync(string userId, int pageId)
+    public async Task<bool> CanAccessPageAsync(string userId, int pageId, PermissionType permission)
     {
         try
         {
@@ -43,8 +43,10 @@ public class PageAuthorizationService : IPageAuthorizationService
             if (page == null)
                 return false;
 
+            var permissionName = permission.ToString();
             var hasPermissions = await _dbContext.PagePermissions
-                .AnyAsync(p => p.NavigationItemId == pageId);
+                .AnyAsync(p => p.NavigationItemId == pageId &&
+                               p.PermissionType == permissionName);
 
             if (!hasPermissions)
                 return true;
@@ -52,6 +54,7 @@ public class PageAuthorizationService : IPageAuthorizationService
             var userPermission = await _dbContext.PagePermissions
                 .AnyAsync(p => p.NavigationItemId == pageId &&
                                p.UserId == userId &&
+                               p.PermissionType == permissionName &&
                                p.IsGranted);
 
             if (userPermission)
@@ -66,6 +69,7 @@ public class PageAuthorizationService : IPageAuthorizationService
                     var rolePermission = await _dbContext.PagePermissions
                         .AnyAsync(p => p.NavigationItemId == pageId &&
                                       p.RoleId == role.Id &&
+                                      p.PermissionType == permissionName &&
                                       p.IsGranted);
                     if (rolePermission)
                         return true;

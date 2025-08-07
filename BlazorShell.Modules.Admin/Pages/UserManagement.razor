@@ -126,6 +126,10 @@
                                             @onclick="() => ShowRolesDialog(user)">
                                         <i class="bi bi-shield"></i>
                                     </button>
+                                    <button class="btn btn-outline-secondary" title="Access"
+                                            @onclick="() => NavigateToAccess(user)">
+                                        <i class="bi bi-lock"></i>
+                                    </button>
                                     @if (user.IsActive)
                                     {
                                         <button class="btn btn-outline-warning" title="Deactivate"
@@ -494,6 +498,11 @@
         }
     }
 
+    private void NavigateToAccess(UserInfo user)
+    {
+        NavigationManager.NavigateTo($"/admin/access/user/{user.Id}");
+    }
+
     private void ToggleRole(string role, bool isChecked)
     {
         if (isChecked && !_selectedUserRoles.Contains(role))
@@ -542,4 +551,5 @@
     }
 
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 }

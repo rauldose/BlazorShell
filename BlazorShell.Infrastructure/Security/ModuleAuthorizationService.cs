@@ -218,4 +218,71 @@ public class ModuleAuthorizationService : IModuleAuthorizationService
             .Where(p => p.UserId == userId && p.IsGranted)
             .ToListAsync();
     }
+
+    public async Task GrantRolePermissionAsync(string roleId, string moduleName, PermissionType permission)
+    {
+        var module = await _dbContext.Modules
+            .FirstOrDefaultAsync(m => m.Name == moduleName);
+
+        if (module == null)
+            throw new InvalidOperationException($"Module {moduleName} not found");
+
+        var existingPermission = await _dbContext.ModulePermissions
+            .FirstOrDefaultAsync(p => p.ModuleId == module.Id &&
+                                      p.RoleId == roleId &&
+                                      p.PermissionType == permission.ToString());
+
+        if (existingPermission != null)
+        {
+            existingPermission.IsGranted = true;
+            existingPermission.GrantedDate = DateTime.UtcNow;
+        }
+        else
+        {
+            _dbContext.ModulePermissions.Add(new ModulePermission
+            {
+                ModuleId = module.Id,
+                RoleId = roleId,
+                PermissionType = permission.ToString(),
+                IsGranted = true,
+                GrantedDate = DateTime.UtcNow,
+                GrantedBy = "System"
+            });
+        }
+
+        await _dbContext.SaveChangesAsync();
+        _logger.LogInformation("Granted {Permission} permission to role {RoleId} for module {ModuleName}",
+            permission, roleId, moduleName);
+    }
+
+    public async Task RevokeRolePermissionAsync(string roleId, string moduleName, PermissionType permission)
+    {
+        var module = await _dbContext.Modules
+            .FirstOrDefaultAsync(m => m.Name == moduleName);
+
+        if (module == null)
+            return;
+
+        var existingPermission = await _dbContext.ModulePermissions
+            .FirstOrDefaultAsync(p => p.ModuleId == module.Id &&
+                                      p.RoleId == roleId &&
+                                      p.PermissionType == permission.ToString());
+
+        if (existingPermission != null)
+        {
+            existingPermission.IsGranted = false;
+            await _dbContext.SaveChangesAsync();
+
+            _logger.LogInformation("Revoked {Permission} permission from role {RoleId} for module {ModuleName}",
+                permission, roleId, moduleName);
+        }
+    }
+
+    public async Task<IEnumerable<ModulePermission>> GetRolePermissionsAsync(string roleId)
+    {
+        return await _dbContext.ModulePermissions
+            .Include(p => p.Module)
+            .Where(p => p.RoleId == roleId && p.IsGranted)
+            .ToListAsync();
+    }
 }

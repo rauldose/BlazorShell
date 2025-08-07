@@ -89,7 +89,9 @@
                     {
                         <tr>
                             <td class="ps-4">- @nav.DisplayName</td>
-                            <td></td>
+                            <td class="text-center">
+                                <input type="checkbox" checked="@HasPageAccess(nav)" @onchange="() => TogglePageAccess(nav, PermissionType.View)" />
+                            </td>
                             @foreach (var perm in _permissionLevels)
                             {
                                 <td class="text-center">
@@ -217,6 +219,8 @@
             }
         }
     }
+
+    private bool HasPageAccess(NavigationItem item) => HasPagePermission(item, PermissionType.View);
 
     private bool HasPagePermission(NavigationItem item, PermissionType permission)
         => _pagePermissions.TryGetValue(item.Id, out var set) && set.Contains(permission);

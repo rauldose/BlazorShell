@@ -23,16 +23,32 @@
     @if (UserId == null && RoleId == null)
     {
         <h1><i class="bi bi-lock"></i> Access Configuration</h1>
-        <p>Select a role to configure module access:</p>
-        <ul class="list-group">
-            @foreach (var role in _roles)
-            {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span>@role.Name</span>
-                    <button class="btn btn-sm btn-primary" @onclick="() => NavigateToRole(role.Id)">Configure</button>
-                </li>
-            }
-        </ul>
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Roles</h5>
+                <ul class="list-group">
+                    @foreach (var role in _roles)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@role.Name</span>
+                            <button class="btn btn-sm btn-primary" @onclick="() => NavigateToRole(role.Id)">Configure</button>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h5>Users</h5>
+                <ul class="list-group">
+                    @foreach (var user in _users)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@user.UserName</span>
+                            <button class="btn btn-sm btn-primary" @onclick="() => NavigateToUser(user.Id)">Configure</button>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
     }
     else if (_loading)
     {
@@ -72,6 +88,7 @@
     [Parameter] public new string? UserId { get; set; }
 
     private List<ApplicationRole> _roles = new();
+    private List<ApplicationUser> _users = new();
     private List<Module> _modules = new();
     private HashSet<int> _granted = new();
     private ApplicationRole? _role;
@@ -83,6 +100,7 @@
     protected override async Task OnModuleInitializedAsync()
     {
         _roles = await RoleManager.Roles.OrderBy(r => r.Name).ToListAsync();
+        _users = await UserManager.Users.OrderBy(u => u.UserName).Take(20).ToListAsync();
 
         if (RoleId != null)
         {
@@ -148,6 +166,11 @@
     private void Back()
     {
         NavigationManager.NavigateTo("/admin/access");
+    }
+
+    private void NavigateToUser(string id)
+    {
+        NavigationManager.NavigateTo($"/admin/access/user/{id}");
     }
 
     private void NavigateToRole(string id)

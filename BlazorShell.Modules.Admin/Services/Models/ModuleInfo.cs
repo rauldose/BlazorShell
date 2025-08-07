@@ -1,3 +1,5 @@
+using BlazorShell.Domain.Entities;
+
 namespace BlazorShell.Modules.Admin.Services.Models;
 
 public class ModuleInfo
@@ -19,5 +21,6 @@ public class ModuleInfo
     public long FileSize { get; set; }
     public int ComponentCount { get; set; }
     public int NavigationItemCount { get; set; }
+    public List<NavigationItem> NavigationItems { get; set; } = new();
     public ModuleStatus Status { get; set; }
 }

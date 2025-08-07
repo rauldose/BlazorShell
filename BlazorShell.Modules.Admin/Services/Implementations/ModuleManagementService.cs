@@ -96,7 +96,9 @@ namespace BlazorShell.Modules.Admin.Services.Implementations
                 {
                     info.LoadedAt = DateTime.UtcNow; // You might want to track this properly
                     info.ComponentCount = loadedModule.GetComponentTypes()?.Count() ?? 0;
-                    info.NavigationItemCount = loadedModule.GetNavigationItems()?.Count() ?? 0;
+                    var navItems = loadedModule.GetNavigationItems()?.ToList() ?? new List<NavigationItem>();
+                    info.NavigationItems = navItems;
+                    info.NavigationItemCount = navItems.Count;
                 }
 
                 moduleInfos.Add(info);

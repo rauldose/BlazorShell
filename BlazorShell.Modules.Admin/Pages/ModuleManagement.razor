@@ -233,9 +233,28 @@
                                 <p>@_selectedModule.ComponentCount</p>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Navigation Items:</label>
+                                <label class="form-label fw-bold">Navigation Item Count:</label>
                                 <p>@_selectedModule.NavigationItemCount</p>
                             </div>
+                        </div>
+                    }
+
+                    @if (_selectedModule.NavigationItems?.Any() == true)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Navigation Items:</label>
+                            <ul class="list-group">
+                                @foreach (var nav in _selectedModule.NavigationItems)
+                                {
+                                    <li class="list-group-item d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(nav.Icon))
+                                        {
+                                            <i class="@nav.Icon me-2"></i>
+                                        }
+                                        <span>@nav.DisplayName (@nav.Url)</span>
+                                    </li>
+                                }
+                            </ul>
                         </div>
                     }
 
@@ -600,7 +619,7 @@
 
     private async Task ShowModuleDetails(ModuleInfo module)
     {
-        _selectedModule = module;
+        _selectedModule = await ModuleManagementService.GetModuleAsync(module.Name) ?? module;
         _moduleDependencies = (await ModuleManagementService.GetModuleDependenciesAsync(module.Name)).ToList();
         _moduleHealth = await ModuleManagementService.GetModuleHealthAsync(module.Name);
     }

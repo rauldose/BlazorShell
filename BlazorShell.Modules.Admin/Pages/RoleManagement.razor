@@ -6,7 +6,7 @@
 @using BlazorShell.Core.Entities
 @using Microsoft.JSInterop
 @inherits ModuleComponentBase
-@attribute [Authorize(Roles = "Administrator")]
+@attribute [Authorize(Policy = "ModuleAccess:Admin:Admin")]
 
 <PageTitle>Role Management</PageTitle>
 

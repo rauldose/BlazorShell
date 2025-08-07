@@ -141,6 +141,9 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Administrator", "ModuleAdmin"));
 });
 
+// Enable dynamic module-based policies
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, ModuleAuthorizationPolicyProvider>();
+
 // Register authorization handlers
 builder.Services.AddSingleton<IAuthorizationHandler, ModuleAccessHandler>();
 

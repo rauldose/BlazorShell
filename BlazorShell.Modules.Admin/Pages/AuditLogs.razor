@@ -5,7 +5,7 @@
 @using BlazorShell.Core.Entities
 @using Microsoft.AspNetCore.Authorization
 @inherits ModuleComponentBase
-@attribute [Authorize(Roles = "Administrator")]
+@attribute [Authorize(Policy = "ModuleAccess:Admin:Admin")]
 
 <PageTitle>Audit Logs</PageTitle>
 

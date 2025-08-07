@@ -59,7 +59,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-gear-fill",
                     Order = 900,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                    RequiredPermission = "Admin.Admin",
                     IsVisible = true
                 },
                 new NavigationItem
@@ -70,7 +70,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-puzzle",
                     Order = 901,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                    RequiredPermission = "Admin.Admin",
                     ParentId = null,
                     IsVisible = true
                 },
@@ -82,7 +82,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-people",
                     Order = 902,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                    RequiredPermission = "Admin.Admin",
                     ParentId = null,
                     IsVisible = true
                 },
@@ -94,7 +94,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-shield-lock",
                     Order = 903,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                    RequiredPermission = "Admin.Admin",
                     ParentId = null,
                     IsVisible = true
                 },
@@ -106,7 +106,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-sliders",
                     Order = 904,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                    RequiredPermission = "Admin.Admin",
                     ParentId = null,
                     IsVisible = true
                 },
@@ -118,7 +118,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-journal-text",
                     Order = 905,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                    RequiredPermission = "Admin.Admin",
                     ParentId = null,
                     IsVisible = true
                 },
@@ -130,7 +130,7 @@ namespace BlazorShell.Modules.Admin
             Icon = "bi bi-speedometer2",
             Order = 906,
             Type = NavigationType.SideMenu,
-            RequiredRole = "Administrator",
+            RequiredPermission = "Admin.Admin",
             ParentId = null,
             IsVisible = true
         }

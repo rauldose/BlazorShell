@@ -36,7 +36,7 @@
                     <p class="card-text">
                         Load and manage modules dynamically. Each module can provide its own pages, services, and navigation items.
                     </p>
-                    <AuthorizeView Roles="Administrator">
+                    <AuthorizeView Policy="ModuleAccess:Admin:Admin">
                         <a href="/admin/modules" class="btn btn-primary">Manage Modules</a>
                     </AuthorizeView>
                 </div>
@@ -52,7 +52,7 @@
                     <p class="card-text">
                         Manage users, roles, and permissions. Control access to modules and features based on user authorization.
                     </p>
-                    <AuthorizeView Roles="Administrator">
+                    <AuthorizeView Policy="ModuleAccess:Admin:Admin">
                         <a href="/admin/users" class="btn btn-primary">Manage Users</a>
                     </AuthorizeView>
                 </div>
@@ -68,7 +68,7 @@
                     <p class="card-text">
                         Configure application settings, module parameters, and system preferences through a centralized interface.
                     </p>
-                    <AuthorizeView Roles="Administrator">
+                    <AuthorizeView Policy="ModuleAccess:Admin:Admin">
                         <a href="/admin/settings" class="btn btn-primary">Settings</a>
                     </AuthorizeView>
                 </div>

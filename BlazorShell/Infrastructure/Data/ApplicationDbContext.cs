@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using BlazorShell.Core.Entities;
+using BlazorShell.Core.Interfaces;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Reflection.Emit;

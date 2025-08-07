@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using BlazorShell.Core.Interfaces;
 using BlazorShell.Core.Entities;
+using BlazorShell.Core.Enums;
 
 namespace BlazorShell.Infrastructure.Services
 {

@@ -9,18 +9,22 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using BlazorShell.Application.Interfaces;
 using BlazorShell.Domain.Entities;
-using BlazorShell.Infrastructure.Data;
+using BlazorShell.Domain.Repositories;
+using BlazorShell.Modules.Admin.Services.Models;
+using BlazorShell.Modules.Admin.Services.Interfaces;
+using BlazorShell.Domain.Events;
 using Newtonsoft.Json;
 using Module = BlazorShell.Domain.Entities.Module;
 
-namespace BlazorShell.Modules.Admin.Services
+namespace BlazorShell.Modules.Admin.Services.Implementations
 {
     public class ModuleManagementService : IModuleManagementService
     {
         private readonly IModuleLoader _moduleLoader;
         private readonly IModuleRegistry _moduleRegistry;
         private readonly IPluginAssemblyLoader _assemblyLoader;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IModuleRepository _moduleRepository;
+        private readonly IDomainEventDispatcher _eventDispatcher;
         private readonly ILogger<ModuleManagementService> _logger;
         private readonly string _modulesPath;
         private readonly string _moduleBackupPath;
@@ -29,13 +33,15 @@ namespace BlazorShell.Modules.Admin.Services
             IModuleLoader moduleLoader,
             IModuleRegistry moduleRegistry,
             IPluginAssemblyLoader assemblyLoader,
-            ApplicationDbContext dbContext,
+            IModuleRepository moduleRepository,
+            IDomainEventDispatcher eventDispatcher,
             ILogger<ModuleManagementService> logger)
         {
             _moduleLoader = moduleLoader;
             _moduleRegistry = moduleRegistry;
             _assemblyLoader = assemblyLoader;
-            _dbContext = dbContext;
+            _moduleRepository = moduleRepository;
+            _eventDispatcher = eventDispatcher;
             _logger = logger;
             _modulesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Modules");
             _moduleBackupPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ModuleBackups");
@@ -59,7 +65,7 @@ namespace BlazorShell.Modules.Admin.Services
             var loadedModules = _moduleRegistry.GetModules();
 
             // Get all modules from database
-            var dbModules = await _dbContext.Modules.ToListAsync();
+            var dbModules = await _moduleRepository.GetAllAsync();
 
             // Combine information
             foreach (var dbModule in dbModules)
@@ -135,8 +141,7 @@ namespace BlazorShell.Modules.Admin.Services
         {
             try
             {
-                var dbModule = await _dbContext.Modules
-                    .FirstOrDefaultAsync(m => m.Name == moduleName);
+                var dbModule = await _moduleRepository.GetByNameAsync(moduleName);
 
                 if (dbModule == null)
                 {
@@ -172,7 +177,8 @@ namespace BlazorShell.Modules.Admin.Services
                 if (module != null)
                 {
                     dbModule.IsEnabled = true;
-                    await _dbContext.SaveChangesAsync();
+                    await _moduleRepository.SaveChangesAsync();
+                    await _eventDispatcher.DispatchAsync(new ModuleEnabledEvent(moduleName));
 
                     return new ModuleOperationResult
                     {
@@ -203,8 +209,7 @@ namespace BlazorShell.Modules.Admin.Services
         {
             try
             {
-                var dbModule = await _dbContext.Modules
-                    .FirstOrDefaultAsync(m => m.Name == moduleName);
+                var dbModule = await _moduleRepository.GetByNameAsync(moduleName);
 
                 if (dbModule == null)
                 {
@@ -228,7 +233,7 @@ namespace BlazorShell.Modules.Admin.Services
                 if (success)
                 {
                     dbModule.IsEnabled = false;
-                    await _dbContext.SaveChangesAsync();
+                    await _moduleRepository.SaveChangesAsync();
 
                     return new ModuleOperationResult
                     {
@@ -290,8 +295,7 @@ namespace BlazorShell.Modules.Admin.Services
                 }
 
                 // Remove from database
-                var dbModule = await _dbContext.Modules
-                    .FirstOrDefaultAsync(m => m.Name == moduleName);
+                var dbModule = await _moduleRepository.GetByNameAsync(moduleName);
 
                 if (dbModule != null)
                 {
@@ -304,8 +308,7 @@ namespace BlazorShell.Modules.Admin.Services
                         File.Move(assemblyPath, backupPath);
                     }
 
-                    _dbContext.Modules.Remove(dbModule);
-                    await _dbContext.SaveChangesAsync();
+                    await _moduleRepository.RemoveAsync(dbModule);
                 }
 
                 return new ModuleOperationResult
@@ -385,8 +388,7 @@ namespace BlazorShell.Modules.Admin.Services
                 }
 
                 // Check if module already exists
-                var existingModule = await _dbContext.Modules
-                    .FirstOrDefaultAsync(m => m.Name == moduleInstance.Name);
+                var existingModule = await _moduleRepository.GetByNameAsync(moduleInstance.Name);
 
                 if (existingModule != null)
                 {
@@ -430,8 +432,7 @@ namespace BlazorShell.Modules.Admin.Services
                     CreatedBy = "System"
                 };
 
-                _dbContext.Modules.Add(dbModule);
-                await _dbContext.SaveChangesAsync();
+                await _moduleRepository.AddAsync(dbModule);
 
                 return new ModuleUploadResult
                 {
@@ -471,8 +472,7 @@ namespace BlazorShell.Modules.Admin.Services
 
         public async Task<Dictionary<string, object>> GetModuleConfigurationAsync(string moduleName)
         {
-            var dbModule = await _dbContext.Modules
-                .FirstOrDefaultAsync(m => m.Name == moduleName);
+            var dbModule = await _moduleRepository.GetByNameAsync(moduleName);
 
             if (dbModule?.Configuration != null)
             {
@@ -494,8 +494,7 @@ namespace BlazorShell.Modules.Admin.Services
         {
             try
             {
-                var dbModule = await _dbContext.Modules
-                    .FirstOrDefaultAsync(m => m.Name == moduleName);
+                var dbModule = await _moduleRepository.GetByNameAsync(moduleName);
 
                 if (dbModule == null)
                     return false;
@@ -504,7 +503,7 @@ namespace BlazorShell.Modules.Admin.Services
                 dbModule.ModifiedDate = DateTime.UtcNow;
                 dbModule.ModifiedBy = "System";
 
-                await _dbContext.SaveChangesAsync();
+                await _moduleRepository.SaveChangesAsync();
 
                 // If module is loaded and configurable, apply configuration
                 var module = _moduleRegistry.GetModule(moduleName);
@@ -526,16 +525,14 @@ namespace BlazorShell.Modules.Admin.Services
         {
             var dependencies = new List<ModuleDependency>();
 
-            var dbModule = await _dbContext.Modules
-                .FirstOrDefaultAsync(m => m.Name == moduleName);
+            var dbModule = await _moduleRepository.GetByNameAsync(moduleName);
 
             if (dbModule?.Dependencies != null)
             {
                 var deps = JsonConvert.DeserializeObject<List<string>>(dbModule.Dependencies) ?? new List<string>();
                 foreach (var dep in deps)
                 {
-                    var depModule = await _dbContext.Modules
-                        .FirstOrDefaultAsync(m => m.Name == dep);
+                var depModule = await _moduleRepository.GetByNameAsync(dep);
 
                     dependencies.Add(new ModuleDependency
                     {
@@ -625,67 +622,4 @@ namespace BlazorShell.Modules.Admin.Services
         }
     }
 
-    // Supporting classes
-    public class ModuleInfo
-    {
-        public string Name { get; set; } = string.Empty;
-        public string DisplayName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Version { get; set; } = string.Empty;
-        public string Author { get; set; } = string.Empty;
-        public string Icon { get; set; } = string.Empty;
-        public string Category { get; set; } = string.Empty;
-        public bool IsEnabled { get; set; }
-        public bool IsLoaded { get; set; }
-        public bool IsCore { get; set; }
-        public int LoadOrder { get; set; }
-        public string AssemblyPath { get; set; } = string.Empty;
-        public DateTime LastModified { get; set; }
-        public DateTime? LoadedAt { get; set; }
-        public long FileSize { get; set; }
-        public int ComponentCount { get; set; }
-        public int NavigationItemCount { get; set; }
-        public ModuleStatus Status { get; set; }
-    }
-
-    public enum ModuleStatus
-    {
-        Running,
-        Stopped,
-        Disabled,
-        Missing,
-        Error,
-        Unregistered
-    }
-
-    public class ModuleOperationResult
-    {
-        public bool Success { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public Exception? Exception { get; set; }
-    }
-
-    public class ModuleUploadResult : ModuleOperationResult
-    {
-        public string? ModuleName { get; set; }
-        public string? Version { get; set; }
-    }
-
-    public class ModuleDependency
-    {
-        public string ModuleName { get; set; } = string.Empty;
-        public bool IsRequired { get; set; }
-        public bool IsLoaded { get; set; }
-        public bool IsSatisfied { get; set; }
-    }
-
-    public class ModuleHealthStatus
-    {
-        public string ModuleName { get; set; } = string.Empty;
-        public bool IsHealthy { get; set; }
-        public string Status { get; set; } = string.Empty;
-        public List<string> Issues { get; set; } = new();
-        public Dictionary<string, object> Metrics { get; set; } = new();
-        public DateTime CheckTime { get; set; }
-    }
 }

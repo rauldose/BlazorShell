@@ -3,7 +3,9 @@ using BlazorShell.Domain.Entities;
 using System.Collections.Generic;
 using System.IO;
 
-namespace BlazorShell.Modules.Admin.Services;
+using BlazorShell.Modules.Admin.Services.Models;
+
+namespace BlazorShell.Modules.Admin.Services.Interfaces;
 
 public interface IModuleManagementService
 {

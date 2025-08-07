@@ -193,12 +193,12 @@ builder.Services.AddAntiforgery(options =>
 
 // TEMPORARY: Register Admin module services directly for testing
 // Remove this once dynamic module service registration is working
-//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.IModuleManagementService,
-//                             BlazorShell.Modules.Admin.Services.ModuleManagementService>();
-//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.IUserManagementService,
-//                             BlazorShell.Modules.Admin.Services.UserManagementService>();
-//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.IAuditService,
-//                             BlazorShell.Modules.Admin.Services.AuditService>();
+//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.Interfaces.IModuleManagementService,
+//                             BlazorShell.Modules.Admin.Services.Implementations.ModuleManagementService>();
+//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.Interfaces.IUserManagementService,
+//                             BlazorShell.Modules.Admin.Services.Implementations.UserManagementService>();
+//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.Interfaces.IAuditService,
+//                             BlazorShell.Modules.Admin.Services.Implementations.AuditService>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<IModuleInitializationService, ModuleInitializationService>();
 builder.Services.AddScoped<IApplicationInitializationService, ApplicationInitializationService>();

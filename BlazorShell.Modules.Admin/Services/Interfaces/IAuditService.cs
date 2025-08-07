@@ -1,7 +1,7 @@
 // BlazorShell.Modules.Admin/Services/Interfaces/IAuditService.cs
 using BlazorShell.Domain.Entities;
 
-namespace BlazorShell.Modules.Admin.Services;
+namespace BlazorShell.Modules.Admin.Services.Interfaces;
 
 public interface IAuditService
 {

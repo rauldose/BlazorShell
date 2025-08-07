@@ -23,7 +23,7 @@ namespace BlazorShell.Modules.Admin
         public string Author => "BlazorShell Team";
         public string Icon => "bi bi-gear-fill";
         public string Category => "System";
-        public int Order => 999; // Load last to ensure all other modules are available
+        public int Order => 999;
 
         public async Task<bool> InitializeAsync(IServiceProvider serviceProvider)
         {
@@ -52,95 +52,250 @@ namespace BlazorShell.Modules.Admin
 
         public IEnumerable<NavigationItem> GetNavigationItems()
         {
-            return new List<NavigationItem>
+            // Method 1: Build hierarchy manually
+            return BuildHierarchicalNavigation();
+
+            // Method 2: Build flat list then convert to hierarchy
+            // return BuildNavigationWithHelperMethod();
+        }
+
+        private IEnumerable<NavigationItem> BuildHierarchicalNavigation()
+        {
+            // Create parent item with children directly
+            var adminParent = new NavigationItem
             {
-                
-                        new NavigationItem
-                        {
-                            Name = "ModuleManager",
-                            DisplayName = "Module Manager",
-                            Url = "/admin/modules",
-                            Icon = "bi bi-puzzle",
-                            Order = 1,
-                            Type = NavigationType.SideMenu,
-                            RequiredRole = "Administrator",
-                            ParentId = 1,
-                            IsVisible = true
-                        },
-                        new NavigationItem
-                        {
-                            Name = "UserManagement",
-                            DisplayName = "User Management",
-                            Url = "/admin/users",
-                            Icon = "bi bi-people",
-                            Order = 2,
-                            Type = NavigationType.SideMenu,
-                            RequiredRole = "Administrator",
-                            ParentId = null,
-                            IsVisible = true
-                        },
-                        new NavigationItem
-                        {
-                            Name = "RoleManagement",
-                            DisplayName = "Role Management",
-                            Url = "/admin/roles",
-                            Icon = "bi bi-shield-lock",
-                            Order = 3,
-                            Type = NavigationType.SideMenu,
-                            RequiredRole = "Administrator",
-                            ParentId = null,
-                            IsVisible = true
-                        },
-                        new NavigationItem
-                        {
-                            Name = "AccessConfiguration",
-                            DisplayName = "Access Configuration",
-                            Url = "/admin/access",
-                            Icon = "bi bi-lock",
-                            Order = 4,
-                            Type = NavigationType.SideMenu,
-                            RequiredRole = "Administrator",
-                            ParentId = null,
-                            IsVisible = true
-                        },
-                        new NavigationItem
-                        {
-                            Name = "Settings",
-                            DisplayName = "Settings",
-                            Url = "/admin/settings",
-                            Icon = "bi bi-sliders",
-                            Order = 5,
-                            Type = NavigationType.SideMenu,
-                            RequiredRole = "Administrator",
-                            ParentId = null,
-                            IsVisible = true
-                        },
-                        new NavigationItem
-                        {
-                            Name = "AuditLog",
-                            DisplayName = "Audit Log",
-                            Url = "/admin/audit",
-                            Icon = "bi bi-journal-text",
-                            Order = 6,
-                            Type = NavigationType.SideMenu,
-                            RequiredRole = "Administrator",
-                            ParentId = null,
-                            IsVisible = true
-                        }
-                    
-                
+                Id = 1,
+                Name = "Administration",
+                DisplayName = "Administration",
+                Url = "#",
+                Icon = "bi bi-gear-fill",
+                Order = 0,
+                Type = NavigationType.SideMenu,
+                RequiredRole = null,
+                ParentId = null,
+                IsVisible = true,
+                Children = new List<NavigationItem>
+                {
+                    new NavigationItem
+                    {
+                        Id = 2,
+                        Name = "ModuleManager",
+                        DisplayName = "Module Manager",
+                        Url = "/admin/modules",
+                        Icon = "bi bi-puzzle",
+                        Order = 1,
+                        Type = NavigationType.SideMenu,
+                        RequiredRole = "Administrator",
+                        ParentId = 1,
+                        IsVisible = true
+                    },
+                    new NavigationItem
+                    {
+                        Id = 3,
+                        Name = "UserManagement",
+                        DisplayName = "User Management",
+                        Url = "/admin/users",
+                        Icon = "bi bi-people",
+                        Order = 2,
+                        Type = NavigationType.SideMenu,
+                        RequiredRole = null,
+                        ParentId = 1,
+                        IsVisible = true
+                    },
+                    new NavigationItem
+                    {
+                        Id = 4,
+                        Name = "RoleManagement",
+                        DisplayName = "Role Management",
+                        Url = "/admin/roles",
+                        Icon = "bi bi-shield-lock",
+                        Order = 3,
+                        Type = NavigationType.SideMenu,
+                        RequiredRole = "Administrator",
+                        ParentId = 1,
+                        IsVisible = true
+                    },
+                    new NavigationItem
+                    {
+                        Id = 5,
+                        Name = "AccessConfiguration",
+                        DisplayName = "Access Configuration",
+                        Url = "/admin/access",
+                        Icon = "bi bi-lock",
+                        Order = 4,
+                        Type = NavigationType.SideMenu,
+                        RequiredRole = "Administrator",
+                        ParentId = 1,
+                        IsVisible = true
+                    },
+                    new NavigationItem
+                    {
+                        Id = 6,
+                        Name = "Settings",
+                        DisplayName = "Settings",
+                        Url = "/admin/settings",
+                        Icon = "bi bi-sliders",
+                        Order = 5,
+                        Type = NavigationType.SideMenu,
+                        RequiredRole = "Administrator",
+                        ParentId = 1,
+                        IsVisible = true
+                    },
+                    new NavigationItem
+                    {
+                        Id = 7,
+                        Name = "AuditLog",
+                        DisplayName = "Audit Log",
+                        Url = "/admin/audit",
+                        Icon = "bi bi-journal-text",
+                        Order = 6,
+                        Type = NavigationType.SideMenu,
+                        RequiredRole = "Administrator",
+                        ParentId = 1,
+                        IsVisible = true
+                    }
+                }
             };
+
+            // Set parent reference on children (optional but useful for navigation)
+            foreach (var child in adminParent.Children)
+            {
+                child.Parent = adminParent;
+            }
+
+            // Return only root level items - children are accessible via Children property
+            return new List<NavigationItem> { adminParent };
+        }
+
+        private IEnumerable<NavigationItem> BuildNavigationWithHelperMethod()
+        {
+            // Create flat list first
+            var allItems = new List<NavigationItem>
+            {
+                new NavigationItem
+                {
+                    Id = 1,
+                    Name = "Administration",
+                    DisplayName = "Administration",
+                    Url = "#",
+                    Icon = "bi bi-gear-fill",
+                    Order = 0,
+                    Type = NavigationType.SideMenu,
+                    RequiredRole = "Administrator",
+                    ParentId = null,
+                    IsVisible = true
+                },
+                new NavigationItem
+                {
+                    Id = 2,
+                    Name = "ModuleManager",
+                    DisplayName = "Module Manager",
+                    Url = "/admin/modules",
+                    Icon = "bi bi-puzzle",
+                    Order = 1,
+                    Type = NavigationType.SideMenu,
+                    RequiredRole = "Administrator",
+                    ParentId = 1,
+                    IsVisible = true
+                },
+                new NavigationItem
+                {
+                    Id = 3,
+                    Name = "UserManagement",
+                    DisplayName = "User Management",
+                    Url = "/admin/users",
+                    Icon = "bi bi-people",
+                    Order = 2,
+                    Type = NavigationType.SideMenu,
+                    RequiredRole = "Administrator",
+                    ParentId = 1,
+                    IsVisible = true
+                },
+                new NavigationItem
+                {
+                    Id = 4,
+                    Name = "RoleManagement",
+                    DisplayName = "Role Management",
+                    Url = "/admin/roles",
+                    Icon = "bi bi-shield-lock",
+                    Order = 3,
+                    Type = NavigationType.SideMenu,
+                    RequiredRole = "Administrator",
+                    ParentId = 1,
+                    IsVisible = true
+                },
+                new NavigationItem
+                {
+                    Id = 5,
+                    Name = "AccessConfiguration",
+                    DisplayName = "Access Configuration",
+                    Url = "/admin/access",
+                    Icon = "bi bi-lock",
+                    Order = 4,
+                    Type = NavigationType.SideMenu,
+                    RequiredRole = "Administrator",
+                    ParentId = 1,
+                    IsVisible = true
+                },
+                new NavigationItem
+                {
+                    Id = 6,
+                    Name = "Settings",
+                    DisplayName = "Settings",
+                    Url = "/admin/settings",
+                    Icon = "bi bi-sliders",
+                    Order = 5,
+                    Type = NavigationType.SideMenu,
+                    RequiredRole = "Administrator",
+                    ParentId = 1,
+                    IsVisible = true
+                },
+                new NavigationItem
+                {
+                    Id = 7,
+                    Name = "AuditLog",
+                    DisplayName = "Audit Log",
+                    Url = "/admin/audit",
+                    Icon = "bi bi-journal-text",
+                    Order = 6,
+                    Type = NavigationType.SideMenu,
+                    RequiredRole = "Administrator",
+                    ParentId = 1,
+                    IsVisible = true
+                }
+            };
+
+            // Build hierarchy
+            return BuildHierarchy(allItems);
+        }
+
+        private IEnumerable<NavigationItem> BuildHierarchy(List<NavigationItem> flatList)
+        {
+            var lookup = flatList.ToLookup(i => i.ParentId);
+
+            // Process each item to populate its Children collection
+            foreach (var item in flatList)
+            {
+                item.Children = lookup[item.Id].OrderBy(c => c.Order).ToList();
+
+                // Set parent reference
+                foreach (var child in item.Children)
+                {
+                    child.Parent = item;
+                }
+            }
+
+            // Return only root items (ParentId == null)
+            return flatList.Where(i => i.ParentId == null).OrderBy(i => i.Order);
         }
 
         public IEnumerable<Type> GetComponentTypes()
         {
             var assembly = typeof(AdminModule).Assembly;
-
-            // Fixed: Use GetCustomAttributes (plural) to handle multiple route attributes
             return assembly.GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(ComponentBase)) &&
                            !t.IsAbstract &&
-                           t.GetCustomAttributes<RouteAttribute>().Any()) // Changed to GetCustomAttributes
+                           t.GetCustomAttributes<RouteAttribute>().Any())
                 .ToList();
         }
 
@@ -159,12 +314,9 @@ namespace BlazorShell.Modules.Admin
 
         public void RegisterServices(IServiceCollection services)
         {
-            // Register admin-specific services
             services.AddScoped<IModuleManagementService, ModuleManagementService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
             services.AddScoped<IAuditService, AuditService>();
-            //services.AddScoped<IAccessConfigurationService, AccessConfigurationService>();
-
             _logger?.LogInformation("Admin module services registered");
         }
     }

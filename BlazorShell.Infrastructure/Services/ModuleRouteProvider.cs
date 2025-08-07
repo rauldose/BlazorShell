@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// BlazorShell.Infrastructure/Services/ModuleRouteProvider.cs
+using Microsoft.AspNetCore.Components;
 using System.Reflection;
 using BlazorShell.Application.Interfaces;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -7,11 +8,12 @@ using Microsoft.Extensions.Logging;
 namespace BlazorShell.Infrastructure.Services
 {
     /// <summary>
-    /// Provides dynamic route registration for modules
+    /// Provides dynamic route registration for modules with support for multiple routes per component
     /// </summary>
     public class ModuleRouteProvider
     {
         private readonly Dictionary<string, Type> _routes = new();
+        private readonly Dictionary<Type, List<string>> _componentRoutes = new();
         private readonly ILogger<ModuleRouteProvider> _logger;
 
         public ModuleRouteProvider(ILogger<ModuleRouteProvider> logger)
@@ -23,12 +25,22 @@ namespace BlazorShell.Infrastructure.Services
         {
             foreach (var componentType in componentTypes)
             {
-                var routeAttribute = componentType.GetCustomAttribute<RouteAttribute>();
-                if (routeAttribute != null)
+                // Fixed: Get all route attributes (plural) to handle multiple @page directives
+                var routeAttributes = componentType.GetCustomAttributes<RouteAttribute>().ToList();
+
+                if (routeAttributes.Any())
                 {
-                    _routes[routeAttribute.Template] = componentType;
-                    _logger.LogInformation("Registered route {Route} for component {Component} from module {Module}",
-                        routeAttribute.Template, componentType.Name, moduleName);
+                    // Store all routes for this component
+                    _componentRoutes[componentType] = new List<string>();
+
+                    foreach (var routeAttribute in routeAttributes)
+                    {
+                        _routes[routeAttribute.Template] = componentType;
+                        _componentRoutes[componentType].Add(routeAttribute.Template);
+
+                        _logger.LogInformation("Registered route {Route} for component {Component} from module {Module}",
+                            routeAttribute.Template, componentType.Name, moduleName);
+                    }
                 }
             }
         }
@@ -37,12 +49,20 @@ namespace BlazorShell.Infrastructure.Services
         {
             foreach (var componentType in componentTypes)
             {
-                var routeAttribute = componentType.GetCustomAttribute<RouteAttribute>();
-                if (routeAttribute != null && _routes.ContainsKey(routeAttribute.Template))
+                // Get all routes for this component
+                if (_componentRoutes.TryGetValue(componentType, out var routes))
                 {
-                    _routes.Remove(routeAttribute.Template);
-                    _logger.LogInformation("Unregistered route {Route} for module {Module}",
-                        routeAttribute.Template, moduleName);
+                    foreach (var route in routes)
+                    {
+                        if (_routes.ContainsKey(route))
+                        {
+                            _routes.Remove(route);
+                            _logger.LogInformation("Unregistered route {Route} for module {Module}",
+                                route, moduleName);
+                        }
+                    }
+
+                    _componentRoutes.Remove(componentType);
                 }
             }
         }
@@ -55,6 +75,13 @@ namespace BlazorShell.Infrastructure.Services
         public Dictionary<string, Type> GetAllRoutes()
         {
             return new Dictionary<string, Type>(_routes);
+        }
+
+        public List<string> GetRoutesForComponent(Type componentType)
+        {
+            return _componentRoutes.TryGetValue(componentType, out var routes)
+                ? new List<string>(routes)
+                : new List<string>();
         }
     }
 

@@ -238,7 +238,7 @@
     // System modules that should not be reloaded while this page is active
     private readonly HashSet<string> _systemModules = new(StringComparer.OrdinalIgnoreCase)
     {
-        "Admin", "Core", "Authentication", "Navigation"
+        "System", "Core", "Authentication", "Navigation"
     };
 
     protected override async Task OnModuleInitializedAsync()

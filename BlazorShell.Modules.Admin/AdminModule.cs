@@ -4,8 +4,10 @@ using BlazorShell.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
-using BlazorShell.Modules.Admin.Services.Interfaces;
+using BlazorShell.Modules.Admin.Services;
+using Microsoft.AspNetCore.Components;
 using BlazorShell.Modules.Admin.Services.Implementations;
+using BlazorShell.Modules.Admin.Services.Interfaces;
 
 namespace BlazorShell.Modules.Admin
 {
@@ -52,111 +54,93 @@ namespace BlazorShell.Modules.Admin
         {
             return new List<NavigationItem>
             {
-                new NavigationItem
-                {
-                    Name = "admin",
-                    DisplayName = "Administration",
-                    Url = "/admin",
-                    Icon = "bi bi-gear-fill",
-                    Order = 900,
-                    Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
-                    IsVisible = true
-                },
-                new NavigationItem
-                {
-                    Name = "admin-modules",
-                    DisplayName = "Modules",
-                    Url = "/admin/modules",
-                    Icon = "bi bi-puzzle",
-                    Order = 901,
-                    Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
-                    ParentId = null,
-                    IsVisible = true
-                },
-                new NavigationItem
-                {
-                    Name = "admin-users",
-                    DisplayName = "Users",
-                    Url = "/admin/users",
-                    Icon = "bi bi-people",
-                    Order = 902,
-                    Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
-                    ParentId = null,
-                    IsVisible = true
-                },
-                new NavigationItem
-                {
-                    Name = "admin-roles",
-                    DisplayName = "Roles",
-                    Url = "/admin/roles",
-                    Icon = "bi bi-shield-lock",
-                    Order = 903,
-                    Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
-                    ParentId = null,
-                    IsVisible = true
-                },
-                new NavigationItem
-                {
-                    Name = "admin-settings",
-                    DisplayName = "Settings",
-                    Url = "/admin/settings",
-                    Icon = "bi bi-sliders",
-                    Order = 904,
-                    Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
-                    ParentId = null,
-                    IsVisible = true
-                },
-                new NavigationItem
-                {
-                    Name = "admin-audit",
-                    DisplayName = "Audit Logs",
-                    Url = "/admin/audit",
-                    Icon = "bi bi-journal-text",
-                    Order = 905,
-                    Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
-                    ParentId = null,
-                    IsVisible = true
-                },
-                new NavigationItem
-        {
-            Name = "admin-performance",
-            DisplayName = "Module Performance",
-            Url = "/admin/modules/performance",
-            Icon = "bi bi-speedometer2",
-            Order = 906,
-            Type = NavigationType.SideMenu,
-            RequiredRole = "Administrator",
-            ParentId = null,
-            IsVisible = true
-        },
-                new NavigationItem
-                {
-                    Name = "admin-access",
-                    DisplayName = "Access Control",
-                    Url = "/admin/access",
-                    Icon = "bi bi-lock",
-                    Order = 907,
-                    Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
-                    ParentId = null,
-                    IsVisible = true
-                }
+                
+                        new NavigationItem
+                        {
+                            Name = "ModuleManager",
+                            DisplayName = "Module Manager",
+                            Url = "/admin/modules",
+                            Icon = "bi bi-puzzle",
+                            Order = 1,
+                            Type = NavigationType.SideMenu,
+                            RequiredRole = "Administrator",
+                            ParentId = 1,
+                            IsVisible = true
+                        },
+                        new NavigationItem
+                        {
+                            Name = "UserManagement",
+                            DisplayName = "User Management",
+                            Url = "/admin/users",
+                            Icon = "bi bi-people",
+                            Order = 2,
+                            Type = NavigationType.SideMenu,
+                            RequiredRole = "Administrator",
+                            ParentId = null,
+                            IsVisible = true
+                        },
+                        new NavigationItem
+                        {
+                            Name = "RoleManagement",
+                            DisplayName = "Role Management",
+                            Url = "/admin/roles",
+                            Icon = "bi bi-shield-lock",
+                            Order = 3,
+                            Type = NavigationType.SideMenu,
+                            RequiredRole = "Administrator",
+                            ParentId = null,
+                            IsVisible = true
+                        },
+                        new NavigationItem
+                        {
+                            Name = "AccessConfiguration",
+                            DisplayName = "Access Configuration",
+                            Url = "/admin/access",
+                            Icon = "bi bi-lock",
+                            Order = 4,
+                            Type = NavigationType.SideMenu,
+                            RequiredRole = "Administrator",
+                            ParentId = null,
+                            IsVisible = true
+                        },
+                        new NavigationItem
+                        {
+                            Name = "Settings",
+                            DisplayName = "Settings",
+                            Url = "/admin/settings",
+                            Icon = "bi bi-sliders",
+                            Order = 5,
+                            Type = NavigationType.SideMenu,
+                            RequiredRole = "Administrator",
+                            ParentId = null,
+                            IsVisible = true
+                        },
+                        new NavigationItem
+                        {
+                            Name = "AuditLog",
+                            DisplayName = "Audit Log",
+                            Url = "/admin/audit",
+                            Icon = "bi bi-journal-text",
+                            Order = 6,
+                            Type = NavigationType.SideMenu,
+                            RequiredRole = "Administrator",
+                            ParentId = null,
+                            IsVisible = true
+                        }
+                    
+                
             };
         }
 
         public IEnumerable<Type> GetComponentTypes()
         {
             var assembly = typeof(AdminModule).Assembly;
+
+            // Fixed: Use GetCustomAttributes (plural) to handle multiple route attributes
             return assembly.GetTypes()
-                .Where(t => t.IsSubclassOf(typeof(Microsoft.AspNetCore.Components.ComponentBase)) &&
+                .Where(t => t.IsSubclassOf(typeof(ComponentBase)) &&
                            !t.IsAbstract &&
-                           t.GetCustomAttribute<Microsoft.AspNetCore.Components.RouteAttribute>() != null)
+                           t.GetCustomAttributes<RouteAttribute>().Any()) // Changed to GetCustomAttributes
                 .ToList();
         }
 
@@ -179,6 +163,7 @@ namespace BlazorShell.Modules.Admin
             services.AddScoped<IModuleManagementService, ModuleManagementService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
             services.AddScoped<IAuditService, AuditService>();
+            //services.AddScoped<IAccessConfigurationService, AccessConfigurationService>();
 
             _logger?.LogInformation("Admin module services registered");
         }

@@ -209,7 +209,7 @@ namespace BlazorShell.Infrastructure.Services
         private bool IsSystemModule(string moduleName)
         {
             // Define your system/core modules that shouldn't be reloaded
-            var systemModules = new[] { "Core", "Admin", "Authentication", "Navigation" };
+            var systemModules = new[] { "Core", "System", "Authentication", "Navigation" };
             return systemModules.Contains(moduleName, StringComparer.OrdinalIgnoreCase);
         }
 

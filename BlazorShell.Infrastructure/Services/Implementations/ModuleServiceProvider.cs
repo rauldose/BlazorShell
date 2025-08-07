@@ -14,10 +14,13 @@ using Microsoft.JSInterop;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
+using BlazorShell.Domain.Repositories;
+using BlazorShell.Infrastructure.Repositories;
+using BlazorShell.Domain.Events;
 
 namespace BlazorShell.Infrastructure.Services
 {
-    
+
     public class ModuleServiceProvider : IModuleServiceProvider
     {
         private readonly ConcurrentDictionary<string, ModuleServiceContainer> _moduleContainers = new();
@@ -186,6 +189,10 @@ namespace BlazorShell.Infrastructure.Services
             moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<RoleManager<ApplicationRole>>());
             moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<SignInManager<ApplicationUser>>());
 
+            moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<IModuleRepository>());
+            moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<IUserRepository>());
+            moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<IAuditLogRepository>());
+            moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<IDomainEventDispatcher>());
             // Add logging
             moduleServices.AddSingleton(_rootProvider.GetRequiredService<ILoggerFactory>());
             moduleServices.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
@@ -237,6 +244,10 @@ namespace BlazorShell.Infrastructure.Services
                 typeof(SignInManager<>),
                 typeof(ILogger<>),
                 typeof(ILoggerFactory),
+                typeof(IUserRepository),
+                typeof(IAuditLogRepository),
+                typeof(IModuleRepository),
+                typeof(IDomainEventDispatcher),
                 typeof(IConfiguration),
                 typeof(IHttpContextAccessor),
                 typeof(NavigationManager),

@@ -167,6 +167,10 @@ namespace BlazorShell.Modules.Admin
             services.AddScoped<IModuleManagementService, ModuleManagementService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
             services.AddScoped<IAuditService, AuditService>();
+            
+            // Register UI services for better separation of concerns
+            services.AddScoped<IModuleManagementUIService, ModuleManagementUIService>();
+            services.AddScoped<IModuleUploadService, ModuleUploadService>();
 
             _logger?.LogInformation("Admin module services registered");
         }

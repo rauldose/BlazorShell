@@ -1,24 +1,25 @@
 ﻿// BlazorShell.Modules.Admin/Services/AuditService.cs
 using Microsoft.EntityFrameworkCore;
 using BlazorShell.Domain.Entities;
-using BlazorShell.Infrastructure.Data;
+using BlazorShell.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using BlazorShell.Modules.Admin.Services.Interfaces;
 
-namespace BlazorShell.Modules.Admin.Services
+namespace BlazorShell.Modules.Admin.Services.Implementations
 {
     public class AuditService : IAuditService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IAuditLogRepository _auditRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<AuditService> _logger;
 
         public AuditService(
-            ApplicationDbContext dbContext,
+            IAuditLogRepository auditRepository,
             IHttpContextAccessor httpContextAccessor,
             ILogger<AuditService> logger)
         {
-            _dbContext = dbContext;
+            _auditRepository = auditRepository;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
@@ -43,8 +44,7 @@ namespace BlazorShell.Modules.Admin.Services
                     CreatedDate = DateTime.UtcNow
                 };
 
-                _dbContext.AuditLogs.Add(auditLog);
-                await _dbContext.SaveChangesAsync();
+                await _auditRepository.AddAsync(auditLog);
             }
             catch (Exception ex)
             {
@@ -54,31 +54,17 @@ namespace BlazorShell.Modules.Admin.Services
 
         public async Task<IEnumerable<AuditLog>> GetAuditLogsAsync(int page = 1, int pageSize = 50)
         {
-            return await _dbContext.AuditLogs
-                .OrderByDescending(a => a.CreatedDate)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            return await _auditRepository.GetLogsAsync((page - 1) * pageSize, pageSize);
         }
 
         public async Task<IEnumerable<AuditLog>> GetAuditLogsByUserAsync(string userId, int page = 1, int pageSize = 50)
         {
-            return await _dbContext.AuditLogs
-                .Where(a => a.UserId == userId)
-                .OrderByDescending(a => a.CreatedDate)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            return await _auditRepository.GetLogsByUserAsync(userId, (page - 1) * pageSize, pageSize);
         }
 
         public async Task<IEnumerable<AuditLog>> GetAuditLogsByEntityAsync(string entityName, string entityId, int page = 1, int pageSize = 50)
         {
-            return await _dbContext.AuditLogs
-                .Where(a => a.EntityName == entityName && a.EntityId == entityId)
-                .OrderByDescending(a => a.CreatedDate)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            return await _auditRepository.GetLogsByEntityAsync(entityName, entityId, (page - 1) * pageSize, pageSize);
         }
     }
 }

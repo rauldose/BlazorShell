@@ -1,38 +1,39 @@
 ﻿// BlazorShell.Modules.Admin/Services/UserManagementService.cs
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using BlazorShell.Domain.Entities;
-using BlazorShell.Infrastructure.Data;
+using BlazorShell.Domain.Repositories;
 using Microsoft.Extensions.Logging;
+using BlazorShell.Modules.Admin.Services.Models;
+using BlazorShell.Modules.Admin.Services.Interfaces;
+using BlazorShell.Domain.Events;
 
-namespace BlazorShell.Modules.Admin.Services
+namespace BlazorShell.Modules.Admin.Services.Implementations
 {
     public class UserManagementService : IUserManagementService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUserRepository _userRepository;
+        private readonly IDomainEventDispatcher _eventDispatcher;
         private readonly ILogger<UserManagementService> _logger;
 
         public UserManagementService(
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
-            ApplicationDbContext dbContext,
+            IUserRepository userRepository,
+            IDomainEventDispatcher eventDispatcher,
             ILogger<UserManagementService> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _dbContext = dbContext;
+            _userRepository = userRepository;
+            _eventDispatcher = eventDispatcher;
             _logger = logger;
         }
 
         public async Task<IEnumerable<UserInfo>> GetUsersAsync(int page = 1, int pageSize = 20)
         {
-            var users = await _dbContext.Users
-                .OrderBy(u => u.UserName)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            var users = await _userRepository.GetUsersAsync((page - 1) * pageSize, pageSize);
 
             var userInfos = new List<UserInfo>();
             foreach (var user in users)
@@ -94,6 +95,7 @@ namespace BlazorShell.Modules.Admin.Services
                     await _userManager.AddToRolesAsync(user, model.Roles);
                 }
 
+                await _eventDispatcher.DispatchAsync(new UserCreatedEvent(user.Id));
                 return new UserOperationResult
                 {
                     Success = true,
@@ -241,38 +243,4 @@ namespace BlazorShell.Modules.Admin.Services
         }
     }
 
-    // Supporting classes
-    public class UserInfo
-    {
-        public string Id { get; set; } = string.Empty;
-        public string UserName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
-        public bool EmailConfirmed { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime? LastLoginDate { get; set; }
-        public List<string> Roles { get; set; } = new();
-    }
-
-    public class CreateUserModel
-    {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
-        public List<string>? Roles { get; set; }
-    }
-
-    public class UpdateUserModel
-    {
-        public string Email { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
-    }
-
-    public class UserOperationResult
-    {
-        public bool Success { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public string? UserId { get; set; }
-    }
 }

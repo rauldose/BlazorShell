@@ -4,7 +4,8 @@ using BlazorShell.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
-using BlazorShell.Modules.Admin.Services;
+using BlazorShell.Modules.Admin.Services.Interfaces;
+using BlazorShell.Modules.Admin.Services.Implementations;
 
 namespace BlazorShell.Modules.Admin
 {

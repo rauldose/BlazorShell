@@ -112,7 +112,17 @@
     {
         _roles = await RoleManager.Roles.OrderBy(r => r.Name).ToListAsync();
         _users = await UserManager.Users.OrderBy(u => u.UserName).Take(20).ToListAsync();
+    }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        await LoadPermissions();
+        _loading = false;
+    }
+
+    private async Task LoadPermissions()
+    {
         if (RoleId != null)
         {
             await LoadRolePermissions(RoleId);
@@ -121,7 +131,6 @@
         {
             await LoadUserPermissions(UserId);
         }
-        _loading = false;
     }
 
     private async Task LoadRolePermissions(string roleId)

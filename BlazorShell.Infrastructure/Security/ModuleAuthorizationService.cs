@@ -43,6 +43,18 @@ public class ModuleAuthorizationService : IModuleAuthorizationService
             if (module == null)
                 return false;
 
+            // Check required role
+            if (!string.IsNullOrEmpty(module.RequiredRole) &&
+                !await _userManager.IsInRoleAsync(user, module.RequiredRole))
+                return false;
+
+            // If no explicit permissions configured, allow access
+            var hasPermissions = await _dbContext.ModulePermissions
+                .AnyAsync(p => p.ModuleId == module.Id);
+
+            if (!hasPermissions)
+                return true;
+
             var userPermission = await _dbContext.ModulePermissions
                 .AnyAsync(p => p.ModuleId == module.Id &&
                                p.UserId == userId &&
@@ -93,6 +105,18 @@ public class ModuleAuthorizationService : IModuleAuthorizationService
 
             if (module == null)
                 return false;
+
+            // Ensure user meets required role
+            if (!string.IsNullOrEmpty(module.RequiredRole) &&
+                !await _userManager.IsInRoleAsync(user, module.RequiredRole))
+                return false;
+
+            // If no permissions defined, allow by default
+            var hasPermissions = await _dbContext.ModulePermissions
+                .AnyAsync(p => p.ModuleId == module.Id);
+
+            if (!hasPermissions)
+                return true;
 
             var userPermission = await _dbContext.ModulePermissions
                 .FirstOrDefaultAsync(p => p.ModuleId == module.Id &&

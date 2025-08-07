@@ -12,6 +12,7 @@ public class Module : IAuditableEntity
     public string? EntryType { get; set; }
     public string? Icon { get; set; }
     public string? Category { get; set; }
+    public string? RequiredRole { get; set; }
     public bool IsEnabled { get; set; }
     public bool IsCore { get; set; }
     public int LoadOrder { get; set; }

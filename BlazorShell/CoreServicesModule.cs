@@ -3,6 +3,7 @@ using BlazorShell.Application.Interfaces;
 using BlazorShell.Application.Services;
 using BlazorShell.Infrastructure.Security;
 using BlazorShell.Infrastructure.Services;
+using BlazorShell.Infrastructure.Services.Implementations;
 using Microsoft.Extensions.Hosting;
 
 public class CoreServicesModule : Module
@@ -18,8 +19,8 @@ public class CoreServicesModule : Module
         builder.RegisterType<UnifiedAuthorizationService>().As<IPageAuthorizationService>().InstancePerLifetimeScope();
         builder.RegisterType<PluginAssemblyLoader>().As<IPluginAssemblyLoader>().SingleInstance();
         builder.RegisterType<ModuleRouteProvider>().AsSelf().SingleInstance();
-        builder.RegisterType<ModuleServiceManager>().AsSelf().SingleInstance();
         builder.RegisterType<ModuleMetadataCache>().AsSelf().SingleInstance();
+        builder.RegisterType<RouteAssemblyProvider>().As<IRouteAssemblyProvider>().SingleInstance();
 
         builder.RegisterType<DynamicRouteService>()
             .As<IDynamicRouteService>()

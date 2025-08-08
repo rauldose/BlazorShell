@@ -71,18 +71,4 @@ public class CacheService : ICacheService
             throw;
         }
     }
-
-    public Task ClearAsync()
-    {
-        try
-        {
-            _logger.LogInformation("Cache clear requested");
-            return Task.CompletedTask;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error clearing cache");
-            throw;
-        }
-    }
 }

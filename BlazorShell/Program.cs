@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using BlazorShell.Infrastructure.Data;
 using BlazorShell.Application.Services;
 using BlazorShell.Application.Interfaces;
+using BlazorShell.Application.Interfaces.Repositories;
+using BlazorShell.Infrastructure.Repositories;
 using BlazorShell.Domain.Entities;
 using BlazorShell.Infrastructure.Services;
 using BlazorShell.Infrastructure.Security;
@@ -175,6 +177,14 @@ builder.Services.AddSession(options =>
 
 // Add HTTP context accessor for service layer
 builder.Services.AddHttpContextAccessor();
+
+// Application services
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<ISettingsService, SettingsService>();
+
+// Repositories
+builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Configure CORS if needed for external API access
 builder.Services.AddCors(options =>

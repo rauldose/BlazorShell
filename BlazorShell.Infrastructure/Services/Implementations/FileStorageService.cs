@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using BlazorShell.Application.Services;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace BlazorShell.Infrastructure.Services;
 
@@ -32,7 +33,10 @@ public class FileStorageService : IFileStorageService
         {
             var folderPath = string.IsNullOrEmpty(folder)
                 ? _storageRoot
-                : Path.Combine(_storageRoot, folder);
+                : Path.GetFullPath(Path.Combine(_storageRoot, folder));
+
+            if (!folderPath.StartsWith(_storageRoot, StringComparison.Ordinal))
+                throw new InvalidOperationException("Invalid folder path");
 
             if (!Directory.Exists(folderPath))
             {
@@ -42,8 +46,8 @@ public class FileStorageService : IFileStorageService
             var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
             var filePath = Path.Combine(folderPath, uniqueFileName);
 
-            using var fileOutputStream = new FileStream(filePath, FileMode.Create);
-            await fileStream.CopyToAsync(fileOutputStream);
+            await using var fileOutputStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true);
+            await fileStream.CopyToAsync(fileOutputStream).ConfigureAwait(false);
 
             _logger.LogInformation("File saved: {FilePath}", filePath);
 
@@ -62,7 +66,9 @@ public class FileStorageService : IFileStorageService
     {
         try
         {
-            var fullPath = Path.Combine(_storageRoot, filePath);
+            var fullPath = Path.GetFullPath(Path.Combine(_storageRoot, filePath));
+            if (!fullPath.StartsWith(_storageRoot, StringComparison.Ordinal))
+                throw new InvalidOperationException("Invalid file path");
 
             if (!File.Exists(fullPath))
             {
@@ -70,14 +76,7 @@ public class FileStorageService : IFileStorageService
                 return null;
             }
 
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
-
-            return memory;
+            return new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
         }
         catch (Exception ex)
         {
@@ -86,20 +85,22 @@ public class FileStorageService : IFileStorageService
         }
     }
 
-    public async Task<bool> DeleteFileAsync(string filePath)
+    public Task<bool> DeleteFileAsync(string filePath)
     {
         try
         {
-            var fullPath = Path.Combine(_storageRoot, filePath);
+            var fullPath = Path.GetFullPath(Path.Combine(_storageRoot, filePath));
+            if (!fullPath.StartsWith(_storageRoot, StringComparison.Ordinal))
+                throw new InvalidOperationException("Invalid file path");
 
             if (File.Exists(fullPath))
             {
-                await Task.Run(() => File.Delete(fullPath));
+                File.Delete(fullPath);
                 _logger.LogInformation("File deleted: {FilePath}", fullPath);
-                return true;
+                return Task.FromResult(true);
             }
 
-            return false;
+            return Task.FromResult(false);
         }
         catch (Exception ex)
         {
@@ -110,25 +111,27 @@ public class FileStorageService : IFileStorageService
 
     public Task<bool> FileExistsAsync(string filePath)
     {
-        var fullPath = Path.Combine(_storageRoot, filePath);
-        return Task.FromResult(File.Exists(fullPath));
+        var fullPath = Path.GetFullPath(Path.Combine(_storageRoot, filePath));
+        var exists = fullPath.StartsWith(_storageRoot, StringComparison.Ordinal) && File.Exists(fullPath);
+        return Task.FromResult(exists);
     }
 
-    public async Task<IEnumerable<string>> GetFilesAsync(string folder)
+    public Task<IEnumerable<string>> GetFilesAsync(string folder)
     {
         try
         {
             var folderPath = string.IsNullOrEmpty(folder)
                 ? _storageRoot
-                : Path.Combine(_storageRoot, folder);
+                : Path.GetFullPath(Path.Combine(_storageRoot, folder));
 
-            if (!Directory.Exists(folderPath))
+            if (!folderPath.StartsWith(_storageRoot, StringComparison.Ordinal) || !Directory.Exists(folderPath))
             {
-                return Enumerable.Empty<string>();
+                return Task.FromResult<IEnumerable<string>>(Array.Empty<string>());
             }
 
-            var files = await Task.Run(() => Directory.GetFiles(folderPath));
-            return files.Select(f => Path.GetRelativePath(_storageRoot, f));
+            var files = Directory.GetFiles(folderPath)
+                .Select(f => Path.GetRelativePath(_storageRoot, f));
+            return Task.FromResult<IEnumerable<string>>(files);
         }
         catch (Exception ex)
         {

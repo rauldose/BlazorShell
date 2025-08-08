@@ -1,6 +1,6 @@
 using System;
 
-namespace BlazorShell.Application.Models;
+namespace BlazorShell.Application.Events;
 
 public class AuthenticationStateChangedEventArgs : EventArgs
 {

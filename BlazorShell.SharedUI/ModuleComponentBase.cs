@@ -187,6 +187,18 @@ namespace BlazorShell.Components
             }
         }
 
+        protected T GetRequiredService<T>() where T : class
+        {
+            var service = GetService<T>();
+            if (service == null)
+            {
+                var message = $"Service of type {typeof(T).Name} is not registered for module {ModuleName}";
+                _logger?.LogError(message);
+                throw new InvalidOperationException(message);
+            }
+            return service;
+        }
+
         protected async Task<bool> HasPermissionAsync(PermissionType permission)
         {
             if (string.IsNullOrEmpty(ModuleName) || string.IsNullOrEmpty(UserId) || ModuleAuth == null)
@@ -198,6 +210,11 @@ namespace BlazorShell.Components
         protected void NavigateTo(string url, bool forceLoad = false)
         {
             Navigation.NavigateTo(url, forceLoad);
+        }
+
+        protected void RefreshPage()
+        {
+            Navigation.Refresh();
         }
 
         public virtual void Dispose()

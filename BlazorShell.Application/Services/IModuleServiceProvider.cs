@@ -12,5 +12,6 @@ public interface IModuleServiceProvider
     object? GetService(Type serviceType);
     IServiceProvider GetModuleServiceProvider(string moduleName);
     bool IsModuleRegistered(string moduleName);
+    void RefreshModuleServices(string moduleName, IServiceModule module);
     IEnumerable<string> GetRegisteredModules();
 }

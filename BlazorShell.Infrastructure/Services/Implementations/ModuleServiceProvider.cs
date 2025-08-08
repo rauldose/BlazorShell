@@ -14,10 +14,9 @@ using Microsoft.JSInterop;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
-using BlazorShell.Application.Interfaces.Repositories;
+using BlazorShell.Domain.Repositories;
 using BlazorShell.Infrastructure.Repositories;
 using BlazorShell.Domain.Events;
-using BlazorShell.Domain.Repositories;
 
 namespace BlazorShell.Infrastructure.Services
 {
@@ -49,23 +48,46 @@ namespace BlazorShell.Infrastructure.Services
                 {
                     _logger.LogInformation("Registering services for module {Module}", moduleName);
 
-                    // Remove existing registrations if present
-                    if (_moduleContainers.TryRemove(moduleName, out var oldContainer))
+                    // Check if module is already registered
+                    if (_moduleContainers.ContainsKey(moduleName))
                     {
-                        foreach (var type in oldContainer.RegisteredTypes)
-                        {
-                            _serviceToModule.TryRemove(type, out _);
-                        }
+                        _logger.LogWarning("Module {Module} is already registered. Refreshing services.", moduleName);
+                        RefreshModuleServices(moduleName, module);
+                        return;
+                    }
 
-                        if (oldContainer.ServiceProvider is IDisposable disposable)
+                    // Create a new service collection for the module
+                    var moduleServices = new ServiceCollection();
+
+                    // Add all core services that modules might need
+                    AddCoreServicesToModule(moduleServices);
+
+                    // Let the module register its own services
+                    module.RegisterServices(moduleServices);
+
+                    // Build the service provider for this module
+                    var moduleProvider = moduleServices.BuildServiceProvider();
+
+                    // Store the container
+                    var container = new ModuleServiceContainer
+                    {
+                        ServiceProvider = moduleProvider,
+                        ServiceCollection = moduleServices,
+                        RegisteredTypes = new HashSet<Type>()
+                    };
+
+                    // Track which services belong to which module
+                    foreach (var descriptor in moduleServices)
+                    {
+                        if (descriptor.ServiceType != null && !IsCoreService(descriptor.ServiceType))
                         {
-                            disposable.Dispose();
+                            _serviceToModule[descriptor.ServiceType] = moduleName;
+                            container.RegisteredTypes.Add(descriptor.ServiceType);
                         }
                     }
 
-                    RegisterModuleServicesInternal(moduleName, module);
+                    _moduleContainers[moduleName] = container;
 
-                    var container = _moduleContainers[moduleName];
                     _logger.LogInformation("Successfully registered {Count} services for module {Module}",
                         container.RegisteredTypes.Count, moduleName);
                 }
@@ -73,6 +95,40 @@ namespace BlazorShell.Infrastructure.Services
                 {
                     _logger.LogError(ex, "Failed to register services for module {Module}", moduleName);
                     throw;
+                }
+            }
+        }
+
+        public void RefreshModuleServices(string moduleName, IServiceModule module)
+        {
+            lock (_registrationLock)
+            {
+                try
+                {
+                    _logger.LogInformation("Refreshing services for module {Module}", moduleName);
+
+                    // Remove old registrations
+                    if (_moduleContainers.TryRemove(moduleName, out var oldContainer))
+                    {
+                        // Clean up old service type mappings
+                        foreach (var type in oldContainer.RegisteredTypes)
+                        {
+                            _serviceToModule.TryRemove(type, out _);
+                        }
+
+                        // Dispose old provider if disposable
+                        if (oldContainer.ServiceProvider is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
+                    }
+
+                    // Re-register the module
+                    RegisterModuleServicesInternal(moduleName, module);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to refresh services for module {Module}", moduleName);
                 }
             }
         }

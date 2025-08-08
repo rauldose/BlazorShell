@@ -18,6 +18,7 @@ public class CoreServicesModule : Module
         builder.RegisterType<UnifiedAuthorizationService>().As<IPageAuthorizationService>().InstancePerLifetimeScope();
         builder.RegisterType<PluginAssemblyLoader>().As<IPluginAssemblyLoader>().SingleInstance();
         builder.RegisterType<ModuleRouteProvider>().AsSelf().SingleInstance();
+        builder.RegisterType<ModuleServiceManager>().AsSelf().SingleInstance();
         builder.RegisterType<ModuleMetadataCache>().AsSelf().SingleInstance();
 
         builder.RegisterType<DynamicRouteService>()

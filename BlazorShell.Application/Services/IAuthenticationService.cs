@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BlazorShell.Application.Events;
+using BlazorShell.Application.Models;
 
 namespace BlazorShell.Application.Services;
 

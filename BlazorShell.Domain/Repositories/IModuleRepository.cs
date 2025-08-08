@@ -1,6 +1,6 @@
 using BlazorShell.Domain.Entities;
 
-namespace BlazorShell.Application.Interfaces.Repositories;
+namespace BlazorShell.Domain.Repositories;
 
 public interface IModuleRepository
 {

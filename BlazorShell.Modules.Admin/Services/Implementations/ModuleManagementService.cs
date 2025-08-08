@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using BlazorShell.Application.Interfaces;
 using BlazorShell.Domain.Entities;
-using BlazorShell.Application.Interfaces.Repositories;
+using BlazorShell.Domain.Repositories;
 using BlazorShell.Modules.Admin.Services.Models;
 using BlazorShell.Modules.Admin.Services.Interfaces;
 using BlazorShell.Domain.Events;

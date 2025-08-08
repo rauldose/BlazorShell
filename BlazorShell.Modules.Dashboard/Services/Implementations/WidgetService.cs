@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 using BlazorShell.Modules.Dashboard.Models;
 using BlazorShell.Modules.Dashboard.Services.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -10,7 +10,7 @@ namespace BlazorShell.Modules.Dashboard.Services.Implementations;
 public class WidgetService : IWidgetService
 {
     private readonly ILogger<WidgetService> _logger;
-    private readonly ConcurrentDictionary<string, HashSet<string>> _userWidgets = new();
+    private static readonly Dictionary<string, List<string>> _userWidgets = new();
 
     public WidgetService(ILogger<WidgetService> logger)
     {
@@ -19,7 +19,7 @@ public class WidgetService : IWidgetService
 
     public async Task<Widget?> GetWidgetAsync(string widgetId)
     {
-        await Task.Delay(50).ConfigureAwait(false);
+        await Task.Delay(50);
 
         var widget = new Widget
         {
@@ -35,7 +35,7 @@ public class WidgetService : IWidgetService
 
     public async Task<IEnumerable<Widget>> GetAvailableWidgetsAsync()
     {
-        await Task.Delay(50).ConfigureAwait(false);
+        await Task.Delay(50);
 
         return new List<Widget>
         {
@@ -49,57 +49,59 @@ public class WidgetService : IWidgetService
 
     public async Task<bool> AddWidgetToDashboardAsync(string userId, string widgetId)
     {
-        await Task.Delay(50).ConfigureAwait(false);
+        await Task.Delay(50);
 
-        var widgets = _userWidgets.GetOrAdd(userId, _ => new HashSet<string>());
-        lock (widgets)
+        if (!_userWidgets.ContainsKey(userId))
         {
-            if (widgets.Add(widgetId))
-            {
-                _logger.LogInformation("Widget {WidgetId} added for user {UserId}", widgetId, userId);
-                return true;
-            }
+            _userWidgets[userId] = new List<string>();
         }
+
+        if (!_userWidgets[userId].Contains(widgetId))
+        {
+            _userWidgets[userId].Add(widgetId);
+            _logger.LogInformation("Widget {WidgetId} added for user {UserId}", widgetId, userId);
+            return true;
+        }
+
         return false;
     }
 
     public async Task<bool> RemoveWidgetFromDashboardAsync(string userId, string widgetId)
     {
-        await Task.Delay(50).ConfigureAwait(false);
+        await Task.Delay(50);
 
-        if (_userWidgets.TryGetValue(userId, out var widgets))
+        if (_userWidgets.ContainsKey(userId))
         {
-            lock (widgets)
+            var removed = _userWidgets[userId].Remove(widgetId);
+            if (removed)
             {
-                var removed = widgets.Remove(widgetId);
-                if (removed)
-                {
-                    _logger.LogInformation("Widget {WidgetId} removed for user {UserId}", widgetId, userId);
-                }
-                return removed;
+                _logger.LogInformation("Widget {WidgetId} removed for user {UserId}", widgetId, userId);
             }
+            return removed;
         }
+
         return false;
     }
 
     public async Task<IEnumerable<Widget>> GetUserWidgetsAsync(string userId)
     {
-        await Task.Delay(50).ConfigureAwait(false);
+        await Task.Delay(50);
 
-        if (!_userWidgets.TryGetValue(userId, out var widgetIds) || widgetIds.Count == 0)
+        if (!_userWidgets.ContainsKey(userId) || !_userWidgets[userId].Any())
         {
-            return await GetAvailableWidgetsAsync().ConfigureAwait(false);
+            return await GetAvailableWidgetsAsync();
         }
 
         var widgets = new List<Widget>();
-        foreach (var widgetId in widgetIds)
+        foreach (var widgetId in _userWidgets[userId])
         {
-            var widget = await GetWidgetAsync(widgetId).ConfigureAwait(false);
+            var widget = await GetWidgetAsync(widgetId);
             if (widget != null)
             {
                 widgets.Add(widget);
             }
         }
+
         return widgets;
     }
 }

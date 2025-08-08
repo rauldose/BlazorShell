@@ -1,13 +1,10 @@
 using Autofac;
 using BlazorShell.Application.Services;
 using BlazorShell.Infrastructure.Services;
-using BlazorShell.Application.Interfaces.Repositories;
+using BlazorShell.Domain.Repositories;
 using BlazorShell.Infrastructure.Repositories;
 using BlazorShell.Domain.Events;
 using BlazorShell.Infrastructure.Events;
-using BlazorShell.Domain.Repositories;
-
-namespace BlazorShell;
 
 public class InfrastructureModule : Module
 {
@@ -19,7 +16,6 @@ public class InfrastructureModule : Module
         builder.RegisterType<CacheService>().As<ICacheService>().SingleInstance();
         builder.RegisterType<ModuleRepository>().As<IModuleRepository>().InstancePerLifetimeScope();
         builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
-        builder.RegisterType<SettingsRepository>().As<ISettingsRepository>().InstancePerLifetimeScope();
         builder.RegisterType<AuditLogRepository>().As<IAuditLogRepository>().InstancePerLifetimeScope();
         builder.RegisterType<DomainEventDispatcher>().As<IDomainEventDispatcher>().SingleInstance();
     }

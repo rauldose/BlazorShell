@@ -1,6 +1,7 @@
-namespace BlazorShell.Application.Interfaces;
+namespace BlazorShell.Services;
 
 public interface IModuleInitializationService
 {
     Task InitializeAsync();
 }
+

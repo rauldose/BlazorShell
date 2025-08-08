@@ -9,6 +9,7 @@ using System.Reflection;
 using BlazorShell.Application.Interfaces;
 using BlazorShell.Domain.Entities;
 using BlazorShell.Application.Services;
+using BlazorShell.Application.Configuration;
 using BlazorShell.Application.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;

@@ -6,7 +6,7 @@ using BlazorShell.Domain.Entities;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using BlazorShell.Application.Models;
+using BlazorShell.Application.Events;
 using BlazorShell.Application.Services;
 
 namespace BlazorShell.Infrastructure.Services;

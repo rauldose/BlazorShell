@@ -1,3 +1,5 @@
+using BlazorShell.Application.Configuration;
+using BlazorShell.Application.Models;
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.Extensions.Options;
@@ -66,8 +68,7 @@ namespace BlazorShell.Infrastructure.Services
                 // Check if modules have already been initialized in this app domain
                 if (_modulesInitialized)
                 {
-                    _logger.LogInformation("Modules already initialized, ensuring routes are registered");
-                    EnsureRoutesRegistered();
+                    _logger.LogInformation("Modules already initialized");
                     return;
                 }
                 _modulesInitialized = true;
@@ -166,34 +167,6 @@ namespace BlazorShell.Infrastructure.Services
             }
         }
 
-        private void EnsureRoutesRegistered()
-        {
-            try
-            {
-                var modules = _moduleRegistry.GetModules();
-                foreach (var module in modules)
-                {
-                    // Re-register routes for each module
-                    var componentTypes = module.GetComponentTypes();
-                    if (componentTypes?.Any() == true)
-                    {
-                        _routeProvider.RegisterModuleRoutes(module.Name, componentTypes);
-
-                        // Also register with dynamic route service
-                        var assembly = module.GetType().Assembly;
-                        _dynamicRouteService.RegisterModuleAssembly(module.Name, assembly);
-
-                        _logger.LogDebug("Re-registered {Count} routes for module {Module}",
-                            componentTypes.Count(), module.Name);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error ensuring routes are registered");
-            }
-        }
-
         private async Task LoadModuleInternalAsync(string assemblyPath, ModuleConfig moduleConfig)
         {
             var module = await LoadModuleAsync(assemblyPath);
@@ -282,7 +255,7 @@ namespace BlazorShell.Infrastructure.Services
                 if (_loadContexts.ContainsKey(fileName))
                 {
                     _logger.LogWarning("Module {Module} is already loaded", fileName);
-                    return _loadContexts[fileName].Module;
+                    return _loadContexts[fileName].ModuleInstance;
                 }
 
                 // Load assembly
@@ -317,7 +290,7 @@ namespace BlazorShell.Infrastructure.Services
                 _loadContexts[module.Name] = new ModuleLoadContext
                 {
                     Assembly = assembly,
-                    Module = module,
+                    ModuleInstance = module,
                     LoadedAt = DateTime.UtcNow,
                     ComponentTypes = componentTypes,
                     AssemblyPath = assemblyPath // Store the path for reload
@@ -379,7 +352,7 @@ namespace BlazorShell.Infrastructure.Services
                     {
                         ModuleName = moduleName,
                         AssemblyPath = ctx.AssemblyPath ?? ctx.Assembly?.Location ?? string.Empty,
-                        Version = ctx.Module?.Version ?? "Unknown",
+                        Version = ctx.ModuleInstance?.Version ?? "Unknown",
                         IsEnabled = false,
                         CurrentState = ModuleMetadataCache.ModuleState.Unloading
                     };
@@ -810,74 +783,7 @@ namespace BlazorShell.Infrastructure.Services
             dbItem.ModifiedBy = "System";
         }
 
-        private class ModuleLoadContext
-        {
-            public Assembly Assembly { get; set; }
-            public IModule Module { get; set; }
-            public DateTime LoadedAt { get; set; }
-            public List<Type> ComponentTypes { get; set; }
-            public string AssemblyPath { get; set; } // Added to store the path
-        }
-    }
 
-    // Keep your existing configuration classes as they are
-    public class ModulesConfiguration
-    {
-        public ModuleSettings ModuleSettings { get; set; }
-        public List<ModuleConfig> Modules { get; set; }
-    }
-
-    public class ModuleSettings
-    {
-        public bool EnableDynamicLoading { get; set; }
-        public string ModulesPath { get; set; }
-        public bool AllowRemoteModules { get; set; }
-        public bool AutoLoadOnStartup { get; set; }
-        public bool CacheModuleMetadata { get; set; }
-    }
-
-    public class ModuleConfig
-    {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
-        public string Description { get; set; }
-        public string AssemblyName { get; set; }
-        public string EntryType { get; set; }
-        public string Version { get; set; }
-        public string Author { get; set; }
-        public string Category { get; set; }
-        public string Icon { get; set; }
-        public bool Enabled { get; set; }
-        public int LoadOrder { get; set; }
-        public List<string> Dependencies { get; set; }
-        public string RequiredRole { get; set; }
-        public Dictionary<string, object> Configuration { get; set; }
-        public List<NavigationItemConfig> NavigationItems { get; set; }
-        public List<PermissionConfig> Permissions { get; set; }
-    }
-
-    public class NavigationItemConfig
-    {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
-        public string Url { get; set; }
-        public string Icon { get; set; }
-        public int Order { get; set; }
-        public string Type { get; set; }
-        public string RequiredPermission { get; set; }
-        public string Parent { get; set; }
-        public List<NavigationItemConfig> Children { get; set; }
-    }
-
-    public class PermissionConfig
-    {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
-        public string Description { get; set; }
-    }
-
-    public class ModuleConfiguration
-    {
-        public string ModulesPath { get; set; } = "Modules";
     }
 }
+

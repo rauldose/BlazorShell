@@ -68,8 +68,7 @@ namespace BlazorShell.Infrastructure.Services
                 // Check if modules have already been initialized in this app domain
                 if (_modulesInitialized)
                 {
-                    _logger.LogInformation("Modules already initialized, ensuring routes are registered");
-                    EnsureRoutesRegistered();
+                    _logger.LogInformation("Modules already initialized");
                     return;
                 }
                 _modulesInitialized = true;
@@ -165,34 +164,6 @@ namespace BlazorShell.Infrastructure.Services
             {
                 _logger.LogError(ex, "Critical error during module initialization");
                 throw;
-            }
-        }
-
-        private void EnsureRoutesRegistered()
-        {
-            try
-            {
-                var modules = _moduleRegistry.GetModules();
-                foreach (var module in modules)
-                {
-                    // Re-register routes for each module
-                    var componentTypes = module.GetComponentTypes();
-                    if (componentTypes?.Any() == true)
-                    {
-                        _routeProvider.RegisterModuleRoutes(module.Name, componentTypes);
-
-                        // Also register with dynamic route service
-                        var assembly = module.GetType().Assembly;
-                        _dynamicRouteService.RegisterModuleAssembly(module.Name, assembly);
-
-                        _logger.LogDebug("Re-registered {Count} routes for module {Module}",
-                            componentTypes.Count(), module.Name);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error ensuring routes are registered");
             }
         }
 

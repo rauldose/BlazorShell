@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using BlazorShell.Application.Interfaces;
 using BlazorShell.Application.Services;
 using BlazorShell.Domain.Entities;
+using BlazorShell.Application.Interfaces.Repositories;
+using BlazorShell.Infrastructure.Configuration;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -130,18 +132,14 @@ namespace BlazorShell.Infrastructure.Services
                         {
                             _logger.LogWarning("Module assembly not found: {Path}", assemblyPath);
 
-                            // FIX: Use scoped DbContext for database operations
                             using (var scope = _serviceProvider.CreateScope())
                             {
-                                var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-                                var dbModule = await scopedDbContext.Modules
-                                    .FirstOrDefaultAsync(m => m.Name == moduleConfig.Name);
-
+                                var repo = scope.ServiceProvider.GetRequiredService<IModuleRepository>();
+                                var dbModule = await repo.GetByNameAsync(moduleConfig.Name);
                                 if (dbModule != null)
                                 {
                                     dbModule.IsEnabled = false;
-                                    await scopedDbContext.SaveChangesAsync();
+                                    await repo.SaveChangesAsync();
                                 }
                             }
 
@@ -233,16 +231,12 @@ namespace BlazorShell.Infrastructure.Services
                     // Now load the navigation items FROM DATABASE with proper IDs
                     using (var scope = _serviceProvider.CreateScope())
                     {
-                        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                        var repo = scope.ServiceProvider.GetRequiredService<IModuleRepository>();
 
-                        // Get the module from database
-                        var dbModule = await dbContext.Modules
-                            .Include(m => m.NavigationItems)
-                            .FirstOrDefaultAsync(m => m.Name == module.Name);
+                        var dbModule = await repo.GetByNameAsync(module.Name);
 
                         if (dbModule != null && dbModule.NavigationItems?.Any() == true)
                         {
-                            // Register the DATABASE navigation items (with proper IDs) with NavigationService
                             var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
                             navigationService.RegisterNavigationItems(dbModule.NavigationItems.Where(ni => !ni.ParentId.HasValue));
                             _logger.LogInformation("Registered {Count} navigation items for module {Module}",
@@ -387,10 +381,8 @@ namespace BlazorShell.Infrastructure.Services
                     // Try to get additional info from database
                     using (var scope = _serviceProvider.CreateScope())
                     {
-                        var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                        var dbModule = await scopedDbContext.Modules
-                            .AsNoTracking()
-                            .FirstOrDefaultAsync(m => m.Name == moduleName);
+                        var repo = scope.ServiceProvider.GetRequiredService<IModuleRepository>();
+                        var dbModule = await repo.GetByNameAsync(moduleName);
 
                         if (dbModule != null)
                         {
@@ -398,7 +390,6 @@ namespace BlazorShell.Infrastructure.Services
                             metadata.AssemblyName = dbModule.AssemblyName;
                             metadata.RequiredRole = dbModule.RequiredRole;
 
-                            // Parse configuration and dependencies if stored as JSON
                             if (!string.IsNullOrEmpty(dbModule.Configuration))
                             {
                                 try
@@ -458,15 +449,14 @@ namespace BlazorShell.Infrastructure.Services
                 // Update database
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    var repo = scope.ServiceProvider.GetRequiredService<IModuleRepository>();
 
-                    var dbModule = await scopedDbContext.Modules
-                        .FirstOrDefaultAsync(m => m.Name == moduleName);
+                    var dbModule = await repo.GetByNameAsync(moduleName);
 
                     if (dbModule != null)
                     {
                         dbModule.IsEnabled = false;
-                        await scopedDbContext.SaveChangesAsync();
+                        await repo.SaveChangesAsync();
                     }
                 }
 
@@ -531,10 +521,8 @@ namespace BlazorShell.Infrastructure.Services
                 {
                     using (var scope = _serviceProvider.CreateScope())
                     {
-                        var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                        var dbModule = await scopedDbContext.Modules
-                            .AsNoTracking()
-                            .FirstOrDefaultAsync(m => m.Name == moduleName);
+                        var repo = scope.ServiceProvider.GetRequiredService<IModuleRepository>();
+                        var dbModule = await repo.GetByNameAsync(moduleName);
 
                         if (dbModule != null)
                         {
@@ -818,62 +806,6 @@ namespace BlazorShell.Infrastructure.Services
             public List<Type> ComponentTypes { get; set; }
             public string AssemblyPath { get; set; } // Added to store the path
         }
-    }
-
-    // Keep your existing configuration classes as they are
-    public class ModulesConfiguration
-    {
-        public ModuleSettings ModuleSettings { get; set; }
-        public List<ModuleConfig> Modules { get; set; }
-    }
-
-    public class ModuleSettings
-    {
-        public bool EnableDynamicLoading { get; set; }
-        public string ModulesPath { get; set; }
-        public bool AllowRemoteModules { get; set; }
-        public bool AutoLoadOnStartup { get; set; }
-        public bool CacheModuleMetadata { get; set; }
-    }
-
-    public class ModuleConfig
-    {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
-        public string Description { get; set; }
-        public string AssemblyName { get; set; }
-        public string EntryType { get; set; }
-        public string Version { get; set; }
-        public string Author { get; set; }
-        public string Category { get; set; }
-        public string Icon { get; set; }
-        public bool Enabled { get; set; }
-        public int LoadOrder { get; set; }
-        public List<string> Dependencies { get; set; }
-        public string RequiredRole { get; set; }
-        public Dictionary<string, object> Configuration { get; set; }
-        public List<NavigationItemConfig> NavigationItems { get; set; }
-        public List<PermissionConfig> Permissions { get; set; }
-    }
-
-    public class NavigationItemConfig
-    {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
-        public string Url { get; set; }
-        public string Icon { get; set; }
-        public int Order { get; set; }
-        public string Type { get; set; }
-        public string RequiredPermission { get; set; }
-        public string Parent { get; set; }
-        public List<NavigationItemConfig> Children { get; set; }
-    }
-
-    public class PermissionConfig
-    {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
-        public string Description { get; set; }
     }
 
     public class ModuleConfiguration

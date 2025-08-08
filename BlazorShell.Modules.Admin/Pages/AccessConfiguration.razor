@@ -4,16 +4,13 @@
 @page "/admin/access/user/{UserId}"
 @using BlazorShell.Components
 @using BlazorShell.Domain.Entities
-@using BlazorShell.Infrastructure.Data
 @using BlazorShell.Application.Interfaces
+@using BlazorShell.Application.Interfaces.Repositories
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.EntityFrameworkCore
 @inject IModuleAuthorizationService ModuleAuth
 @inject IPageAuthorizationService PageAuth
-@inject ApplicationDbContext DbContext
-@inject RoleManager<ApplicationRole> RoleManager
-@inject UserManager<ApplicationUser> UserManager
+@inject IModuleRepository ModuleRepository
+@inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 @inherits ModuleComponentBase
 @attribute [Authorize(Roles = "Administrator")]
@@ -294,41 +291,23 @@
 
     private async Task LoadInitialData()
     {
-        _roles = await RoleManager.Roles.OrderBy(r => r.Name).ToListAsync();
-        _users = await UserManager.Users.OrderBy(u => u.UserName).Take(50).ToListAsync();
-        _modules = await DbContext.Modules.OrderBy(m => m.DisplayName).ToListAsync();
+        _roles = (await IdentityService.GetRolesAsync())
+            .Select(r => new ApplicationRole { Id = r.Id, Name = r.Name, Description = r.Description })
+            .OrderBy(r => r.Name)
+            .ToList();
 
-        // Load all navigation items including children
-        var allNavItems = await DbContext.NavigationItems
-            .Include(n => n.Module)
-            .Include(n => n.Parent)
-            .Include(n => n.Children)
-            .ToListAsync();
+        _users = (await IdentityService.GetUsersAsync(50))
+            .Select(u => new ApplicationUser { Id = u.Id, UserName = u.UserName, FullName = u.FullName, Email = u.Email })
+            .OrderBy(u => u.UserName)
+            .ToList();
 
-        // Flatten the hierarchy to get all items with URLs
-        _navigationItems = FlattenNavigationItems(allNavItems.Where(ni => !ni.ParentId.HasValue)).ToList();
-    }
+        _modules = await ModuleRepository.GetAllAsync();
 
-    private IEnumerable<NavigationItem> FlattenNavigationItems(IEnumerable<NavigationItem> items)
-    {
-        var result = new List<NavigationItem>();
-
-        foreach (var item in items)
-        {
-            // Add items that have URLs (actual pages)
-            if (!string.IsNullOrEmpty(item.Url))
-            {
-                result.Add(item);
-            }
-
-            // Recursively add children
-            if (item.Children != null && item.Children.Any())
-            {
-                result.AddRange(FlattenNavigationItems(item.Children));
-            }
-        }
-
-        return result;
+        // Flatten navigation items from modules
+        _navigationItems = _modules
+            .SelectMany(m => m.NavigationItems ?? new List<NavigationItem>())
+            .Where(ni => !ni.ParentId.HasValue)
+            .ToList();
     }
 
     private async Task LoadPermissions()
@@ -345,12 +324,14 @@
 
             if (RoleId != null)
             {
-                _role = await RoleManager.FindByIdAsync(RoleId);
+                var roleDto = await IdentityService.FindRoleByIdAsync(RoleId);
+                _role = roleDto == null ? null : new ApplicationRole { Id = roleDto.Id, Name = roleDto.Name, Description = roleDto.Description };
                 await LoadRolePermissions();
             }
             else if (UserId != null)
             {
-                _user = await UserManager.FindByIdAsync(UserId);
+                var userDto = await IdentityService.FindByIdAsync(UserId);
+                _user = userDto == null ? null : new ApplicationUser { Id = userDto.Id, UserName = userDto.UserName, FullName = userDto.FullName };
                 await LoadUserPermissions();
             }
         }

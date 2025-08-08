@@ -10,6 +10,7 @@ using BlazorShell.Application.Interfaces;
 using BlazorShell.Domain.Entities;
 using BlazorShell.Application.Services;
 using BlazorShell.Application.Models;
+using BlazorShell.Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;

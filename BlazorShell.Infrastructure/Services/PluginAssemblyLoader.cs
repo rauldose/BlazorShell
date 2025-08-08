@@ -172,7 +172,7 @@ namespace BlazorShell.Infrastructure.Services
     /// <summary>
     /// State Container implementation
     /// </summary>
-    public class StateContainer : IStateContainer
+    public class StateContainer : IStateContainer, IDisposable
     {
         private readonly Dictionary<string, object> _state;
         private readonly object _lock = new object();
@@ -233,6 +233,11 @@ namespace BlazorShell.Infrastructure.Services
                 _logger.LogDebug("State cleared");
                 StateChanged?.Invoke(this, new StateChangedEventArgs(null, null, null));
             }
+        }
+
+        public void Dispose()
+        {
+            StateChanged = null;
         }
     }
 }

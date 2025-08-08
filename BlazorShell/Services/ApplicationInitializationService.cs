@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace BlazorShell.Services;
 
@@ -21,6 +22,7 @@ public class ApplicationInitializationService : IApplicationInitializationServic
     private readonly IEnumerable<IHostedService> _hostedServices;
     private readonly ILogger<ApplicationInitializationService> _logger;
     private readonly IWebHostEnvironment _environment;
+    private readonly IConfiguration _configuration;
 
     public ApplicationInitializationService(
         ApplicationDbContext context,
@@ -30,7 +32,8 @@ public class ApplicationInitializationService : IApplicationInitializationServic
         ILazyModuleLoader lazyLoader,
         IEnumerable<IHostedService> hostedServices,
         ILogger<ApplicationInitializationService> logger,
-        IWebHostEnvironment environment)
+        IWebHostEnvironment environment,
+        IConfiguration configuration)
     {
         _context = context;
         _roleManager = roleManager;
@@ -40,6 +43,7 @@ public class ApplicationInitializationService : IApplicationInitializationServic
         _hostedServices = hostedServices;
         _logger = logger;
         _environment = environment;
+        _configuration = configuration;
     }
 
     public async Task InitializeAsync()
@@ -94,7 +98,7 @@ public class ApplicationInitializationService : IApplicationInitializationServic
     private async Task SeedDefaultAdmin()
     {
         const string adminEmail = "admin@blazorshell.local";
-        const string adminPassword = "Admin@123456";
+        var adminPassword = _configuration["DefaultAdmin:Password"] ?? throw new InvalidOperationException();
 
         var adminUser = await _userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)

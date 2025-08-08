@@ -14,10 +14,10 @@ public class ModuleRepository : IModuleRepository
         _dbContext = dbContext;
     }
 
-    public async Task<List<Module>> GetAllAsync() => await _dbContext.Modules.ToListAsync();
+    public async Task<List<Module>> GetAllAsync() => await _dbContext.Modules.Include(m => m.NavigationItems).ToListAsync();
 
     public async Task<Module?> GetByNameAsync(string name) =>
-        await _dbContext.Modules.FirstOrDefaultAsync(m => m.Name == name);
+        await _dbContext.Modules.Include(m => m.NavigationItems).FirstOrDefaultAsync(m => m.Name == name);
 
     public async Task AddAsync(Module module)
     {

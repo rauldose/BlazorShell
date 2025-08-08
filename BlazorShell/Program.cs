@@ -19,12 +19,22 @@ using BlazorShell.Infrastructure.Middleware;
 using Autofac.Core;
 using BlazorShell.Components.Account;
 using IdentityRevalidatingAuthenticationStateProvider = BlazorShell.Components.Account.IdentityRevalidatingAuthenticationStateProvider;
+using BlazorShell.Application.Interfaces.Repositories;
+using BlazorShell.Domain.Events;
+using BlazorShell.Infrastructure.Events;
+using BlazorShell.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Store service collection for later use
 var serviceCollection = builder.Services;
 
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
+builder.Services.AddScoped<ISettingsService, SettingsService>();  // Register SettingsService
+builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 // Configure Autofac as DI container for plugin support
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>

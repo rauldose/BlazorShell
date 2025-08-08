@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using BlazorShell.Application.Interfaces.Repositories;
 using BlazorShell.Infrastructure.Repositories;
 using BlazorShell.Domain.Events;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BlazorShell.Infrastructure.Services
 {
@@ -180,6 +181,8 @@ namespace BlazorShell.Infrastructure.Services
             moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<INavigationService>());
             moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<IModuleAuthorizationService>());
             moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<IStateContainer>());
+            moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<IMemoryCache>());
+            moduleServices.AddSingleton(sp => _rootProvider.GetRequiredService<ISettingsService>());
 
             // Add database context as scoped
             moduleServices.AddScoped(sp => _rootProvider.GetRequiredService<ApplicationDbContext>());
@@ -250,6 +253,8 @@ namespace BlazorShell.Infrastructure.Services
                 typeof(IDomainEventDispatcher),
                 typeof(IConfiguration),
                 typeof(IHttpContextAccessor),
+                typeof(ISettingsService),
+                typeof(IMemoryCache),
                 typeof(NavigationManager),
                 typeof(IJSRuntime),
                 typeof(AuthenticationStateProvider),

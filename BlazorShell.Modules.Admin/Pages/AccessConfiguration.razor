@@ -306,7 +306,7 @@
             .ToListAsync();
 
         // Flatten the hierarchy to get all items with URLs
-        _navigationItems = FlattenNavigationItems(allNavItems).ToList();
+        _navigationItems = FlattenNavigationItems(allNavItems.Where(ni => !ni.ParentId.HasValue)).ToList();
     }
 
     private IEnumerable<NavigationItem> FlattenNavigationItems(IEnumerable<NavigationItem> items)

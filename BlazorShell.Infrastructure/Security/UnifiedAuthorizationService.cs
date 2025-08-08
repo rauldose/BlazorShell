@@ -19,8 +19,26 @@ public class UnifiedAuthorizationService : IModuleAuthorizationService, IPageAut
     private readonly IMemoryCache _cache;
     private readonly ILogger<UnifiedAuthorizationService> _logger;
 
-    private const string USER_PERMISSIONS_CACHE_KEY = "UserPerms_{0}";
     private const int CACHE_MINUTES = 5;
+    private const string UserVersionKeyFmt = "auth:perms:ver:{0}";
+
+    private string UserVersionKey(string userId) => string.Format(UserVersionKeyFmt, userId);
+
+    private int GetUserVersion(string userId)
+        => _cache.GetOrCreate(UserVersionKey(userId), e => 0);
+
+    private void BumpUserVersion(string userId)
+    {
+        var key = UserVersionKey(userId);
+        var cur = _cache.Get<int?>(key) ?? 0;
+        _cache.Set(key, cur + 1);
+    }
+
+    private string PageKey(string userId, int pageId, PermissionType permission)
+    {
+        var v = GetUserVersion(userId);
+        return $"auth:perms:user:{userId}:v:{v}:page:{pageId}:perm:{permission}";
+    }
 
     public UnifiedAuthorizationService(
         ApplicationDbContext dbContext,
@@ -190,7 +208,7 @@ public class UnifiedAuthorizationService : IModuleAuthorizationService, IPageAut
         }
 
         await _dbContext.SaveChangesAsync();
-        ClearRoleCache(roleId);
+        await ClearRoleCacheAsync(roleId);
     }
 
     public async Task RevokeRolePermissionAsync(string roleId, string moduleName, PermissionType permission)
@@ -207,7 +225,7 @@ public class UnifiedAuthorizationService : IModuleAuthorizationService, IPageAut
         {
             existing.IsGranted = false;
             await _dbContext.SaveChangesAsync();
-            ClearRoleCache(roleId);
+            await ClearRoleCacheAsync(roleId);
         }
     }
 
@@ -227,9 +245,9 @@ public class UnifiedAuthorizationService : IModuleAuthorizationService, IPageAut
     {
         if (string.IsNullOrEmpty(userId)) return false;
 
-        var cacheKey = $"{USER_PERMISSIONS_CACHE_KEY}_{userId}_{pageId}_{permission}";
-        if (_cache.TryGetValue<bool>(cacheKey, out var cached))
-            return cached;
+        var cacheKey = PageKey(userId, pageId, permission);
+        var cached = _cache.Get<bool?>(cacheKey);
+        if (cached.HasValue) return cached.Value;
 
         try
         {
@@ -280,7 +298,9 @@ public class UnifiedAuthorizationService : IModuleAuthorizationService, IPageAut
             // Check specific page permission
             var hasPagePermission = await CheckPagePermissionAsync(userId, pageId, permission.ToString());
 
-            _cache.Set(cacheKey, hasPagePermission, TimeSpan.FromMinutes(CACHE_MINUTES));
+            _cache.Set(cacheKey, hasPagePermission,
+                new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CACHE_MINUTES)));
+
             return hasPagePermission;
         }
         catch (Exception ex)
@@ -402,7 +422,7 @@ public class UnifiedAuthorizationService : IModuleAuthorizationService, IPageAut
         }
 
         await _dbContext.SaveChangesAsync();
-        ClearRoleCache(roleId);
+        await ClearRoleCacheAsync(roleId);
     }
 
     async Task IPageAuthorizationService.RevokeRolePermissionAsync(string roleId, int pageId, PermissionType permission)
@@ -416,7 +436,7 @@ public class UnifiedAuthorizationService : IModuleAuthorizationService, IPageAut
         {
             existing.IsGranted = false;
             await _dbContext.SaveChangesAsync();
-            ClearRoleCache(roleId);
+            await ClearRoleCacheAsync(roleId);
         }
     }
 
@@ -432,26 +452,16 @@ public class UnifiedAuthorizationService : IModuleAuthorizationService, IPageAut
 
     #region Cache Management
 
-    private void ClearUserCache(string userId)
-    {
-        // Clear all cached permissions for this user
-        var cacheKey = string.Format(USER_PERMISSIONS_CACHE_KEY, userId);
-        _cache.Remove(cacheKey);
-    }
+    private void ClearUserCache(string userId) => BumpUserVersion(userId);
 
-    private async void ClearRoleCache(string roleId)
+    private async Task ClearRoleCacheAsync(string roleId)
     {
-        // Clear cache for all users in this role
         var role = await _roleManager.FindByIdAsync(roleId);
-        if (role != null)
-        {
-            var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name!);
-            foreach (var user in usersInRole)
-            {
-                ClearUserCache(user.Id);
-            }
-        }
-    }
+        if (role == null) return;
 
+        var users = await _userManager.GetUsersInRoleAsync(role.Name!);
+        foreach (var u in users)
+            BumpUserVersion(u.Id);
+    }
     #endregion
 }

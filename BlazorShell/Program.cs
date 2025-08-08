@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.Authorization;
 using BlazorShell.Infrastructure.Data;
 using BlazorShell.Application.Services;
 using BlazorShell.Application.Interfaces;
+using BlazorShell.Application.Interfaces.Repositories;
 using BlazorShell.Domain.Entities;
 using BlazorShell.Infrastructure.Services;
 using BlazorShell.Infrastructure.Security;
 using BlazorShell.Components;
 using BlazorShell.Services;
+using BlazorShell.Infrastructure.Repositories;
+using BlazorShell.Infrastructure.Services.Implementations;
+using BlazorShell;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using System.Reflection;
@@ -159,6 +163,15 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
+// Application services
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<ISettingsService, SettingsService>();
+
+// Repositories
+builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
+
 // Add HTTP context accessor for service layer
 builder.Services.AddHttpContextAccessor();
 
@@ -191,14 +204,6 @@ builder.Services.AddAntiforgery(options =>
     options.SuppressXFrameOptionsHeader = false;
 });
 
-// TEMPORARY: Register Admin module services directly for testing
-// Remove this once dynamic module service registration is working
-//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.Interfaces.IModuleManagementService,
-//                             BlazorShell.Modules.Admin.Services.Implementations.ModuleManagementService>();
-//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.Interfaces.IUserManagementService,
-//                             BlazorShell.Modules.Admin.Services.Implementations.UserManagementService>();
-//builder.Services.AddScoped<BlazorShell.Modules.Admin.Services.Interfaces.IAuditService,
-//                             BlazorShell.Modules.Admin.Services.Implementations.AuditService>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<IModuleInitializationService, ModuleInitializationService>();
 builder.Services.AddScoped<IApplicationInitializationService, ApplicationInitializationService>();

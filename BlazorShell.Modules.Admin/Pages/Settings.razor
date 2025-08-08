@@ -1,8 +1,8 @@
 ﻿@* BlazorShell.Modules.Admin/Pages/Settings.razor *@
 @page "/admin/settings"
 @using BlazorShell.Components
-@using BlazorShell.Domain.Entities
-@using BlazorShell.Infrastructure.Data
+@using BlazorShell.Application.Interfaces
+@using BlazorShell.Application.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @inherits ModuleComponentBase
@@ -118,10 +118,10 @@
 }
 
 @code {
-    [Inject] private ApplicationDbContext DbContext { get; set; } = null!;
+    [Inject] private ISettingsService SettingsService { get; set; } = null!;
 
     private string _selectedCategory = "General";
-    private List<Setting>? _categorySettings;
+    private List<SettingDto>? _categorySettings;
     private bool _isLoading = false;
     private string? _message;
     private bool _isError = false;
@@ -136,18 +136,9 @@
         _isLoading = true;
         try
         {
-            _categorySettings = await DbContext.Settings
-                .Where(s => s.Category == _selectedCategory)
+            _categorySettings = (await SettingsService.GetByCategoryAsync(_selectedCategory))
                 .OrderBy(s => s.Key)
-                .ToListAsync();
-
-            // If no settings exist for this category, create default ones
-            if (!_categorySettings.Any())
-            {
-                _categorySettings = GetDefaultSettings(_selectedCategory);
-                DbContext.Settings.AddRange(_categorySettings);
-                await DbContext.SaveChangesAsync();
-            }
+                .ToList();
         }
         finally
         {
@@ -162,13 +153,11 @@
         InvokeAsync(LoadSettings);
     }
 
-    private void UpdateSetting(Setting setting, string? newValue)
+    private void UpdateSetting(SettingDto setting, string? newValue)
     {
         if (setting != null && newValue != null)
         {
             setting.Value = newValue;
-            setting.ModifiedDate = DateTime.UtcNow;
-            setting.ModifiedBy = User?.Identity?.Name ?? "System";
         }
     }
 
@@ -176,55 +165,19 @@
     {
         try
         {
-            await DbContext.SaveChangesAsync();
+            if (_categorySettings != null)
+            {
+                foreach (var setting in _categorySettings)
+                {
+                    await SettingsService.UpdateSettingAsync(setting.Key, setting.Value ?? string.Empty);
+                }
+            }
             ShowMessage("Settings saved successfully", false);
         }
         catch (Exception ex)
         {
             ShowMessage($"Error saving settings: {ex.Message}", true);
         }
-    }
-
-    private List<Setting> GetDefaultSettings(string category)
-    {
-        var settings = new List<Setting>();
-        var now = DateTime.UtcNow;
-
-        switch (category)
-        {
-            case "General":
-                settings.Add(new Setting { Category = category, Key = "ApplicationName", Value = "BlazorShell", DataType = "String", Description = "Application display name", IsPublic = true, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "DefaultTimeZone", Value = "UTC", DataType = "String", Description = "Default timezone for the application", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "MaintenanceMode", Value = "false", DataType = "Boolean", Description = "Enable maintenance mode", IsPublic = false, ModifiedDate = now });
-                break;
-
-            case "Security":
-                settings.Add(new Setting { Category = category, Key = "RequireEmailConfirmation", Value = "false", DataType = "Boolean", Description = "Require email confirmation for new users", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "PasswordExpirationDays", Value = "90", DataType = "Integer", Description = "Days before password expires", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "MaxLoginAttempts", Value = "5", DataType = "Integer", Description = "Maximum failed login attempts", IsPublic = false, ModifiedDate = now });
-                break;
-
-            case "Email":
-                settings.Add(new Setting { Category = category, Key = "SmtpHost", Value = "localhost", DataType = "String", Description = "SMTP server host", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "SmtpPort", Value = "587", DataType = "Integer", Description = "SMTP server port", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "SmtpUser", Value = "", DataType = "String", Description = "SMTP username", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "SmtpPassword", Value = "", DataType = "Password", Description = "SMTP password", IsPublic = false, IsEncrypted = true, ModifiedDate = now });
-                break;
-
-            case "Modules":
-                settings.Add(new Setting { Category = category, Key = "EnableDynamicLoading", Value = "true", DataType = "Boolean", Description = "Allow dynamic module loading", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "ModuleUploadMaxSizeMB", Value = "10", DataType = "Integer", Description = "Maximum module upload size in MB", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "AutoLoadModules", Value = "true", DataType = "Boolean", Description = "Auto-load modules on startup", IsPublic = false, ModifiedDate = now });
-                break;
-
-            case "Performance":
-                settings.Add(new Setting { Category = category, Key = "EnableCaching", Value = "true", DataType = "Boolean", Description = "Enable application caching", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "CacheExpirationMinutes", Value = "60", DataType = "Integer", Description = "Cache expiration in minutes", IsPublic = false, ModifiedDate = now });
-                settings.Add(new Setting { Category = category, Key = "EnableCompression", Value = "true", DataType = "Boolean", Description = "Enable response compression", IsPublic = false, ModifiedDate = now });
-                break;
-        }
-
-        return settings;
     }
 
     private void ShowMessage(string message, bool isError)

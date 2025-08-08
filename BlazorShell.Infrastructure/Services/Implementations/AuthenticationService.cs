@@ -11,7 +11,7 @@ using BlazorShell.Application.Services;
 
 namespace BlazorShell.Infrastructure.Services;
 
-public class AuthenticationService : IAuthenticationService
+public class AuthenticationService : IAuthenticationService, IDisposable
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
@@ -149,5 +149,10 @@ public class AuthenticationService : IAuthenticationService
     protected virtual void OnAuthenticationStateChanged(AuthenticationStateChangedEventArgs e)
     {
         AuthenticationStateChanged?.Invoke(this, e);
+    }
+
+    public void Dispose()
+    {
+        AuthenticationStateChanged = null;
     }
 }

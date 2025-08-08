@@ -1,5 +1,5 @@
 using BlazorShell.Domain.Entities;
-using BlazorShell.Domain.Repositories;
+using BlazorShell.Application.Interfaces.Repositories;
 using BlazorShell.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

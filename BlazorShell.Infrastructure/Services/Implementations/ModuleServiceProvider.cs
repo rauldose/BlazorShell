@@ -14,7 +14,7 @@ using Microsoft.JSInterop;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
-using BlazorShell.Domain.Repositories;
+using BlazorShell.Application.Interfaces.Repositories;
 using BlazorShell.Infrastructure.Repositories;
 using BlazorShell.Domain.Events;
 

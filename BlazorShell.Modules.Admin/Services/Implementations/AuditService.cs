@@ -1,7 +1,7 @@
 ﻿// BlazorShell.Modules.Admin/Services/AuditService.cs
 using Microsoft.EntityFrameworkCore;
 using BlazorShell.Domain.Entities;
-using BlazorShell.Domain.Repositories;
+using BlazorShell.Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using BlazorShell.Modules.Admin.Services.Interfaces;
@@ -54,17 +54,19 @@ namespace BlazorShell.Modules.Admin.Services.Implementations
 
         public async Task<IEnumerable<AuditLog>> GetAuditLogsAsync(int page = 1, int pageSize = 50)
         {
-            return await _auditRepository.GetLogsAsync((page - 1) * pageSize, pageSize);
+            return await _auditRepository.GetRecentAsync(pageSize);
         }
 
         public async Task<IEnumerable<AuditLog>> GetAuditLogsByUserAsync(string userId, int page = 1, int pageSize = 50)
         {
-            return await _auditRepository.GetLogsByUserAsync(userId, (page - 1) * pageSize, pageSize);
+            var logs = await _auditRepository.GetRecentAsync(pageSize);
+            return logs.Where(l => l.UserId == userId);
         }
 
         public async Task<IEnumerable<AuditLog>> GetAuditLogsByEntityAsync(string entityName, string entityId, int page = 1, int pageSize = 50)
         {
-            return await _auditRepository.GetLogsByEntityAsync(entityName, entityId, (page - 1) * pageSize, pageSize);
+            var logs = await _auditRepository.GetRecentAsync(pageSize);
+            return logs.Where(l => l.EntityName == entityName && l.EntityId == entityId);
         }
     }
 }

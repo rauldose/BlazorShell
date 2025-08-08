@@ -115,6 +115,10 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 // Register dynamic route service
 builder.Services.AddSingleton<IDynamicRouteService, DynamicRouteService>();
 
+// Unified authorization services
+builder.Services.AddScoped<IModuleAuthorizationService, UnifiedAuthorizationService>();
+builder.Services.AddScoped<IPageAuthorizationService, UnifiedAuthorizationService>();
+
 // Add cascading authentication state (new .NET 8 pattern)
 builder.Services.AddCascadingAuthenticationState();
 

@@ -1,7 +1,7 @@
 using Autofac;
 using BlazorShell.Application.Services;
 using BlazorShell.Infrastructure.Services;
-using BlazorShell.Domain.Repositories;
+using BlazorShell.Application.Interfaces.Repositories;
 using BlazorShell.Infrastructure.Repositories;
 using BlazorShell.Domain.Events;
 using BlazorShell.Infrastructure.Events;

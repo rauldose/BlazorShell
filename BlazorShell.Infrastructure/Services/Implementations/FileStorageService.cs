@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Security;
 using BlazorShell.Application.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
@@ -90,11 +91,14 @@ public class FileStorageService : IFileStorageService
     {
         try
         {
+            if (filePath.Contains("..") || Path.IsPathRooted(filePath))
+                throw new SecurityException("Invalid path");
+
             var fullPath = Path.Combine(_storageRoot, filePath);
 
             if (File.Exists(fullPath))
             {
-                await Task.Run(() => File.Delete(fullPath));
+                File.Delete(fullPath);
                 _logger.LogInformation("File deleted: {FilePath}", fullPath);
                 return true;
             }

@@ -11,10 +11,11 @@
 @inject IModuleLoader ModuleLoader
 @inject ILogger<Routes> Logger
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IRouteAssemblyProvider RouteAssemblyProvider
 
 <CascadingValue Value="DynamicRouteService">
     <Router AppAssembly="typeof(App).Assembly"
-            AdditionalAssemblies="@_additionalAssemblies"
+            AdditionalAssemblies="@RouteAssemblyProvider.Assemblies"
             OnNavigateAsync="OnNavigateAsync">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
@@ -61,46 +62,20 @@
 </CascadingValue>
 
 @code {
-    private static List<Assembly>? _staticAdditionalAssemblies;
-    private static bool _staticIsInitialized = false;
-    private static readonly object _initLock = new object();
-    
-    private List<Assembly> _additionalAssemblies = new();
     private bool _disposed = false;
 
     protected override async Task OnInitializedAsync()
     {
-        // FIX: Use static initialization to prevent re-initialization loops
-        // This is especially important when the component is rendered in static SSR mode
-        lock (_initLock)
-        {
-            if (_staticIsInitialized && _staticAdditionalAssemblies != null)
-            {
-                _additionalAssemblies = _staticAdditionalAssemblies;
-                Logger.LogDebug("Using cached module assemblies ({Count} assemblies)", _additionalAssemblies.Count);
-                return;
-            }
-        }
-
         try
         {
-            Logger.LogInformation("Routes component initializing (first time)");
-            
+            Logger.LogInformation("Routes component initializing");
+
             // Ensure modules are loaded first
             await ModuleLoader.InitializeModulesAsync();
-            
+
             // Load module assemblies
             await LoadModuleAssemblies();
-            
-            // Cache the assemblies statically
-            lock (_initLock)
-            {
-                _staticAdditionalAssemblies = _additionalAssemblies;
-                _staticIsInitialized = true;
-            }
-            
-            // Subscribe to changes only if we're in InteractiveServer mode
-            // Static SSR doesn't need these subscriptions
+
             if (!IsStaticRendering())
             {
                 if (ModuleRegistry != null)
@@ -108,14 +83,14 @@
                     ModuleRegistry.ModuleRegistered += OnModuleRegistered;
                     ModuleRegistry.ModuleUnregistered += OnModuleUnregistered;
                 }
-                
+
                 if (DynamicRouteService != null)
                 {
                     DynamicRouteService.RoutesChanged += OnRoutesChanged;
                 }
             }
-            
-            Logger.LogInformation("Routes component initialized with {Count} additional assemblies", _additionalAssemblies.Count);
+
+            Logger.LogInformation("Routes component initialized with {Count} additional assemblies", RouteAssemblyProvider.Assemblies.Count());
         }
         catch (Exception ex)
         {
@@ -154,11 +129,8 @@
             foreach (var module in modules)
             {
                 var assembly = module.GetType().Assembly;
-                if (!_additionalAssemblies.Contains(assembly))
-                {
-                    _additionalAssemblies.Add(assembly);
-                    Logger.LogInformation("Added module assembly: {AssemblyName}", assembly.FullName);
-                }
+                RouteAssemblyProvider.AddAssembly(assembly);
+                Logger.LogInformation("Added module assembly: {AssemblyName}", assembly.FullName);
             }
         }
         catch (Exception ex)
@@ -178,21 +150,8 @@
         if (_disposed) return;
         
         var assembly = e.Module.GetType().Assembly;
-        if (!_additionalAssemblies.Contains(assembly))
-        {
-            _additionalAssemblies.Add(assembly);
-            
-            // Update static cache
-            lock (_initLock)
-            {
-                if (_staticAdditionalAssemblies != null && !_staticAdditionalAssemblies.Contains(assembly))
-                {
-                    _staticAdditionalAssemblies.Add(assembly);
-                }
-            }
-            
-            InvokeAsync(StateHasChanged);
-        }
+        RouteAssemblyProvider.AddAssembly(assembly);
+        InvokeAsync(StateHasChanged);
     }
 
     private void OnModuleUnregistered(object? sender, ModuleEventArgs e)
@@ -200,18 +159,8 @@
         if (_disposed) return;
         
         var assembly = e.Module.GetType().Assembly;
-        if (_additionalAssemblies.Contains(assembly))
-        {
-            _additionalAssemblies.Remove(assembly);
-            
-            // Update static cache
-            lock (_initLock)
-            {
-                _staticAdditionalAssemblies?.Remove(assembly);
-            }
-            
-            InvokeAsync(StateHasChanged);
-        }
+        RouteAssemblyProvider.RemoveAssembly(assembly);
+        InvokeAsync(StateHasChanged);
     }
 
     private void OnRoutesChanged(object? sender, RouteChangedEventArgs e)

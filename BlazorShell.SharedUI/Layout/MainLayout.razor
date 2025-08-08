@@ -247,6 +247,7 @@
         await LoadNavigationItems();
     }
 
+
     private async Task LoadNavigationItems()
     {
         if (NavigationService == null) return;
@@ -263,25 +264,50 @@
         }
         else
         {
+            // For anonymous users, only show public items
             _topMenuItems = (await NavigationService.GetNavigationItemsAsync(NavigationType.TopMenu))
-                .Where(n => string.IsNullOrEmpty(n.RequiredPermission) && string.IsNullOrEmpty(n.RequiredRole))
+                .Where(n => n.IsPublic)
                 .ToList();
 
             _sideMenuItems = (await NavigationService.GetNavigationItemsAsync(NavigationType.SideMenu))
-                .Where(n => string.IsNullOrEmpty(n.RequiredPermission) && string.IsNullOrEmpty(n.RequiredRole))
+                .Where(n => n.IsPublic)
                 .ToList();
         }
 
         // Auto-expand active groups
-        foreach (var item in _sideMenuItems ?? Enumerable.Empty<NavigationItem>())
+        foreach (var item in _sideMenuItems ?? new List<NavigationItem>())
         {
-            if (item.Children?.Any(c => IsActive(c.Url)) == true)
+            if (item.Children?.Any() == true && IsActiveGroup(item))
             {
-                _expandedGroups.Add(item.Name);
+                _expandedGroups.Add(item.Name!);
             }
         }
+    }
 
-        StateHasChanged();
+    private bool IsActiveGroup(NavigationItem group)
+    {
+        if (group.Children == null || !group.Children.Any())
+            return false;
+
+        var currentPath = Navigation.ToBaseRelativePath(Navigation.Uri);
+
+        // Check if any child item's URL matches the current path
+        return group.Children.Any(child =>
+            !string.IsNullOrEmpty(child.Url) &&
+            currentPath.StartsWith(child.Url.TrimStart('/'), StringComparison.OrdinalIgnoreCase));
+    }
+
+    private bool IsActive(NavigationItem item)
+    {
+        if (string.IsNullOrEmpty(item.Url))
+            return false;
+
+        var currentPath = Navigation.ToBaseRelativePath(Navigation.Uri);
+        var itemPath = item.Url.TrimStart('/');
+
+        // Exact match or current path starts with item path (for nested routes)
+        return currentPath.Equals(itemPath, StringComparison.OrdinalIgnoreCase) ||
+               currentPath.StartsWith(itemPath + "/", StringComparison.OrdinalIgnoreCase);
     }
 
     private void NavigateTo(string url)

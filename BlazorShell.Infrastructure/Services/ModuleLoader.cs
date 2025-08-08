@@ -208,7 +208,7 @@ namespace BlazorShell.Infrastructure.Services
                     Version = module.Version,
                     LoadedAt = DateTime.UtcNow,
                     IsEnabled = true,
-                    IsCore = moduleConfig.LoadOrder < 100, // Assume low order = core
+                    IsCore = moduleConfig.LoadOrder < 100,
                     RequiredRole = moduleConfig.RequiredRole,
                     Configuration = moduleConfig.Configuration ?? new Dictionary<string, object>(),
                     Dependencies = moduleConfig.Dependencies ?? new List<string>(),
@@ -227,28 +227,37 @@ namespace BlazorShell.Infrastructure.Services
                 var initialized = await module.InitializeAsync(_serviceProvider);
                 if (initialized)
                 {
-                    // Register navigation items
-                    var navItems = module.GetNavigationItems();
-                    if (navItems?.Any() == true)
+                    // IMPORTANT: Update database FIRST to get proper IDs
+                    await UpdateModuleInDatabase(module, moduleConfig);
+
+                    // Now load the navigation items FROM DATABASE with proper IDs
+                    using (var scope = _serviceProvider.CreateScope())
                     {
-                        var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
-                        navigationService.RegisterNavigationItems(navItems);
-                        _logger.LogInformation("Registered {Count} navigation items for module {Module}",
-                            navItems.Count(), module.Name);
+                        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                        // Get the module from database
+                        var dbModule = await dbContext.Modules
+                            .Include(m => m.NavigationItems)
+                            .FirstOrDefaultAsync(m => m.Name == module.Name);
+
+                        if (dbModule != null && dbModule.NavigationItems?.Any() == true)
+                        {
+                            // Register the DATABASE navigation items (with proper IDs) with NavigationService
+                            var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
+                            navigationService.RegisterNavigationItems(dbModule.NavigationItems.Where(ni => !ni.ParentId.HasValue));
+                            _logger.LogInformation("Registered {Count} navigation items for module {Module}",
+                                dbModule.NavigationItems.Count, module.Name);
+                        }
                     }
 
                     // Register module components for routing
                     var componentTypes = module.GetComponentTypes();
                     if (componentTypes?.Any() == true)
                     {
-                        // Register routes with the route provider
                         _routeProvider.RegisterModuleRoutes(module.Name, componentTypes);
                         _logger.LogInformation("Registered {Count} components for module {Module}",
                             componentTypes.Count(), module.Name);
                     }
-
-                    // Update or create database entry
-                    await UpdateModuleInDatabase(module, moduleConfig);
 
                     _logger.LogInformation("Module {Module} loaded successfully", module.Name);
                 }
@@ -621,86 +630,184 @@ namespace BlazorShell.Infrastructure.Services
 
         private async Task UpdateModuleInDatabase(IModule module, ModuleConfig config)
         {
-            // FIX: Create a new scope for database operations
             using (var scope = _serviceProvider.CreateScope())
             {
                 var scopedDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 var dbModule = await scopedDbContext.Modules
+                    .Include(m => m.NavigationItems)
                     .FirstOrDefaultAsync(m => m.Name == module.Name);
 
+                bool isNewModule = false;
                 if (dbModule == null)
                 {
+                    isNewModule = true;
                     dbModule = new BlazorShell.Domain.Entities.Module
                     {
                         Name = module.Name,
+                        DisplayName = module.DisplayName,
+                        Description = module.Description,
+                        Version = module.Version,
+                        Author = module.Author,
+                        Icon = module.Icon,
+                        Category = module.Category,
+                        RequiredRole = config.RequiredRole,
+                        LoadOrder = module.Order,
+                        IsEnabled = true,
+                        AssemblyName = config.AssemblyName,
+                        EntryType = config.EntryType,
+                        Configuration = JsonConvert.SerializeObject(config.Configuration),
+                        Dependencies = JsonConvert.SerializeObject(config.Dependencies),
                         CreatedDate = DateTime.UtcNow,
                         CreatedBy = "System"
                     };
                     scopedDbContext.Modules.Add(dbModule);
+                    await scopedDbContext.SaveChangesAsync(); // Get the Module ID
                 }
-
-                dbModule.DisplayName = module.DisplayName;
-                dbModule.Description = module.Description;
-                dbModule.Version = module.Version;
-                dbModule.Author = module.Author;
-                dbModule.Icon = module.Icon;
-                dbModule.Category = module.Category;
-                dbModule.RequiredRole = config.RequiredRole;
-                dbModule.LoadOrder = module.Order;
-                dbModule.IsEnabled = true;
-                dbModule.AssemblyName = config.AssemblyName;
-                dbModule.EntryType = config.EntryType;
-                dbModule.Configuration = JsonConvert.SerializeObject(config.Configuration);
-                dbModule.Dependencies = JsonConvert.SerializeObject(config.Dependencies);
-                dbModule.ModifiedDate = DateTime.UtcNow;
-                dbModule.ModifiedBy = "System";
-
-                // Persist navigation items to database so that access configuration
-                // can load them for permission management. Previously navigation
-                // items were only registered in memory and never stored, which
-                // meant the AccessConfiguration page could not display page level
-                // permissions. We now synchronize the module's navigation items
-                // with the database, creating missing entries and updating existing
-                // ones.
-
-                var navItems = module.GetNavigationItems()?.ToList() ?? new List<NavigationItem>();
-
-                // Load existing items for this module to preserve IDs and permissions
-                var existingItems = await scopedDbContext.NavigationItems
-                    .Where(n => n.ModuleId == dbModule.Id)
-                    .ToListAsync();
-
-                foreach (var item in navItems)
+                else
                 {
-                    var existing = existingItems.FirstOrDefault(n => n.Name == item.Name);
-                    if (existing == null)
-                    {
-                        item.ModuleId = dbModule.Id;
-                        item.CreatedDate = DateTime.UtcNow;
-                        item.CreatedBy = "System";
-                        scopedDbContext.NavigationItems.Add(item);
-                    }
-                    else
-                    {
-                        existing.DisplayName = item.DisplayName;
-                        existing.Url = item.Url;
-                        existing.Icon = item.Icon;
-                        existing.ParentId = item.ParentId;
-                        existing.Order = item.Order;
-                        existing.IsVisible = item.IsVisible;
-                        existing.RequiredPermission = item.RequiredPermission;
-                        existing.RequiredRole = item.RequiredRole;
-                        existing.Target = item.Target;
-                        existing.CssClass = item.CssClass;
-                        existing.Type = item.Type;
-                        existing.ModifiedDate = DateTime.UtcNow;
-                        existing.ModifiedBy = "System";
-                    }
+                    // Update existing module
+                    dbModule.DisplayName = module.DisplayName;
+                    dbModule.Description = module.Description;
+                    dbModule.Version = module.Version;
+                    dbModule.Author = module.Author;
+                    dbModule.Icon = module.Icon;
+                    dbModule.Category = module.Category;
+                    dbModule.RequiredRole = config.RequiredRole;
+                    dbModule.LoadOrder = module.Order;
+                    dbModule.IsEnabled = true;
+                    dbModule.AssemblyName = config.AssemblyName;
+                    dbModule.EntryType = config.EntryType;
+                    dbModule.Configuration = JsonConvert.SerializeObject(config.Configuration);
+                    dbModule.Dependencies = JsonConvert.SerializeObject(config.Dependencies);
+                    dbModule.ModifiedDate = DateTime.UtcNow;
+                    dbModule.ModifiedBy = "System";
+                    await scopedDbContext.SaveChangesAsync();
                 }
 
-                await scopedDbContext.SaveChangesAsync();
+                // Handle navigation items
+                var moduleNavItems = module.GetNavigationItems()?.ToList() ?? new List<NavigationItem>();
+
+                if (moduleNavItems.Any())
+                {
+                    // Clear existing navigation items if this is a re-registration
+                    if (!isNewModule && dbModule.NavigationItems?.Any() == true)
+                    {
+                        scopedDbContext.NavigationItems.RemoveRange(dbModule.NavigationItems);
+                        await scopedDbContext.SaveChangesAsync();
+                    }
+
+                    // Group items by whether they have a parent
+                    var rootItems = moduleNavItems.Where(n => !moduleNavItems.Any(p => p.Children?.Contains(n) ?? false)).ToList();
+                    var childItemsMap = new Dictionary<NavigationItem, List<NavigationItem>>();
+
+                    foreach (var item in rootItems)
+                    {
+                        if (item.Children != null && item.Children.Any())
+                        {
+                            childItemsMap[item] = item.Children.ToList();
+                        }
+                    }
+
+                    // Save root items first
+                    var savedItemsMap = new Dictionary<string, NavigationItem>();
+
+                    foreach (var item in rootItems)
+                    {
+                        var dbItem = new NavigationItem
+                        {
+                            ModuleId = dbModule.Id,
+                            Name = item.Name,
+                            DisplayName = item.DisplayName,
+                            Url = item.Url,
+                            Icon = item.Icon,
+                            Order = item.Order,
+                            IsVisible = item.IsVisible,
+                            IsPublic = item.IsPublic,
+                            MinimumRole = item.MinimumRole,
+                            Target = item.Target,
+                            CssClass = item.CssClass,
+                            Type = item.Type,
+                            CreatedDate = DateTime.UtcNow,
+                            CreatedBy = "System"
+                        };
+
+                        scopedDbContext.NavigationItems.Add(dbItem);
+                        savedItemsMap[item.Name ?? Guid.NewGuid().ToString()] = dbItem;
+                    }
+
+                    await scopedDbContext.SaveChangesAsync(); // Get IDs for root items
+
+                    // Now save child items with proper parent IDs
+                    foreach (var kvp in childItemsMap)
+                    {
+                        var parentItem = savedItemsMap[kvp.Key.Name ?? ""];
+
+                        foreach (var childItem in kvp.Value)
+                        {
+                            var dbChild = new NavigationItem
+                            {
+                                ModuleId = dbModule.Id,
+                                ParentId = parentItem.Id, // Now we have the real parent ID
+                                Name = childItem.Name,
+                                DisplayName = childItem.DisplayName,
+                                Url = childItem.Url,
+                                Icon = childItem.Icon,
+                                Order = childItem.Order,
+                                IsVisible = childItem.IsVisible,
+                                IsPublic = childItem.IsPublic,
+                                MinimumRole = childItem.MinimumRole,
+                                Target = childItem.Target,
+                                CssClass = childItem.CssClass,
+                                Type = childItem.Type,
+                                CreatedDate = DateTime.UtcNow,
+                                CreatedBy = "System"
+                            };
+
+                            scopedDbContext.NavigationItems.Add(dbChild);
+                        }
+                    }
+
+                    await scopedDbContext.SaveChangesAsync(); // Save child items
+                }
             }
+        }
+
+        private NavigationItem CreateNavigationItem(NavigationItem sourceItem, int moduleId)
+        {
+            return new NavigationItem
+            {
+                ModuleId = moduleId,
+                Name = sourceItem.Name,
+                DisplayName = sourceItem.DisplayName,
+                Url = sourceItem.Url,
+                Icon = sourceItem.Icon,
+                Order = sourceItem.Order,
+                IsVisible = sourceItem.IsVisible,
+                IsPublic = sourceItem.IsPublic,
+                MinimumRole = sourceItem.MinimumRole,
+                Target = sourceItem.Target,
+                CssClass = sourceItem.CssClass,
+                Type = sourceItem.Type,
+                CreatedDate = DateTime.UtcNow,
+                CreatedBy = "System"
+            };
+        }
+
+        private void UpdateNavigationItem(NavigationItem dbItem, NavigationItem sourceItem)
+        {
+            dbItem.DisplayName = sourceItem.DisplayName;
+            dbItem.Url = sourceItem.Url;
+            dbItem.Icon = sourceItem.Icon;
+            dbItem.Order = sourceItem.Order;
+            dbItem.IsVisible = sourceItem.IsVisible;
+            dbItem.IsPublic = sourceItem.IsPublic;
+            dbItem.MinimumRole = sourceItem.MinimumRole;
+            dbItem.Target = sourceItem.Target;
+            dbItem.CssClass = sourceItem.CssClass;
+            dbItem.Type = sourceItem.Type;
+            dbItem.ModifiedDate = DateTime.UtcNow;
+            dbItem.ModifiedBy = "System";
         }
 
         private class ModuleLoadContext

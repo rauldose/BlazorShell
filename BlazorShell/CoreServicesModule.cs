@@ -14,8 +14,8 @@ public class CoreServicesModule : Module
         builder.RegisterType<ModuleRegistry>().As<IModuleRegistry>().SingleInstance();
         builder.RegisterType<NavigationService>().As<INavigationService>().SingleInstance();
         builder.RegisterType<StateContainer>().As<IStateContainer>().InstancePerLifetimeScope();
-        builder.RegisterType<ModuleAuthorizationService>().As<IModuleAuthorizationService>().InstancePerLifetimeScope();
-        builder.RegisterType<PageAuthorizationService>().As<IPageAuthorizationService>().InstancePerLifetimeScope();
+        builder.RegisterType<UnifiedAuthorizationService>().As<IModuleAuthorizationService>().InstancePerLifetimeScope();
+        builder.RegisterType<UnifiedAuthorizationService>().As<IPageAuthorizationService>().InstancePerLifetimeScope();
         builder.RegisterType<PluginAssemblyLoader>().As<IPluginAssemblyLoader>().SingleInstance();
         builder.RegisterType<ModuleRouteProvider>().AsSelf().SingleInstance();
         builder.RegisterType<ModuleServiceManager>().AsSelf().SingleInstance();

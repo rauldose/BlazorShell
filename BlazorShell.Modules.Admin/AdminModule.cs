@@ -63,94 +63,87 @@ namespace BlazorShell.Modules.Admin
         {
             // Create parent item with children directly
             var adminParent = new NavigationItem
-            {
-                Id = 1,
+            {            
                 Name = "Administration",
                 DisplayName = "Administration",
                 Url = "#",
                 Icon = "bi bi-gear-fill",
                 Order = 0,
                 Type = NavigationType.SideMenu,
-                RequiredRole = null,
+                MinimumRole = "Administrator",
                 ParentId = null,
                 IsVisible = true,
                 Children = new List<NavigationItem>
                 {
                     new NavigationItem
                     {
-                        Id = 2,
                         Name = "ModuleManager",
                         DisplayName = "Module Manager",
                         Url = "/admin/modules",
                         Icon = "bi bi-puzzle",
                         Order = 1,
                         Type = NavigationType.SideMenu,
-                        RequiredRole = "Administrator",
+                             MinimumRole = "Administrator",
                         ParentId = 1,
                         IsVisible = true
                     },
                     new NavigationItem
                     {
-                        Id = 3,
                         Name = "UserManagement",
                         DisplayName = "User Management",
                         Url = "/admin/users",
                         Icon = "bi bi-people",
                         Order = 2,
                         Type = NavigationType.SideMenu,
-                        RequiredRole = null,
+                             MinimumRole = "Administrator",
                         ParentId = 1,
                         IsVisible = true
                     },
                     new NavigationItem
                     {
-                        Id = 4,
                         Name = "RoleManagement",
                         DisplayName = "Role Management",
                         Url = "/admin/roles",
                         Icon = "bi bi-shield-lock",
                         Order = 3,
                         Type = NavigationType.SideMenu,
-                        RequiredRole = "Administrator",
+                             MinimumRole = "Administrator",
                         ParentId = 1,
                         IsVisible = true
                     },
                     new NavigationItem
                     {
-                        Id = 5,
                         Name = "AccessConfiguration",
                         DisplayName = "Access Configuration",
                         Url = "/admin/access",
                         Icon = "bi bi-lock",
                         Order = 4,
                         Type = NavigationType.SideMenu,
-                        RequiredRole = "Administrator",
+                             MinimumRole = "Administrator",
                         ParentId = 1,
                         IsVisible = true
                     },
                     new NavigationItem
                     {
-                        Id = 6,
                         Name = "Settings",
                         DisplayName = "Settings",
                         Url = "/admin/settings",
                         Icon = "bi bi-sliders",
                         Order = 5,
                         Type = NavigationType.SideMenu,
-                        RequiredRole = "Administrator",
+                             MinimumRole = "Administrator",
                         ParentId = 1,
                         IsVisible = true
                     },
                     new NavigationItem
                     {
-                        Id = 7,
                         Name = "AuditLog",
                         DisplayName = "Audit Log",
                         Url = "/admin/audit",
                         Icon = "bi bi-journal-text",
                         Order = 6,
                         Type = NavigationType.SideMenu,
-                        RequiredRole = "Administrator",
+                             MinimumRole = "Administrator",
                         ParentId = 1,
                         IsVisible = true
                     }
@@ -181,7 +174,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-gear-fill",
                     Order = 0,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                         MinimumRole = "Administrator",
                     ParentId = null,
                     IsVisible = true
                 },
@@ -194,7 +187,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-puzzle",
                     Order = 1,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                         MinimumRole = "Administrator",
                     ParentId = 1,
                     IsVisible = true
                 },
@@ -207,7 +200,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-people",
                     Order = 2,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                         MinimumRole = "Administrator",
                     ParentId = 1,
                     IsVisible = true
                 },
@@ -220,7 +213,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-shield-lock",
                     Order = 3,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                         MinimumRole = "Administrator",
                     ParentId = 1,
                     IsVisible = true
                 },
@@ -233,7 +226,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-lock",
                     Order = 4,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                         MinimumRole = "Administrator",
                     ParentId = 1,
                     IsVisible = true
                 },
@@ -246,7 +239,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-sliders",
                     Order = 5,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                         MinimumRole = "Administrator",
                     ParentId = 1,
                     IsVisible = true
                 },
@@ -259,7 +252,7 @@ namespace BlazorShell.Modules.Admin
                     Icon = "bi bi-journal-text",
                     Order = 6,
                     Type = NavigationType.SideMenu,
-                    RequiredRole = "Administrator",
+                         MinimumRole = "Administrator",
                     ParentId = 1,
                     IsVisible = true
                 }

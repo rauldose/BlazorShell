@@ -108,7 +108,8 @@ namespace BlazorShell.Modules.Dashboard
                     Order = 1,
                     Type = NavigationType.Both,
                     IsVisible = true,
-                    RequiredPermission = null // Public access for demo
+                    IsPublic = true,
+                     MinimumRole = null // Public access for demo
                 },
                 new NavigationItem
                 {
@@ -119,7 +120,7 @@ namespace BlazorShell.Modules.Dashboard
                     Order = 2,
                     Type = NavigationType.SideMenu,
                     IsVisible = true,
-                    RequiredPermission = null,
+                     MinimumRole = null,
                     ParentId = null
                 },
                 new NavigationItem
@@ -131,7 +132,7 @@ namespace BlazorShell.Modules.Dashboard
                     Order = 3,
                     Type = NavigationType.SideMenu,
                     IsVisible = true,
-                    RequiredPermission = null,
+                     MinimumRole = null,
                     ParentId = null
                 },
                 new NavigationItem
@@ -143,7 +144,7 @@ namespace BlazorShell.Modules.Dashboard
                     Order = 4,
                     Type = NavigationType.Both,
                     IsVisible = true,
-                    RequiredPermission = null
+                     MinimumRole = null
                 }
             };
 

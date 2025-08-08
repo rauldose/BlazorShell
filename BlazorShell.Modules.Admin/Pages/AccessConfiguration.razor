@@ -9,8 +9,8 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
-@inject IModuleAuthorizationService ModuleAuthorization
-@inject IPageAuthorizationService PageAuthorization
+@inject IModuleAuthorizationService ModuleAuth
+@inject IPageAuthorizationService PageAuth
 @inject ApplicationDbContext DbContext
 @inject RoleManager<ApplicationRole> RoleManager
 @inject UserManager<ApplicationUser> UserManager
@@ -21,89 +21,243 @@
 <PageTitle>Access Configuration</PageTitle>
 
 <div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/admin">Admin</a></li>
+            @if (RoleId != null || UserId != null)
+            {
+                <li class="breadcrumb-item"><a href="/admin/access">Access</a></li>
+                <li class="breadcrumb-item active">@EntityName</li>
+            }
+            else
+            {
+                <li class="breadcrumb-item active">Access Configuration</li>
+            }
+        </ol>
+    </nav>
+
     @if (UserId == null && RoleId == null)
     {
+        <!-- Main Selection Screen -->
         <h1><i class="bi bi-lock"></i> Access Configuration</h1>
-        <div class="row">
+
+        <div class="row mt-4">
             <div class="col-md-6">
-                <h5>Roles</h5>
-                <ul class="list-group">
-                    @foreach (var role in _roles)
-                    {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>@role.Name</span>
-                            <button class="btn btn-sm btn-primary" @onclick="() => NavigateToRole(role.Id)">Configure</button>
-                        </li>
-                    }
-                </ul>
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-shield"></i> Configure Role Access</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        @foreach (var role in _roles)
+                        {
+                            <a href="/admin/access/role/@role.Id" class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">@role.Name</h6>
+                                        <small class="text-muted">@role.Description</small>
+                                    </div>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
             </div>
+
             <div class="col-md-6">
-                <h5>Users</h5>
-                <ul class="list-group">
-                    @foreach (var user in _users)
-                    {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>@user.UserName</span>
-                            <button class="btn btn-sm btn-primary" @onclick="() => NavigateToUser(user.Id)">Configure</button>
-                        </li>
-                    }
-                </ul>
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-person"></i> Configure User Access</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        @foreach (var user in _users)
+                        {
+                            <a href="/admin/access/user/@user.Id" class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">@user.UserName</h6>
+                                        <small class="text-muted">@user.FullName</small>
+                                    </div>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
             </div>
-        </div>
-    }
-    else if (_loading)
-    {
-        <div class="text-center py-5">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2">Loading access configuration...</p>
         </div>
     }
     else
     {
-        <h1><i class="bi bi-lock"></i> Access for @EntityName</h1>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Module/Page</th>
-                    <th class="text-center">Access</th>
-                    @foreach (var perm in _permissionLevels)
-                    {
-                        <th class="text-center">@perm</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var module in _modules)
+        <!-- Permission Configuration Screen -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>
+                @if (RoleId != null)
                 {
-                    <tr>
-                        <td>@module.DisplayName</td>
-                        <td class="text-center">
-                            <input type="checkbox" checked="@HasAccess(module)" @onchange="() => ToggleAccess(module)" />
-                        </td>
-                        @foreach (var perm in _permissionLevels)
-                        {
-                            <td></td>
-                        }
-                    </tr>
-                    @foreach (var nav in module.NavigationItems.Where(n => !string.IsNullOrEmpty(n.Url)).OrderBy(n => n.Order))
-                    {
-                        <tr>
-                            <td class="ps-4">- @nav.DisplayName</td>
-                            <td class="text-center">
-                                <input type="checkbox" checked="@HasPageAccess(nav)" @onchange="() => TogglePageAccess(nav, PermissionType.View)" />
-                            </td>
-                            @foreach (var perm in _permissionLevels)
-                            {
-                                <td class="text-center">
-                                    <input type="checkbox" checked="@HasPagePermission(nav, perm)" @onchange="() => TogglePageAccess(nav, perm)" />
-                                </td>
-                            }
-                        </tr>
-                    }
+                    <i class="bi bi-shield"></i>
+                    <span>Role: @_role?.Name</span>
                 }
-            </tbody>
-        </table>
-        <button class="btn btn-secondary" @onclick="Back">Back</button>
+                else
+                {
+                    <i class="bi bi-person"></i>
+                    <span>User: @_user?.UserName</span>
+                }
+            </h1>
+            <button class="btn btn-secondary" @onclick="Back">
+                <i class="bi bi-arrow-left"></i> Back
+            </button>
+        </div>
+
+        @if (_loading)
+        {
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2">Loading permissions...</p>
+            </div>
+        }
+        else if (!_modules.Any() && !_navigationItems.Any())
+        {
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> No modules or navigation items found.
+                Please ensure modules are loaded and navigation items are registered.
+            </div>
+        }
+        else
+        {
+            <!-- Module Permissions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-puzzle"></i> Module Permissions (@_modules.Count modules)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Module</th>
+                                    <th class="text-center" style="width: 100px">View</th>
+                                    <th class="text-center" style="width: 100px">Create</th>
+                                    <th class="text-center" style="width: 100px">Edit</th>
+                                    <th class="text-center" style="width: 100px">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var module in _modules.Where(m => m.IsEnabled))
+                                {
+                                    <tr>
+                                        <td>
+                                            <i class="@module.Icon"></i>
+                                            <strong>@module.DisplayName</strong>
+                                            @if (module.IsCore)
+                                            {
+                                                <span class="badge bg-secondary ms-2">Core</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input"
+                                                   checked="@HasModulePermission(module, PermissionType.View)"
+                                                   @onchange="@(async (e) => await ToggleModulePermission(module, PermissionType.View, (bool)e.Value!))" />
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input"
+                                                   checked="@HasModulePermission(module, PermissionType.Create)"
+                                                   @onchange="@(async (e) => await ToggleModulePermission(module, PermissionType.Create, (bool)e.Value!))" />
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input"
+                                                   checked="@HasModulePermission(module, PermissionType.Save)"
+                                                   @onchange="@(async (e) => await ToggleModulePermission(module, PermissionType.Save, (bool)e.Value!))" />
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input"
+                                                   checked="@HasModulePermission(module, PermissionType.Delete)"
+                                                   @onchange="@(async (e) => await ToggleModulePermission(module, PermissionType.Delete, (bool)e.Value!))" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page/Navigation Permissions -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-file-text"></i> Page Permissions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Page</th>
+                                    <th>Module</th>
+                                    <th class="text-center" style="width: 100px">View</th>
+                                    <th class="text-center" style="width: 100px">Create</th>
+                                    <th class="text-center" style="width: 100px">Edit</th>
+                                    <th class="text-center" style="width: 100px">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var nav in _navigationItems.OrderBy(n => GetNavigationPath(n)).ThenBy(n => n.Order))
+                                {
+                                    <tr>
+                                        <td>
+                                            @if (nav.Parent != null)
+                                            {
+                                                <span class="text-muted small">@GetNavigationPath(nav.Parent) /</span>
+                                            }
+                                            <i class="@nav.Icon"></i>
+                                            <strong>@nav.DisplayName</strong>
+                                            @if (nav.IsPublic)
+                                            {
+                                                <span class="badge bg-success ms-2">Public</span>
+                                            }
+                                            @if (!string.IsNullOrEmpty(nav.MinimumRole))
+                                            {
+                                                <span class="badge bg-warning ms-2">Min: @nav.MinimumRole</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (nav.Module != null)
+                                            {
+                                                <span class="text-muted">@nav.Module.DisplayName</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input"
+                                                   checked="@HasPagePermission(nav, PermissionType.View)"
+                                                   disabled="@nav.IsPublic"
+                                                   @onchange="@(async (e) => await TogglePagePermission(nav, PermissionType.View, (bool)e.Value!))" />
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input"
+                                                   checked="@HasPagePermission(nav, PermissionType.Create)"
+                                                   disabled="@nav.IsPublic"
+                                                   @onchange="@(async (e) => await TogglePagePermission(nav, PermissionType.Create, (bool)e.Value!))" />
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input"
+                                                   checked="@HasPagePermission(nav, PermissionType.Save)"
+                                                   disabled="@nav.IsPublic"
+                                                   @onchange="@(async (e) => await TogglePagePermission(nav, PermissionType.Save, (bool)e.Value!))" />
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input"
+                                                   checked="@HasPagePermission(nav, PermissionType.Delete)"
+                                                   disabled="@nav.IsPublic"
+                                                   @onchange="@(async (e) => await TogglePagePermission(nav, PermissionType.Delete, (bool)e.Value!))" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
     }
 </div>
 
@@ -114,53 +268,118 @@
     private List<ApplicationRole> _roles = new();
     private List<ApplicationUser> _users = new();
     private List<Module> _modules = new();
-    private HashSet<int> _granted = new();
-    private Dictionary<int, HashSet<PermissionType>> _pagePermissions = new();
-    private readonly PermissionType[] _permissionLevels = new[] { PermissionType.Read, PermissionType.Create, PermissionType.Save };
+    private List<NavigationItem> _navigationItems = new();
+
     private ApplicationRole? _role;
     private ApplicationUser? _user;
-    private bool _loading = true;
 
+    private Dictionary<int, HashSet<PermissionType>> _modulePermissions = new();
+    private Dictionary<int, HashSet<PermissionType>> _pagePermissions = new();
+
+    private bool _loading = false;
     private string EntityName => _role?.Name ?? _user?.UserName ?? string.Empty;
 
     protected override async Task OnModuleInitializedAsync()
     {
-        _roles = await RoleManager.Roles.OrderBy(r => r.Name).ToListAsync();
-        _users = await UserManager.Users.OrderBy(u => u.UserName).Take(20).ToListAsync();
+        await LoadInitialData();
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        _loading = true;
-        await LoadPermissions();
-        _loading = false;
+        if (RoleId != null || UserId != null)
+        {
+            await LoadPermissions();
+        }
+    }
+
+    private async Task LoadInitialData()
+    {
+        _roles = await RoleManager.Roles.OrderBy(r => r.Name).ToListAsync();
+        _users = await UserManager.Users.OrderBy(u => u.UserName).Take(50).ToListAsync();
+        _modules = await DbContext.Modules.OrderBy(m => m.DisplayName).ToListAsync();
+
+        // Load all navigation items including children
+        var allNavItems = await DbContext.NavigationItems
+            .Include(n => n.Module)
+            .Include(n => n.Parent)
+            .Include(n => n.Children)
+            .ToListAsync();
+
+        // Flatten the hierarchy to get all items with URLs
+        _navigationItems = FlattenNavigationItems(allNavItems).ToList();
+    }
+
+    private IEnumerable<NavigationItem> FlattenNavigationItems(IEnumerable<NavigationItem> items)
+    {
+        var result = new List<NavigationItem>();
+
+        foreach (var item in items)
+        {
+            // Add items that have URLs (actual pages)
+            if (!string.IsNullOrEmpty(item.Url))
+            {
+                result.Add(item);
+            }
+
+            // Recursively add children
+            if (item.Children != null && item.Children.Any())
+            {
+                result.AddRange(FlattenNavigationItems(item.Children));
+            }
+        }
+
+        return result;
     }
 
     private async Task LoadPermissions()
     {
-        if (RoleId != null)
+        _loading = true;
+
+        try
         {
-            await LoadRolePermissions(RoleId);
+            // Ensure navigation items are loaded
+            if (!_navigationItems.Any())
+            {
+                await LoadInitialData();
+            }
+
+            if (RoleId != null)
+            {
+                _role = await RoleManager.FindByIdAsync(RoleId);
+                await LoadRolePermissions();
+            }
+            else if (UserId != null)
+            {
+                _user = await UserManager.FindByIdAsync(UserId);
+                await LoadUserPermissions();
+            }
         }
-        else if (UserId != null)
+        catch (Exception ex)
         {
-            await LoadUserPermissions(UserId);
+            // Log the error
+            Console.WriteLine($"Error loading permissions: {ex.Message}");
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
         }
     }
 
-    private async Task LoadRolePermissions(string roleId)
+    private async Task LoadRolePermissions()
     {
-        _role = await RoleManager.FindByIdAsync(roleId);
-        _modules = await DbContext.Modules
-            .Where(m => m.IsEnabled)
-            .Include(m => m.NavigationItems)
-            .OrderBy(m => m.DisplayName)
-            .ToListAsync();
-        var permissions = await ModuleAuthorization.GetRolePermissionsAsync(roleId);
-        _granted = permissions.Where(p => p.PermissionType == PermissionType.View.ToString())
-                              .Select(p => p.ModuleId).ToHashSet();
-        var pagePermissions = await PageAuthorization.GetRolePermissionsAsync(roleId);
-        _pagePermissions = pagePermissions
+        // Load module permissions
+        var modulePerms = await ModuleAuth.GetRolePermissionsAsync(RoleId!);
+        _modulePermissions = modulePerms
+            .GroupBy(p => p.ModuleId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(p => Enum.Parse<PermissionType>(p.PermissionType!)).ToHashSet()
+            );
+
+        // Load page permissions
+        var pagePerms = await PageAuth.GetRolePermissionsAsync(RoleId!);
+        _pagePermissions = pagePerms
             .GroupBy(p => p.NavigationItemId)
             .ToDictionary(
                 g => g.Key,
@@ -168,19 +387,20 @@
             );
     }
 
-    private async Task LoadUserPermissions(string userId)
+    private async Task LoadUserPermissions()
     {
-        _user = await UserManager.FindByIdAsync(userId);
-        _modules = await DbContext.Modules
-            .Where(m => m.IsEnabled)
-            .Include(m => m.NavigationItems)
-            .OrderBy(m => m.DisplayName)
-            .ToListAsync();
-        var permissions = await ModuleAuthorization.GetUserPermissionsAsync(userId);
-        _granted = permissions.Where(p => p.PermissionType == PermissionType.View.ToString())
-                              .Select(p => p.ModuleId).ToHashSet();
-        var pagePermissions = await PageAuthorization.GetUserPermissionsAsync(userId);
-        _pagePermissions = pagePermissions
+        // Load module permissions
+        var modulePerms = await ModuleAuth.GetUserPermissionsAsync(UserId!);
+        _modulePermissions = modulePerms
+            .GroupBy(p => p.ModuleId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(p => Enum.Parse<PermissionType>(p.PermissionType!)).ToHashSet()
+            );
+
+        // Load page permissions
+        var pagePerms = await PageAuth.GetUserPermissionsAsync(UserId!);
+        _pagePermissions = pagePerms
             .GroupBy(p => p.NavigationItemId)
             .ToDictionary(
                 g => g.Key,
@@ -188,96 +408,72 @@
             );
     }
 
-    private bool HasAccess(Module module) => _granted.Contains(module.Id);
-
-    private async Task ToggleAccess(Module module)
+    private bool HasModulePermission(Module module, PermissionType permission)
     {
-        if (RoleId != null)
-        {
-            if (HasAccess(module))
-            {
-                await ModuleAuthorization.RevokeRolePermissionAsync(RoleId!, module.Name!, PermissionType.View);
-                _granted.Remove(module.Id);
-            }
-            else
-            {
-                await ModuleAuthorization.GrantRolePermissionAsync(RoleId!, module.Name!, PermissionType.View);
-                _granted.Add(module.Id);
-            }
-        }
-        else if (UserId != null)
-        {
-            if (HasAccess(module))
-            {
-                await ModuleAuthorization.RevokePermissionAsync(UserId!, module.Name!, PermissionType.View);
-                _granted.Remove(module.Id);
-            }
-            else
-            {
-                await ModuleAuthorization.GrantPermissionAsync(UserId!, module.Name!, PermissionType.View);
-                _granted.Add(module.Id);
-            }
-        }
+        return _modulePermissions.TryGetValue(module.Id, out var perms) && perms.Contains(permission);
     }
 
-    private bool HasPageAccess(NavigationItem item) => HasPagePermission(item, PermissionType.View);
+    private bool HasPagePermission(NavigationItem nav, PermissionType permission)
+    {
+        return _pagePermissions.TryGetValue(nav.Id, out var perms) && perms.Contains(permission);
+    }
 
-    private bool HasPagePermission(NavigationItem item, PermissionType permission)
-        => _pagePermissions.TryGetValue(item.Id, out var set) && set.Contains(permission);
-
-    private async Task TogglePageAccess(NavigationItem item, PermissionType permission)
+    private async Task ToggleModulePermission(Module module, PermissionType permission, bool granted)
     {
         if (RoleId != null)
         {
-            if (HasPagePermission(item, permission))
-            {
-                await PageAuthorization.RevokeRolePermissionAsync(RoleId!, item.Id, permission);
-                _pagePermissions[item.Id].Remove(permission);
-            }
+            if (granted)
+                await ModuleAuth.GrantRolePermissionAsync(RoleId, module.Name!, permission);
             else
-            {
-                await PageAuthorization.GrantRolePermissionAsync(RoleId!, item.Id, permission);
-                if (!_pagePermissions.TryGetValue(item.Id, out var set))
-                {
-                    set = new HashSet<PermissionType>();
-                    _pagePermissions[item.Id] = set;
-                }
-                set.Add(permission);
-            }
+                await ModuleAuth.RevokeRolePermissionAsync(RoleId, module.Name!, permission);
         }
         else if (UserId != null)
         {
-            if (HasPagePermission(item, permission))
-            {
-                await PageAuthorization.RevokePermissionAsync(UserId!, item.Id, permission);
-                _pagePermissions[item.Id].Remove(permission);
-            }
+            if (granted)
+                await ModuleAuth.GrantPermissionAsync(UserId, module.Name!, permission);
             else
-            {
-                await PageAuthorization.GrantPermissionAsync(UserId!, item.Id, permission);
-                if (!_pagePermissions.TryGetValue(item.Id, out var set))
-                {
-                    set = new HashSet<PermissionType>();
-                    _pagePermissions[item.Id] = set;
-                }
-                set.Add(permission);
-            }
+                await ModuleAuth.RevokePermissionAsync(UserId, module.Name!, permission);
         }
+
+        await LoadPermissions();
+    }
+
+    private async Task TogglePagePermission(NavigationItem nav, PermissionType permission, bool granted)
+    {
+        if (RoleId != null)
+        {
+            if (granted)
+                await PageAuth.GrantRolePermissionAsync(RoleId, nav.Id, permission);
+            else
+                await PageAuth.RevokeRolePermissionAsync(RoleId, nav.Id, permission);
+        }
+        else if (UserId != null)
+        {
+            if (granted)
+                await PageAuth.GrantPermissionAsync(UserId, nav.Id, permission);
+            else
+                await PageAuth.RevokePermissionAsync(UserId, nav.Id, permission);
+        }
+
+        await LoadPermissions();
+    }
+
+    private string GetNavigationPath(NavigationItem item)
+    {
+        var path = item.DisplayName;
+        var current = item.Parent;
+
+        while (current != null)
+        {
+            path = $"{current.DisplayName} / {path}";
+            current = current.Parent;
+        }
+
+        return path;
     }
 
     private void Back()
     {
         NavigationManager.NavigateTo("/admin/access");
     }
-
-    private void NavigateToUser(string id)
-    {
-        NavigationManager.NavigateTo($"/admin/access/user/{id}");
-    }
-
-    private void NavigateToRole(string id)
-    {
-        NavigationManager.NavigateTo($"/admin/access/role/{id}");
-    }
 }
-

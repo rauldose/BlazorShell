@@ -9,7 +9,6 @@
 @inherits ModuleComponentBase
 @attribute [Authorize(Roles = "Administrator,ModuleAdmin")]
 
-
 <PageTitle>Module Management</PageTitle>
 
 <div class="container-fluid">
@@ -30,6 +29,16 @@
         <div class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
             <p class="mt-2">Loading modules...</p>
+        </div>
+    }
+    else if (_serviceError)
+    {
+        <div class="alert alert-danger">
+            <h5><i class="bi bi-exclamation-triangle"></i> Service Error</h5>
+            <p>The Module Management Service is not available.</p>
+            <button class="btn btn-danger" @onclick="RetryInitialization">
+                <i class="bi bi-arrow-clockwise"></i> Retry (Attempt @(_retryCount + 1))
+            </button>
         </div>
     }
     else if (_modules != null)
@@ -99,21 +108,11 @@
                             <td>@module.Version</td>
                             <td>@module.Category</td>
                             <td>@module.Author</td>
-                            <td>
-                                @if (module.IsLoaded)
-                                {
-                                    <span title="Components">@module.ComponentCount <i class="bi bi-file-code"></i></span>
-                                    <span title="Navigation Items" class="ms-2">@module.NavigationItemCount <i class="bi bi-list"></i></span>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">-</span>
-                                }
-                            </td>
+                            <td>@module.ComponentCount</td>
                             <td>@FormatFileSize(module.FileSize)</td>
                             <td>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button class="btn btn-outline-primary" title="Details"
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-info" title="Details"
                                             @onclick="() => ShowModuleDetails(module)">
                                         <i class="bi bi-info-circle"></i>
                                     </button>
@@ -122,12 +121,12 @@
                                     {
                                         <button class="btn btn-outline-warning" title="Disable"
                                                 @onclick="() => DisableModule(module.Name)"
-                                                disabled="@(module.IsCore || _operatingModules.Contains(module.Name))">
+                                                disabled="@(_operatingModules.Contains(module.Name) || module.IsCore)">
                                             <i class="bi bi-pause-circle"></i>
                                         </button>
-                                        <button class="btn btn-outline-info" title="Reload"
+                                        <button class="btn btn-outline-primary" title="Reload"
                                                 @onclick="() => ReloadModule(module.Name)"
-                                                disabled="@(_operatingModules.Contains(module.Name))">
+                                                disabled="@(_operatingModules.Contains(module.Name) || module.IsCore)">
                                             <i class="bi bi-arrow-repeat"></i>
                                         </button>
                                     }
@@ -178,9 +177,10 @@
     }
 </div>
 
-@* Module Details Modal *@
-@if (_selectedModule != null)
+@* FIXED: Only show ONE modal at a time based on conditions *@
+@if (_selectedModule != null && !_showUploadDialog && !_showConfigDialog)
 {
+    @* Module Details Modal *@
     <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -215,48 +215,6 @@
                         <label class="form-label fw-bold">Description:</label>
                         <p>@_selectedModule.Description</p>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">File Size:</label>
-                            <p>@FormatFileSize(_selectedModule.FileSize)</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Load Order:</label>
-                            <p>@_selectedModule.LoadOrder</p>
-                        </div>
-                    </div>
-                    @if (_selectedModule.IsLoaded)
-                    {
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Components:</label>
-                                <p>@_selectedModule.ComponentCount</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Navigation Item Count:</label>
-                                <p>@_selectedModule.NavigationItemCount</p>
-                            </div>
-                        </div>
-                    }
-
-                    @if (_selectedModule.NavigationItems?.Any() == true)
-                    {
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Navigation Items:</label>
-                            <ul class="list-group">
-                                @foreach (var nav in _selectedModule.NavigationItems)
-                                {
-                                    <li class="list-group-item d-flex align-items-center">
-                                        @if (!string.IsNullOrEmpty(nav.Icon))
-                                        {
-                                            <i class="@nav.Icon me-2"></i>
-                                        }
-                                        <span>@nav.DisplayName (@nav.Url)</span>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    }
 
                     @if (_moduleDependencies?.Any() == true)
                     {
@@ -304,10 +262,9 @@
         </div>
     </div>
 }
-
-@* Module Upload Modal *@
-@if (_showUploadDialog)
+else if (_showUploadDialog)
 {
+    @* Module Upload Modal *@
     <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -347,10 +304,9 @@
         </div>
     </div>
 }
-
-@* Module Configuration Modal *@
-@if (_showConfigDialog && _selectedModule != null)
+else if (_showConfigDialog && _selectedModule != null)
 {
+    @* Module Configuration Modal *@
     <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -392,6 +348,7 @@
 @code {
     private IModuleManagementService? ModuleManagementService;
     private ILogger<ModuleManagement>? Logger;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
 
     private List<ModuleInfo>? _modules;
     private ModuleInfo? _selectedModule;
@@ -406,7 +363,7 @@
     private int _uploadProgress = 0;
     private bool _serviceError = false;
 
-    // Add retry mechanism
+    // Retry mechanism
     private int _retryCount = 0;
     private const int MaxRetries = 3;
 
@@ -450,10 +407,25 @@
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        ModuleManagementService = GetService<IModuleManagementService>();
+        Logger = GetService<ILogger<ModuleManagement>>();
+
+        if (ModuleManagementService == null)
+        {
+            ShowMessage("Module Management Service is not available", MessageType.Error);
+            return;
+        }
+
+        await LoadModules();
+    }
+
     protected override async Task OnModuleInitializedAsync()
     {
         await InitializeServices();
     }
+
     private async Task InitializeServices()
     {
         try
@@ -503,20 +475,6 @@
         StateHasChanged();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        ModuleManagementService = GetService<IModuleManagementService>();
-        Logger = GetService<ILogger<ModuleManagement>>();
-
-        if (ModuleManagementService == null)
-        {
-            ShowMessage("Module Management Service is not available", MessageType.Error);
-            return;
-        }
-
-        await LoadModules();
-    }
-
     private async Task LoadModules()
     {
         _isLoading = true;
@@ -527,7 +485,7 @@
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error loading modules");
+            Logger?.LogError(ex, "Error loading modules");
             ShowMessage("Error loading modules: " + ex.Message, MessageType.Error);
         }
         finally
@@ -619,6 +577,10 @@
 
     private async Task ShowModuleDetails(ModuleInfo module)
     {
+        // FIXED: Clear configuration dialog flag when showing details
+        _showConfigDialog = false;
+        _showUploadDialog = false;
+
         _selectedModule = await ModuleManagementService.GetModuleAsync(module.Name) ?? module;
         _moduleDependencies = (await ModuleManagementService.GetModuleDependenciesAsync(module.Name)).ToList();
         _moduleHealth = await ModuleManagementService.GetModuleHealthAsync(module.Name);
@@ -626,6 +588,8 @@
 
     private async Task ShowConfiguration(ModuleInfo module)
     {
+        // FIXED: Clear other modals and set selected module for configuration
+        _showUploadDialog = false;
         _selectedModule = module;
         _moduleConfig = await ModuleManagementService.GetModuleConfigurationAsync(module.Name);
         _showConfigDialog = true;
@@ -659,6 +623,8 @@
 
     private void ShowUploadDialog()
     {
+        // FIXED: Clear other modals when showing upload
+        CloseModals();
         _showUploadDialog = true;
         _uploadFile = null;
         _uploadProgress = 0;
@@ -704,7 +670,7 @@
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error uploading module");
+            Logger?.LogError(ex, "Error uploading module");
             ShowMessage($"Upload failed: {ex.Message}", MessageType.Error);
         }
         finally
@@ -764,6 +730,4 @@
 
         return $"{size:0.##} {sizes[order]}";
     }
-
-    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
 }

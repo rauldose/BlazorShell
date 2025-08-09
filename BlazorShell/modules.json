@@ -41,6 +41,21 @@
       "LoadOrder": 999,
       "Dependencies": [],
       "RequiredRole": "Administrator"
+    },
+    {
+      "Name": "Analytics",
+      "DisplayName": "Analytics",
+      "Description": "System Analytics module",
+      "AssemblyName": "BlazorShell.Modules.Analytics.dll",
+      "EntryType": "BlazorShell.Modules.Admin.AnalyticsModule",
+      "Version": "1.0.0",
+      "Author": "BlazorShell Team",
+      "Category": "System",
+      "Icon": "bi bi-gear-fill",
+      "Enabled": true,
+      "LoadOrder": 999,
+      "Dependencies": [],
+      "RequiredRole": "User"
     }
   ]
 }

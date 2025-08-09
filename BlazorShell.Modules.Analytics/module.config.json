@@ -1,0 +1,19 @@
+{
+  "ModuleInfo": {
+    "Name": "Analytics",
+    "Version": "1.0.0",
+    "Description": "Sales Analytics and Business Intelligence Module"
+  },
+  "Database": {
+    "Provider": "SqlServer",
+    "ConnectionString": "Server=localhost;Database=BlazorShell_Analytics;Trusted_Connection=True;TrustServerCertificate=True",
+    "EnableMigrations": true,
+    "SeedSampleData": true
+  },
+  "Settings": {
+    "CacheEnabled": true,
+    "CacheDuration": 300,
+    "MaxDataPoints": 1000,
+    "EnableRealTimeUpdates": true
+  }
+}

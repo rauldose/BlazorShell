@@ -1,0 +1,1073 @@
+﻿@* BlazorShell.Modules.Analytics/UI/Pages/AnalyticsDashboard.razor *@
+@page "/analytics"
+@page "/analytics/dashboard"
+@using BlazorShell.Components
+@using BlazorShell.Modules.Analytics.Services
+@using BlazorShell.Modules.Analytics.Domain.Models
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.JSInterop
+@inherits ModuleComponentBase
+@attribute [Authorize(Roles = "User,Analyst,Manager,Administrator")]
+@* @inject  *@
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+<PageTitle>Analytics Dashboard</PageTitle>
+
+ @if (Metrics != null && _scriptsLoaded)
+{
+    <div class="analytics-dashboard">
+        @* Header Section *@
+        <div class="dashboard-header mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="display-6 fw-bold text-gradient">
+                        <i class="bi bi-graph-up-arrow me-2"></i>Analytics Dashboard
+                    </h1>
+                    <p class="text-muted">Real-time business intelligence and sales metrics</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="btn-group me-2" role="group">
+                        <button class="btn btn-outline-primary @(DateRange == 7 ? "active" : "")" @onclick="() => SetDateRange(7)">
+                            <i class="bi bi-calendar-day"></i> 7 Days
+                        </button>
+                        <button class="btn btn-outline-primary @(DateRange == 30 ? "active" : "")" @onclick="() => SetDateRange(30)">
+                            <i class="bi bi-calendar-month"></i> 30 Days
+                        </button>
+                        <button class="btn btn-outline-primary @(DateRange == 90 ? "active" : "")" @onclick="() => SetDateRange(90)">
+                            <i class="bi bi-calendar3"></i> 90 Days
+                        </button>
+                    </div>
+                    <button class="btn btn-success" @onclick="ExportDashboard">
+                        <i class="bi bi-download"></i> Export
+                    </button>
+                    <button class="btn btn-primary ms-2" @onclick="RefreshData">
+                        <i class="bi bi-arrow-clockwise @(IsLoading ? "spin" : "")"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        @if (IsLoading && Metrics == null)
+        {
+            <div class="loading-skeleton">
+                <div class="row">
+                    @for (int i = 0; i < 4; i++)
+                    {
+                        <div class="col-md-3 mb-3">
+                            <div class="skeleton-card"></div>
+                        </div>
+                    }
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-8">
+                        <div class="skeleton-chart-large"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="skeleton-chart-small"></div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Metrics != null)
+        {
+            @* KPI Cards Row *@
+            <div class="row mb-4 kpi-cards">
+                <div class="col-md-3 mb-3">
+                    <div class="kpi-card revenue-card">
+                        <div class="kpi-icon">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-label">Total Revenue</span>
+                            <h2 class="kpi-value">@Metrics.TotalRevenue.ToString("C0")</h2>
+                            <div class="kpi-change @(Metrics.GrowthPercentage >= 0 ? "positive" : "negative")">
+                                <i class="bi @(Metrics.GrowthPercentage >= 0 ? "bi-arrow-up" : "bi-arrow-down")"></i>
+                                <span>@Math.Abs(Metrics.GrowthPercentage).ToString("F1")%</span>
+                                <small>vs last period</small>
+                            </div>
+                        </div>
+                        <div class="kpi-sparkline">
+                            <svg viewBox="0 0 100 30" class="sparkline">
+                                <polyline points="@GetSparklinePoints(RevenueHistory)" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="kpi-card profit-card">
+                        <div class="kpi-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-label">Total Profit</span>
+                            <h2 class="kpi-value">@Metrics.TotalProfit.ToString("C0")</h2>
+                            <div class="kpi-metric">
+                                <span class="badge bg-success">
+                                    @((Metrics.TotalProfit / Metrics.TotalRevenue * 100).ToString("F1"))% margin
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="kpi-card orders-card">
+                        <div class="kpi-icon">
+                            <i class="bi bi-cart-check"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-label">Total Orders</span>
+                            <h2 class="kpi-value">@Metrics.TotalOrders.ToString("N0")</h2>
+                            <div class="kpi-metric">
+                                <small>Avg: @Metrics.AverageOrderValue.ToString("C0")</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="kpi-card conversion-card">
+                        <div class="kpi-icon">
+                            <i class="bi bi-bullseye"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-label">Conversion Rate</span>
+                            <h2 class="kpi-value">@ConversionRate.ToString("F1")%</h2>
+                            <div class="progress mt-2" style="height: 6px;">
+                                <div class="progress-bar" style="width: @ConversionRate%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Live Sales Component *@
+            <div class="row mb-4">
+                <div class="col-12">
+                    <LiveSalesChart @ref="LiveSalesChartRef" />
+                </div>
+            </div>
+
+            @* Charts Row *@
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h5>Revenue Trend</h5>
+                            <div class="chart-controls">
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="ToggleChartType">
+                                    <i class="bi @(ChartType == "line" ? "bi-bar-chart" : "bi-graph-up")"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h5>Revenue by Category</h5>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="categoryChart"></canvas>
+                            <div class="chart-legend mt-3">
+                                @if (Metrics.RevenueByCategory != null)
+                                {
+                                    @foreach (var category in Metrics.RevenueByCategory.Take(5))
+                                    {
+                                        <div class="legend-item">
+                                            <span class="legend-color" style="background: @category.Color"></span>
+                                            <span class="legend-label">@category.Label</span>
+                                            <span class="legend-value">@category.Value.ToString("C0")</span>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Performance Tables *@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="table-card">
+                        <div class="table-header">
+                            <h5><i class="bi bi-trophy"></i> Top Products</h5>
+                            <button class="btn btn-sm btn-link" @onclick='() => Navigation.NavigateTo("/analytics/reports")'>
+                                View All <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th width="50">#</th>
+                                        <th>Product</th>
+                                        <th>Revenue</th>
+                                        <th width="100">Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var product in Metrics.TopProducts.Take(5))
+                                    {
+                                        <tr class="animate-row">
+                                            <td>
+                                                <span class="rank-badge rank-@product.Rank">@product.Rank</span>
+                                            </td>
+                                            <td>
+                                                <strong>@product.Name</strong>
+                                            </td>
+                                            <td>
+                                                <span class="revenue-value">@product.Value.ToString("C0")</span>
+                                            </td>
+                                            <td>
+                                                <div class="trend-indicator @(product.ChangePercent >= 0 ? "up" : "down")">
+                                                    <i class="bi @(product.ChangePercent >= 0 ? "bi-trending-up" : "bi-trending-down")"></i>
+                                                    @Math.Abs(product.ChangePercent).ToString("F1")%
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="table-card">
+                        <div class="table-header">
+                            <h5><i class="bi bi-people"></i> Top Sales Representatives</h5>
+                            <span class="badge bg-info">Live</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th width="50">#</th>
+                                        <th>Name</th>
+                                        <th>Sales</th>
+                                        <th>Performance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var rep in Metrics.TopSalesReps.Take(5))
+                                    {
+                                        <tr class="animate-row">
+                                            <td>
+                                                <span class="rank-badge rank-@rep.Rank">@rep.Rank</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm me-2">
+                                                        @rep.Name.Substring(0, 1)
+                                                    </div>
+                                                    <strong>@rep.Name</strong>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="revenue-value">@rep.Value.ToString("C0")</span>
+                                            </td>
+                                            <td>
+                                                <div class="performance-bar">
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-gradient"
+                                                        style="width: @(rep.Value / Metrics.TopSalesReps.First().Value * 100)%">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private DashboardMetrics? Metrics;
+    private bool IsLoading = false;
+    private bool _resourcesReady = false;
+    private bool _loadError = false;
+    private bool _chartsRendered = false;
+    private bool _isPrerendering = false;
+    private bool _scriptsLoaded = false;
+    private int DateRange = 30;
+    private string ChartType = "line";
+    private double ConversionRate = 3.5;
+    private List<decimal> RevenueHistory = new();
+    private LiveSalesChart? LiveSalesChartRef;
+    private System.Threading.Timer? _refreshTimer;
+    private IAnalyticsService? AnalyticsService;
+    private ICdnResourceManager? CdnManager;
+
+
+
+    protected override async Task OnModuleInitializedAsync()
+    {
+        AnalyticsService = GetService<IAnalyticsService>();
+
+        if (AnalyticsService == null)
+        {
+            return;
+        }
+        await LoadData();
+        await LoadScriptsAndRenderCharts();
+
+    }
+
+    private async Task<bool> RetryLoad()
+    {
+        _loadError = false;
+        _resourcesReady = false;
+        _chartsRendered = false;
+        StateHasChanged();
+
+        try
+        {
+            _resourcesReady = await CdnManager.EnsureResourcesLoadedAsync();
+
+            if (!_resourcesReady)
+            {
+                _loadError = true;
+            }
+            else if (Metrics != null)
+            {
+                await Task.Delay(100);
+                await RenderCharts();
+                _chartsRendered = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            _loadError = true;
+        }
+
+        StateHasChanged();
+        return _resourcesReady;
+    }
+    private async Task LoadData(bool silent = false)
+    {
+        if (!silent) IsLoading = true;
+
+        try
+        {
+            var endDate = DateTime.Now;
+            var startDate = endDate.AddDays(-DateRange);
+
+            Metrics = await AnalyticsService.GetDashboardMetricsAsync(startDate, endDate);
+
+            // Generate sample revenue history for sparkline
+            var random = new Random();
+            RevenueHistory = Enumerable.Range(0, 20)
+                .Select(i => Metrics.TotalRevenue / 20 + (decimal)(random.NextDouble() - 0.5) * 10000)
+                .ToList();
+
+            ConversionRate = 3.5 + random.NextDouble() * 2;
+            StateHasChanged();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // We're no longer prerendering
+            _isPrerendering = false;
+  
+        }
+
+        // Render charts if resources are ready and we have data
+        // if (_resourcesReady && Metrics != null && !_chartsRendered && !IsLoading)
+        // {
+        //     // Small delay to ensure DOM is ready
+        //     await Task.Delay(100);
+        //     await RenderCharts();
+        //     _chartsRendered = true;
+        // }
+    }
+    private async Task LoadScriptsAndRenderCharts()
+    {
+        if (_scriptsLoaded || Metrics == null) return;
+
+        try
+        {
+            // Load CDN resources directly without service
+            await LoadAllAnalyticsScripts();
+
+            // Small delay for DOM
+            await Task.Delay(200);
+
+            // Render charts
+            await RenderCharts();
+
+            _scriptsLoaded = true;
+        }
+        catch (Exception ex)
+        {
+         
+        }
+    }
+
+    // Fixed version of LoadAllAnalyticsScripts method
+    // This should replace the existing method in Analytics.razor and LiveSalesChart.razor
+
+    private async Task<bool> LoadAllAnalyticsScripts()
+    {
+        try
+        {
+            // Check if already loaded
+            var hasChart = await JSRuntime.InvokeAsync<bool>("eval",
+                "typeof Chart !== 'undefined' && typeof window.renderChart === 'function'");
+
+            if (hasChart)
+            {
+                Console.WriteLine("Chart.js already loaded and functions defined");
+                return true;
+            }
+
+            Console.WriteLine("Loading Chart.js...");
+
+            // First, load Chart.js synchronously and wait for it
+            var loadResult = await JSRuntime.InvokeAsync<bool>("eval", @"
+            (async function() {
+                try {
+                    // Check again to prevent double loading
+                    if (typeof Chart !== 'undefined') {
+                        console.log('Chart.js already exists');
+                        return true;
+                    }
+
+                    // Create and load script
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+
+                    // Wait for script to load
+                    await new Promise((resolve, reject) => {
+                        script.onload = () => {
+                            console.log('✓ Chart.js script loaded');
+                            resolve();
+                        };
+                        script.onerror = (error) => {
+                            console.error('✗ Failed to load Chart.js:', error);
+                            reject(error);
+                        };
+                        document.head.appendChild(script);
+                    });
+
+                    // Verify Chart is available
+                    if (typeof Chart === 'undefined') {
+                        console.error('Chart.js loaded but Chart is still undefined');
+                        return false;
+                    }
+
+                    console.log('✓ Chart.js is available');
+                    return true;
+                } catch (error) {
+                    console.error('Error in Chart.js loading:', error);
+                    return false;
+                }
+            })()
+        ");
+
+            if (!loadResult)
+            {
+                Console.WriteLine("Failed to load Chart.js");
+                return false;
+            }
+
+            // Small delay to ensure Chart.js is fully initialized
+            await Task.Delay(100);
+
+            // Now define all analytics functions
+            var functionsResult = await JSRuntime.InvokeAsync<bool>("eval", @"
+            (function() {
+                try {
+                    console.log('Defining analytics functions...');
+
+                    // Verify Chart.js is available
+                    if (typeof Chart === 'undefined') {
+                        console.error('Chart.js is not available for function definitions');
+                        return false;
+                    }
+
+                    // Initialize global objects
+                    window.AnalyticsModule = window.AnalyticsModule || {};
+                    window.AnalyticsModule.charts = window.AnalyticsModule.charts || {};
+
+                    // Configure Chart.js defaults
+                    Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, ""Helvetica Neue"", Arial, sans-serif';
+                    Chart.defaults.responsive = true;
+                    Chart.defaults.maintainAspectRatio = false;
+
+                    // Define renderChart function
+                    window.renderChart = function(canvasId, config) {
+                        console.log('renderChart called for:', canvasId);
+
+                        const ctx = document.getElementById(canvasId);
+                        if (!ctx) {
+                            console.error('Canvas not found:', canvasId);
+                            return null;
+                        }
+
+                        // Destroy existing chart if it exists
+                        if (window.AnalyticsModule.charts[canvasId]) {
+                            window.AnalyticsModule.charts[canvasId].destroy();
+                            delete window.AnalyticsModule.charts[canvasId];
+                        }
+
+                        const chartConfig = {
+                            type: config.type || 'line',
+                            data: {
+                                labels: config.labels || [],
+                                datasets: [{
+                                    label: config.label || 'Data',
+                                    data: config.data || [],
+                                    borderColor: config.borderColor || 'rgb(59, 130, 246)',
+                                    backgroundColor: config.backgroundColor || 'rgba(59, 130, 246, 0.1)',
+                                    borderWidth: config.borderWidth || 2,
+                                    tension: config.tension || 0.4,
+                                    fill: config.fill !== false
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                animation: {
+                                    duration: 750
+                                },
+                                plugins: {
+                                    legend: {
+                                        display: config.showLegend || false
+                                    },
+                                    tooltip: {
+                                        enabled: true,
+                                        mode: 'index',
+                                        intersect: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function(value) {
+                                                if (config.formatAsCurrency) {
+                                                    return '$' + value.toLocaleString();
+                                                }
+                                                return value;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+
+                        try {
+                            window.AnalyticsModule.charts[canvasId] = new Chart(ctx.getContext('2d'), chartConfig);
+                            console.log('✓ Chart created for:', canvasId);
+                            return window.AnalyticsModule.charts[canvasId];
+                        } catch (error) {
+                            console.error('Error creating chart:', error);
+                            return null;
+                        }
+                    };
+
+                    // Define renderPieChart function
+                    window.renderPieChart = function(canvasId, config) {
+                        console.log('renderPieChart called for:', canvasId);
+
+                        const ctx = document.getElementById(canvasId);
+                        if (!ctx) {
+                            console.error('Canvas element not found:', canvasId);
+                            return null;
+                        }
+
+                        // Destroy existing chart
+                        if (window.AnalyticsModule.charts[canvasId]) {
+                            window.AnalyticsModule.charts[canvasId].destroy();
+                            delete window.AnalyticsModule.charts[canvasId];
+                        }
+
+                        const chartConfig = {
+                            type: 'pie',
+                            data: {
+                                labels: config.labels || [],
+                                datasets: [{
+                                    data: config.data || [],
+                                    backgroundColor: config.backgroundColor || [
+                                        'rgba(59, 130, 246, 0.8)',
+                                        'rgba(16, 185, 129, 0.8)',
+                                        'rgba(251, 146, 60, 0.8)',
+                                        'rgba(239, 68, 68, 0.8)',
+                                        'rgba(139, 92, 246, 0.8)'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: { padding: 15 }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.label || '';
+                                                const value = context.parsed || 0;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = ((value / total) * 100).toFixed(1);
+                                                if (config.formatAsCurrency) {
+                                                    return label + ': $' + value.toLocaleString() + ' (' + percentage + '%)';
+                                                }
+                                                return label + ': ' + value + ' (' + percentage + '%)';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+
+                        try {
+                            window.AnalyticsModule.charts[canvasId] = new Chart(ctx.getContext('2d'), chartConfig);
+                            console.log('✓ Pie chart created for:', canvasId);
+                            return window.AnalyticsModule.charts[canvasId];
+                        } catch (error) {
+                            console.error('Error creating pie chart:', error);
+                            return null;
+                        }
+                    };
+
+                    // Define initializeLiveChart function
+                    window.initializeLiveChart = function(chartId, config) {
+                        console.log('initializeLiveChart called for:', chartId);
+
+                        const ctx = document.getElementById(chartId);
+                        if (!ctx) {
+                            console.error('Canvas not found:', chartId);
+                            return null;
+                        }
+
+                        if (window.AnalyticsModule.charts[chartId]) {
+                            window.AnalyticsModule.charts[chartId].destroy();
+                            delete window.AnalyticsModule.charts[chartId];
+                        }
+
+                        try {
+                            window.AnalyticsModule.charts[chartId] = new Chart(ctx.getContext('2d'), config);
+                            console.log('✓ Live chart initialized:', chartId);
+                            return window.AnalyticsModule.charts[chartId];
+                        } catch (error) {
+                            console.error('Error creating live chart:', error);
+                            return null;
+                        }
+                    };
+
+                    // Define updateLiveChart function
+                    window.updateLiveChart = function(chartId, data) {
+                        const chart = window.AnalyticsModule.charts[chartId];
+                        if (!chart) {
+                            console.warn('Chart not found for update:', chartId);
+                            return false;
+                        }
+
+                        try {
+                            chart.data.labels = data.labels || [];
+
+                            if (data.datasets && Array.isArray(data.datasets)) {
+                                data.datasets.forEach((dataset, index) => {
+                                    if (chart.data.datasets[index]) {
+                                        chart.data.datasets[index].data = dataset.data || [];
+                                        if (dataset.label) chart.data.datasets[index].label = dataset.label;
+                                        if (dataset.borderColor) chart.data.datasets[index].borderColor = dataset.borderColor;
+                                        if (dataset.backgroundColor) chart.data.datasets[index].backgroundColor = dataset.backgroundColor;
+                                    }
+                                });
+                            }
+
+                            // Update with no animation for smooth real-time updates
+                            chart.update('none');
+                            return true;
+                        } catch (error) {
+                            console.error('Error updating chart:', error);
+                            return false;
+                        }
+                    };
+
+                    // Define destroyChart function
+                    window.destroyChart = function(chartId) {
+                        if (window.AnalyticsModule.charts[chartId]) {
+                            try {
+                                window.AnalyticsModule.charts[chartId].destroy();
+                                delete window.AnalyticsModule.charts[chartId];
+                                console.log('✓ Chart destroyed:', chartId);
+                                return true;
+                            } catch (error) {
+                                console.error('Error destroying chart:', error);
+                                return false;
+                            }
+                        }
+                        return false;
+                    };
+
+                    console.log('✓ All analytics functions defined successfully');
+                    return true;
+                } catch (error) {
+                    console.error('Error defining analytics functions:', error);
+                    return false;
+                }
+            })()
+        ");
+
+            if (!functionsResult)
+            {
+                Console.WriteLine("Failed to define analytics functions");
+                return false;
+            }
+
+            Console.WriteLine("✓ Chart.js and all functions loaded successfully");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception in LoadAllAnalyticsScripts: {ex.Message}");
+            return false;
+        }
+    }
+    private async Task SetDateRange(int days)
+    {
+        DateRange = days;
+        await LoadData();
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+
+    private async Task ExportDashboard()
+    {
+        // Export functionality
+        await JSRuntime.InvokeVoidAsync("showToast", "Dashboard exported successfully", "success");
+    }
+
+    private void ToggleChartType()
+    {
+        ChartType = ChartType == "line" ? "bar" : "line";
+        InvokeAsync(async () => await RenderCharts());
+    }
+
+    private async Task RenderCharts()
+    {
+        if (Metrics == null) return;
+
+        // Render revenue trend chart
+        await JSRuntime.InvokeVoidAsync("renderChart", "revenueChart", new
+        {
+            type = ChartType,
+            labels = Metrics.RevenueByMonth?.Select(m => m.Label).ToArray(),
+            data = Metrics.RevenueByMonth?.Select(m => m.Value).ToArray(),
+            label = "Revenue"
+        });
+
+        // Render category pie chart
+        await JSRuntime.InvokeVoidAsync("renderPieChart", "categoryChart", new
+        {
+            labels = Metrics.RevenueByCategory?.Select(c => c.Label).ToArray(),
+            data = Metrics.RevenueByCategory?.Select(c => c.Value).ToArray(),
+            colors = Metrics.RevenueByCategory?.Select(c => c.Color).ToArray()
+        });
+    }
+
+    private string GetSparklinePoints(List<decimal> values)
+    {
+        if (!values.Any()) return "";
+
+        var max = values.Max();
+        var min = values.Min();
+        var range = max - min;
+
+        var points = values.Select((v, i) =>
+        {
+            var x = (i / (double)(values.Count - 1)) * 100;
+            var y = range > 0 ? 30 - ((double)(v - min) / (double)range * 30) : 15;
+            return $"{x},{y}";
+        });
+
+        return string.Join(" ", points);
+    }
+
+    public void Dispose()
+    {
+        _refreshTimer?.Dispose();
+    }
+}
+
+<style>
+    .analytics-dashboard {
+        padding: 1.5rem;
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* KPI Cards */
+    .kpi-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+    .kpi-icon {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        font-size: 2.5rem;
+        opacity: 0.1;
+    }
+
+    .revenue-card {
+        border-left: 4px solid #10b981;
+    }
+
+    .profit-card {
+        border-left: 4px solid #3b82f6;
+    }
+
+    .orders-card {
+        border-left: 4px solid #f59e0b;
+    }
+
+    .conversion-card {
+        border-left: 4px solid #8b5cf6;
+    }
+
+    .kpi-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0.5rem 0;
+        color: #1f2937;
+    }
+
+    .kpi-label {
+        color: #6b7280;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .kpi-change {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+    }
+
+        .kpi-change.positive {
+            color: #10b981;
+            background: #d1fae5;
+        }
+
+        .kpi-change.negative {
+            color: #ef4444;
+            background: #fee2e2;
+        }
+
+    /* Charts */
+    .chart-card, .table-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .chart-header, .table-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chart-body {
+        padding: 1.25rem;
+    }
+
+    /* Tables */
+    .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .rank-1 {
+        background: #fbbf24;
+        color: white;
+    }
+
+    .rank-2 {
+        background: #d1d5db;
+        color: #374151;
+    }
+
+    .rank-3 {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .rank-4, .rank-5 {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .avatar-sm {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
+
+    .trend-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+        .trend-indicator.up {
+            color: #10b981;
+        }
+
+        .trend-indicator.down {
+            color: #ef4444;
+        }
+
+    /* Animations */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-row {
+        animation: slideIn 0.3s ease-out forwards;
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .spin {
+        animation: spin 1s linear infinite;
+    }
+
+    @@keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Loading Skeletons */
+    .skeleton-card {
+        height: 140px;
+        background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        border-radius: 12px;
+    }
+
+    .skeleton-chart-large {
+        height: 400px;
+        background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        border-radius: 12px;
+    }
+
+    @@keyframes loading {
+        0% {
+            background-position: 200% 0;
+        }
+
+        100% {
+            background-position: -200% 0;
+        }
+    }
+
+    /* Sparkline */
+    .sparkline {
+        width: 100%;
+        height: 30px;
+        margin-top: 0.5rem;
+    }
+
+        .sparkline polyline {
+            fill: none;
+            stroke: #10b981;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+</style>

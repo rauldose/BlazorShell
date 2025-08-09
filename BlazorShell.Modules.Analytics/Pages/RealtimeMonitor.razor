@@ -1,0 +1,649 @@
+﻿
+@* BlazorShell.Modules.Analytics/UI/Pages/RealtimeMonitor.razor *@
+@page "/analytics/realtime"
+@using BlazorShell.Modules.Analytics.Services
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.JSInterop
+@attribute [Authorize(Roles = "Analyst,Manager,Administrator")]
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<PageTitle>Real-time Sales Monitor</PageTitle>
+
+<div class="realtime-monitor">
+    <div class="monitor-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-6 fw-bold">
+                    <span class="live-indicator"></span>
+                    Real-time Monitor
+                </h1>
+                <p class="text-muted">Live sales activity and performance metrics</p>
+            </div>
+            <div class="col-md-6 text-end">
+                <span class="badge bg-success me-2">
+                    <i class="bi bi-wifi"></i> Connected
+                </span>
+                <span class="badge bg-info me-2">
+                    <i class="bi bi-people"></i> @ViewerCount viewers
+                </span>
+                <button class="btn btn-outline-primary" @onclick="ToggleSound">
+                    <i class="bi @(SoundEnabled ? "bi-volume-up" : "bi-volume-mute")"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        @* Live Activity Feed *@
+        <div class="col-md-4">
+            <div class="activity-feed">
+                <div class="feed-header">
+                    <h5>Live Activity</h5>
+                    <span class="activity-rate">@ActivityRate /min</span>
+                </div>
+                <div class="feed-body">
+                    @foreach (var activity in RecentActivities.Take(15))
+                    {
+                        <div class="activity-item @activity.Type.ToLower() animate-in">
+                            <div class="activity-icon">
+                                <i class="bi @GetActivityIcon(activity.Type)"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">@activity.Title</div>
+                                <div class="activity-details">@activity.Details</div>
+                                <div class="activity-time">@activity.Timestamp.ToString("HH:mm:ss")</div>
+                            </div>
+                            <div class="activity-value">
+                                @if (activity.Value > 0)
+                                {
+                                    <span class="value-badge">+@activity.Value.ToString("C0")</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @* Real-time Metrics *@
+        <div class="col-md-8">
+            <div class="row mb-4">
+                @* Live Revenue Counter *@
+                <div class="col-md-6">
+                    <div class="metric-card live-revenue">
+                        <div class="metric-header">
+                            <span>Live Revenue</span>
+                            <span class="pulse"></span>
+                        </div>
+                        <div class="metric-value">
+                            <span class="currency">$</span>
+                            <span class="counter" id="revenueCounter">@CurrentRevenue.ToString("N0")</span>
+                        </div>
+                        <div class="metric-chart">
+                            <canvas id="liveRevenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                @* Active Users *@
+                <div class="col-md-6">
+                    <div class="metric-card active-users">
+                        <div class="metric-header">
+                            <span>Active Users</span>
+                            <div class="users-grid">
+                                @for (int i = 0; i < Math.Min(ActiveUsers, 50); i++)
+                                {
+                                    <span class="user-dot @(i < 10 ? "active" : "")"></span>
+                                }
+                            </div>
+                        </div>
+                        <div class="metric-value">
+                            <span class="counter">@ActiveUsers</span>
+                            <span class="metric-label">users online</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Geographic Heatmap *@
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="heatmap-card">
+                        <div class="heatmap-header">
+                            <h5>Geographic Activity</h5>
+                            <div class="legend">
+                                <span class="legend-item"><span class="dot low"></span> Low</span>
+                                <span class="legend-item"><span class="dot medium"></span> Medium</span>
+                                <span class="legend-item"><span class="dot high"></span> High</span>
+                            </div>
+                        </div>
+                        <div class="heatmap-body">
+                            <div id="worldMap" class="world-map"></div>
+                            <div class="region-stats">
+                                @foreach (var region in RegionStats)
+                                {
+                                    <div class="region-item">
+                                        <span class="region-name">@region.Name</span>
+                                        <div class="region-bar">
+                                            <div class="bar-fill" style="width: @region.Percentage%"></div>
+                                        </div>
+                                        <span class="region-value">@region.Value.ToString("C0")</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Product Performance Grid *@
+            <div class="row">
+                <div class="col-12">
+                    <div class="performance-grid">
+                        <h5>Product Performance</h5>
+                        <div class="product-bubbles">
+                            @foreach (var product in TopProducts)
+                            {
+                                <div class="product-bubble"
+                                     style="width: @(product.Size)px; height: @(product.Size)px; background: @product.Color">
+                                    <span class="product-name">@product.Name</span>
+                                    <span class="product-value">@product.Value.ToString("C0")</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private HubConnection? hubConnection;
+    private bool SoundEnabled = true;
+    private int ViewerCount = 42;
+    private int ActivityRate = 23;
+    private decimal CurrentRevenue = 45678.90m;
+    private int ActiveUsers = 127;
+
+    private List<ActivityItem> RecentActivities = new();
+    private List<RegionStat> RegionStats = new();
+    private List<ProductBubble> TopProducts = new();
+
+    private System.Threading.Timer? _dataTimer;
+    private Random _random = new Random();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize sample data
+        GenerateSampleData();
+
+        // Setup SignalR connection
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/analyticshub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<SalesActivity>("NewSale", (activity) =>
+        {
+            AddActivity(new ActivityItem
+                {
+                    Type = "Sale",
+                    Title = $"New Sale: {activity.ProductName}",
+                    Details = $"{activity.CustomerName} - {activity.Region}",
+                    Value = activity.Amount,
+                    Timestamp = DateTime.Now
+                });
+
+            CurrentRevenue += activity.Amount;
+            InvokeAsync(StateHasChanged);
+        });
+
+        try
+        {
+            await hubConnection.StartAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error connecting to hub: {ex.Message}");
+        }
+
+        // Simulate real-time data updates
+        _dataTimer = new System.Threading.Timer(async _ =>
+        {
+            await InvokeAsync(() =>
+            {
+                SimulateActivity();
+                StateHasChanged();
+            });
+        }, null, TimeSpan.Zero, TimeSpan.FromSeconds(2));
+    }
+
+    private void GenerateSampleData()
+    {
+        // Generate initial activities
+        for (int i = 0; i < 10; i++)
+        {
+            var types = new[] { "Sale", "View", "Cart", "Checkout" };
+            RecentActivities.Add(new ActivityItem
+                {
+                    Type = types[_random.Next(types.Length)],
+                    Title = $"Sample Activity {i + 1}",
+                    Details = "Customer action",
+                    Value = _random.Next(50, 500),
+                    Timestamp = DateTime.Now.AddMinutes(-i)
+                });
+        }
+
+        // Generate region stats
+        RegionStats = new List<RegionStat>
+        {
+            new() { Name = "North America", Value = 125000, Percentage = 45 },
+            new() { Name = "Europe", Value = 98000, Percentage = 35 },
+            new() { Name = "Asia Pacific", Value = 67000, Percentage = 25 },
+            new() { Name = "Latin America", Value = 34000, Percentage = 15 },
+            new() { Name = "Middle East", Value = 23000, Percentage = 10 }
+        };
+
+        // Generate product bubbles
+        var products = new[] { "Electronics", "Clothing", "Home", "Sports", "Books", "Food" };
+        var colors = new[] { "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4" };
+
+        TopProducts = products.Select((p, i) => new ProductBubble
+            {
+                Name = p,
+                Value = _random.Next(10000, 50000),
+                Size = _random.Next(80, 150),
+                Color = colors[i % colors.Length]
+            }).ToList();
+    }
+
+    private void SimulateActivity()
+    {
+        var types = new[] { "Sale", "View", "Cart", "Checkout", "Return" };
+        var products = new[] { "Laptop", "Phone", "Tablet", "Watch", "Headphones" };
+        var regions = new[] { "New York", "London", "Tokyo", "Sydney", "Paris" };
+
+        var activity = new ActivityItem
+            {
+                Type = types[_random.Next(types.Length)],
+                Title = $"{types[_random.Next(types.Length)]}: {products[_random.Next(products.Length)]}",
+                Details = $"From {regions[_random.Next(regions.Length)]}",
+                Value = _random.Next(50, 2000),
+                Timestamp = DateTime.Now
+            };
+
+        AddActivity(activity);
+
+        // Update metrics
+        CurrentRevenue += activity.Value;
+        ActiveUsers = Math.Max(50, ActiveUsers + _random.Next(-5, 10));
+        ActivityRate = Math.Max(10, ActivityRate + _random.Next(-2, 5));
+        ViewerCount = Math.Max(20, ViewerCount + _random.Next(-1, 3));
+    }
+
+    private void AddActivity(ActivityItem activity)
+    {
+        RecentActivities.Insert(0, activity);
+        if (RecentActivities.Count > 50)
+        {
+            RecentActivities.RemoveAt(RecentActivities.Count - 1);
+        }
+
+        if (SoundEnabled && activity.Type == "Sale")
+        {
+            _ = JSRuntime.InvokeVoidAsync("playSound", "sale");
+        }
+    }
+
+    private string GetActivityIcon(string type) => type switch
+    {
+        "Sale" => "bi-cart-check",
+        "View" => "bi-eye",
+        "Cart" => "bi-cart-plus",
+        "Checkout" => "bi-credit-card",
+        "Return" => "bi-arrow-return-left",
+        _ => "bi-circle"
+    };
+
+    private void ToggleSound()
+    {
+        SoundEnabled = !SoundEnabled;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _dataTimer?.Dispose();
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+
+    private class ActivityItem
+    {
+        public string Type { get; set; } = "";
+        public string Title { get; set; } = "";
+        public string Details { get; set; } = "";
+        public decimal Value { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
+
+    private class RegionStat
+    {
+        public string Name { get; set; } = "";
+        public decimal Value { get; set; }
+        public int Percentage { get; set; }
+    }
+
+    private class ProductBubble
+    {
+        public string Name { get; set; } = "";
+        public decimal Value { get; set; }
+        public int Size { get; set; }
+        public string Color { get; set; } = "";
+    }
+
+    private class SalesActivity
+    {
+        public string ProductName { get; set; } = "";
+        public string CustomerName { get; set; } = "";
+        public string Region { get; set; } = "";
+        public decimal Amount { get; set; }
+    }
+}
+
+<style>
+    .realtime-monitor {
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: calc(100vh - 100px);
+    }
+
+    .monitor-header {
+        color: white;
+    }
+
+    .live-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        background: #10b981;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+        margin-right: 0.5rem;
+    }
+
+    @@keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+    }
+
+    /* Activity Feed */
+    .activity-feed {
+        background: white;
+        border-radius: 12px;
+        height: 600px;
+        overflow: hidden;
+    }
+
+    .feed-header {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .activity-rate {
+        background: #dbeafe;
+        color: #3b82f6;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .feed-body {
+        height: calc(100% - 60px);
+        overflow-y: auto;
+        padding: 0.5rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        border-radius: 8px;
+        background: #f9fafb;
+        transition: all 0.3s ease;
+    }
+
+        .activity-item:hover {
+            background: #f3f4f6;
+            transform: translateX(5px);
+        }
+
+        .activity-item.sale {
+            border-left: 3px solid #10b981;
+        }
+
+    .activity-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        color: #6b7280;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #1f2937;
+    }
+
+    .activity-details {
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+
+    .activity-time {
+        font-size: 0.75rem;
+        color: #9ca3af;
+        margin-top: 0.25rem;
+    }
+
+    .value-badge {
+        background: #d1fae5;
+        color: #10b981;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    /* Metric Cards */
+    .metric-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: 200px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .metric-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        color: #6b7280;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        display: flex;
+        align-items: baseline;
+    }
+
+    .currency {
+        font-size: 1.5rem;
+        margin-right: 0.25rem;
+        color: #6b7280;
+    }
+
+    .counter {
+        animation: countUp 0.5s ease-out;
+    }
+
+    /* Users Grid */
+    .users-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 2px;
+        width: 100px;
+    }
+
+    .user-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        transition: all 0.3s ease;
+    }
+
+        .user-dot.active {
+            background: #10b981;
+            animation: userPulse 2s infinite;
+        }
+
+    /* Heatmap */
+    .heatmap-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    .world-map {
+        height: 200px;
+        background: url('data:image/svg+xml,<svg>...</svg>');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .region-stats {
+        margin-top: 1rem;
+    }
+
+    .region-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .region-name {
+        width: 120px;
+        font-size: 0.875rem;
+        color: #4b5563;
+    }
+
+    .region-bar {
+        flex: 1;
+        height: 20px;
+        background: #f3f4f6;
+        border-radius: 10px;
+        margin: 0 1rem;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        border-radius: 10px;
+        transition: width 1s ease;
+    }
+
+    /* Product Bubbles */
+    .performance-grid {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    .product-bubbles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1rem;
+        justify-content: center;
+    }
+
+    .product-bubble {
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .product-bubble:hover {
+            transform: scale(1.1);
+        }
+
+    .product-name {
+        font-size: 0.875rem;
+    }
+
+    .product-value {
+        font-size: 0.75rem;
+        opacity: 0.9;
+    }
+
+    .animate-in {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>

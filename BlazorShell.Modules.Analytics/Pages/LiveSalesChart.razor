@@ -1,0 +1,1153 @@
+﻿@* BlazorShell.Modules.Analytics/UI/Components/LiveSalesChart.razor *@
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<div class="live-sales-chart">
+    <div class="chart-container">
+        <div class="chart-header">
+            <div class="header-left">
+                <h4 class="chart-title">
+                    <span class="live-dot"></span>
+                    Live Sales Activity
+                </h4>
+                <p class="chart-subtitle">Real-time revenue tracking</p>
+            </div>
+            <div class="header-right">
+                <div class="metric-badges">
+                    <div class="metric-badge revenue">
+                        <span class="badge-label">Current</span>
+                        <span class="badge-value">@CurrentValue.ToString("C0")</span>
+                    </div>
+                    <div class="metric-badge rate">
+                        <span class="badge-label">Rate</span>
+                        <span class="badge-value">@SalesRate.ToString("N0")/min</span>
+                    </div>
+                    <div class="metric-badge trend @(Trend >= 0 ? "up" : "down")">
+                        <i class="bi @(Trend >= 0 ? "bi-trending-up" : "bi-trending-down")"></i>
+                        <span class="badge-value">@Math.Abs(Trend).ToString("F1")%</span>
+                    </div>
+                </div>
+                <div class="chart-controls">
+                    <button class="btn-control @(IsPaused ? "" : "active")" @onclick="TogglePause" title="@(IsPaused ? "Resume" : "Pause")">
+                        <i class="bi @(IsPaused ? "bi-play-fill" : "bi-pause-fill")"></i>
+                    </button>
+                    <button class="btn-control @(ShowPeaks ? "active" : "")" @onclick="TogglePeaks" title="Show peaks">
+                        <i class="bi bi-graph-up"></i>
+                    </button>
+                    <button class="btn-control" @onclick="ResetZoom" title="Reset zoom">
+                        <i class="bi bi-zoom-out"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-body">
+            @* Remove the height attribute and use CSS instead *@
+            <div class="chart-wrapper">
+                <div>
+                    <canvas id="@ChartId"></canvas>
+                </div>
+            </div>
+
+            @if (ShowPeaks && PeakPoints.Any())
+            {
+                <div class="peak-annotations">
+                    @foreach (var peak in PeakPoints.Take(3))
+                    {
+                        <div class="peak-marker" style="left: @(peak.X)%; top: @(peak.Y)%">
+                            <span class="peak-value">@peak.Value.ToString("C0")</span>
+                            <span class="peak-time">@peak.Time</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="chart-footer">
+            <div class="time-range">
+                <button class="range-btn @(TimeWindow == 60 ? "active" : "")" @onclick="() => SetTimeWindow(60)">1m</button>
+                <button class="range-btn @(TimeWindow == 300 ? "active" : "")" @onclick="() => SetTimeWindow(300)">5m</button>
+                <button class="range-btn @(TimeWindow == 900 ? "active" : "")" @onclick="() => SetTimeWindow(900)">15m</button>
+            </div>
+            <div class="status-info">
+                <span class="status-text">
+                    <i class="bi bi-clock"></i>
+                    Last update: @DateTime.Now.ToString("HH:mm:ss")
+                </span>
+            </div>
+        </div>
+    </div>
+
+    @if (RecentSales.Any())
+    {
+        <div class="recent-sales">
+            <h5>Recent Sales</h5>
+            @foreach (var sale in RecentSales)
+            {
+                <div class="sale-notification">
+                    <div class="sale-type">@sale.Type</div>
+                    <div class="sale-product">@sale.Product</div>
+                    <div class="sale-amount">@sale.Amount.ToString("C0")</div>
+                    <div class="sale-time">@sale.TimeAgo</div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private string ChartId = $"live-chart-{Guid.NewGuid():N}";
+    private Timer? _timer;
+    private Random _random = new Random();
+    private bool _chartInitialized = false;
+    private int UpdateInterval = 2000; // milliseconds
+
+    // Chart data
+    private List<DateTime> _timestamps = new();
+    private List<decimal> _values = new();
+    private Queue<DataPoint> _dataQueue = new();
+
+    // Metrics
+    private decimal CurrentValue = 0;
+    private decimal MaxValue = 0;
+    private decimal AverageValue = 0;
+    private decimal TotalValue = 0;
+    private int SalesRate = 0;
+    private double Trend = 0;
+
+    // UI State
+    private bool IsPaused = false;
+    private bool ShowPeaks = false;
+    private int TimeWindow = 300; // seconds
+
+    // Peak detection
+    private List<PeakPoint> PeakPoints = new();
+
+    // Recent sales for notifications
+    private List<SaleNotification> RecentSales = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Add a small delay to ensure DOM is ready
+            await Task.Delay(100);
+
+            await LoadAllAnalyticsScripts();
+            await InitializeChart();
+            StartDataGeneration();
+        }
+    }
+
+    private async Task<bool> LoadAllAnalyticsScripts()
+    {
+        try
+        {
+            // Check if already loaded
+            var hasChart = await JSRuntime.InvokeAsync<bool>("eval",
+                "typeof Chart !== 'undefined' && typeof window.initializeLiveChart === 'function'");
+
+            if (hasChart)
+            {
+                Console.WriteLine("Chart.js already loaded and functions defined");
+                return true;
+            }
+
+            Console.WriteLine("Loading Chart.js...");
+
+            // Load Chart.js
+            var loadResult = await JSRuntime.InvokeAsync<bool>("eval", @"
+            (async function() {
+                try {
+                    if (typeof Chart !== 'undefined') {
+                        console.log('Chart.js already exists');
+                        return true;
+                    }
+
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+
+                    await new Promise((resolve, reject) => {
+                        script.onload = () => {
+                            console.log('✓ Chart.js loaded');
+                            resolve();
+                        };
+                        script.onerror = (error) => {
+                            console.error('✗ Failed to load Chart.js:', error);
+                            reject(error);
+                        };
+                        document.head.appendChild(script);
+                    });
+
+                    if (typeof Chart === 'undefined') {
+                        console.error('Chart.js loaded but Chart is still undefined');
+                        return false;
+                    }
+
+                    console.log('✓ Chart.js is available');
+                    return true;
+                } catch (error) {
+                    console.error('Error loading Chart.js:', error);
+                    return false;
+                }
+            })()
+        ");
+
+            if (!loadResult)
+            {
+                Console.WriteLine("Failed to load Chart.js");
+                return false;
+            }
+
+            await Task.Delay(100);
+
+            // Define the chart functions with FIXED time scale issue
+            var functionsResult = await JSRuntime.InvokeAsync<bool>("eval", @"
+            (function() {
+                try {
+                    console.log('Defining chart functions...');
+
+                    if (typeof Chart === 'undefined') {
+                        console.error('Chart.js not available');
+                        return false;
+                    }
+
+                    // Initialize namespace
+                    window.AnalyticsModule = window.AnalyticsModule || {};
+                    window.AnalyticsModule.charts = window.AnalyticsModule.charts || {};
+
+                    // Set Chart.js defaults
+                    Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, ""Helvetica Neue"", Arial, sans-serif';
+                    Chart.defaults.responsive = true;
+                    Chart.defaults.maintainAspectRatio = false;
+
+                    // Initialize live chart - FIXED to use category scale instead of time
+                    window.initializeLiveChart = function(chartId, config) {
+                        console.log('Initializing chart:', chartId);
+
+                        const canvas = document.getElementById(chartId);
+                        if (!canvas) {
+                            console.error('Canvas not found:', chartId);
+                            return null;
+                        }
+
+                        const ctx = canvas.getContext('2d');
+                        if (!ctx) {
+                            console.error('Could not get 2D context');
+                            return null;
+                        }
+
+                        // Destroy existing chart
+                        if (window.AnalyticsModule.charts[chartId]) {
+                            window.AnalyticsModule.charts[chartId].destroy();
+                            delete window.AnalyticsModule.charts[chartId];
+                        }
+
+                        // Create chart with VISIBLE line settings
+                        const chartConfig = {
+                            type: 'line',
+                            data: {
+                                labels: [],
+                                datasets: [{
+                                    label: 'Revenue',
+                                    data: [],
+                                    // Make sure line is visible with strong blue color
+                                    borderColor: '#3b82f6',  // Solid blue color
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',  // Light blue fill
+                                    borderWidth: 3,  // Thicker line for visibility
+                                    tension: 0.4,
+                                    fill: true,
+                                    // Point settings
+                                    pointRadius: 0,  // Hide points by default
+                                    pointHoverRadius: 6,  // Show on hover
+                                    pointBackgroundColor: '#3b82f6',
+                                    pointBorderColor: '#ffffff',
+                                    pointBorderWidth: 2,
+                                    pointHitRadius: 10,
+                                    // Ensure line is drawn
+                                    showLine: true,  // Explicitly show line
+                                    spanGaps: true,  // Connect points even with gaps
+                                    clip: false  // Don't clip at chart edges
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                animation: {
+                                    duration: 0  // No animation for real-time
+                                },
+                                interaction: {
+                                    intersect: false,
+                                    mode: 'index'
+                                },
+                                elements: {
+                                    line: {
+                                        tension: 0.4,
+                                        borderWidth: 3,
+                                        borderColor: '#3b82f6',
+                                        fill: true
+                                    },
+                                    point: {
+                                        radius: 0,
+                                        hoverRadius: 6
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'top',
+                                        labels: {
+                                            color: '#374151',
+                                            usePointStyle: true,
+                                            padding: 15,
+                                            font: {
+                                                size: 12,
+                                                weight: '500'
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        enabled: true,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                        titleColor: '#fff',
+                                        bodyColor: '#fff',
+                                        borderColor: '#3b82f6',
+                                        borderWidth: 1,
+                                        cornerRadius: 4,
+                                        displayColors: false,
+                                        callbacks: {
+                                            label: function(context) {
+                                                return 'Revenue: $' + (context.parsed.y || 0).toLocaleString();
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        type: 'category',
+                                        display: true,
+                                        grid: {
+                                            display: false,
+                                            drawBorder: false
+                                        },
+                                        ticks: {
+                                            maxRotation: 0,
+                                            autoSkip: true,
+                                            maxTicksLimit: 8,
+                                            color: '#6b7280',
+                                            font: {
+                                                size: 11
+                                            }
+                                        }
+                                    },
+                                    y: {
+                                        type: 'linear',
+                                        display: true,
+                                        beginAtZero: true,
+                                        suggestedMax: 10000,  // Set a suggested max to prevent scaling issues
+                                        grid: {
+                                            color: 'rgba(0, 0, 0, 0.05)',
+                                            drawBorder: false
+                                        },
+                                        ticks: {
+                                            color: '#6b7280',
+                                            font: {
+                                                size: 11
+                                            },
+                                            callback: function(value) {
+                                                if (value >= 1000) {
+                                                    return '$' + (value / 1000).toFixed(0) + 'k';
+                                                }
+                                                return '$' + value;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+
+                        try {
+                            window.AnalyticsModule.charts[chartId] = new Chart(ctx, chartConfig);
+                            console.log('✓ Chart created successfully');
+
+                            // Add test data to verify line is visible
+                            testChart(chartId);
+
+                            return window.AnalyticsModule.charts[chartId];
+                        } catch (error) {
+                            console.error('Error creating chart:', error);
+                            return null;
+                        }
+                    };
+
+                    // Test function to add sample data and verify line is visible
+                    window.testChart = function(chartId) {
+                        const chart = window.AnalyticsModule.charts[chartId];
+                        if (!chart) return;
+
+                        // Add some test data to make sure line is visible
+                        const testData = {
+                            labels: ['Test 1', 'Test 2', 'Test 3'],
+                            datasets: [{
+                                data: [5000, 7500, 6000]
+                            }]
+                        };
+
+                        chart.data.labels = testData.labels;
+                        chart.data.datasets[0].data = testData.data;
+                        chart.update('none');
+
+                        console.log('Test data added - you should see a blue line');
+
+                        // Clear test data after 2 seconds
+                        setTimeout(() => {
+                            chart.data.labels = [];
+                            chart.data.datasets[0].data = [];
+                            chart.update('none');
+                            console.log('Test data cleared - ready for live data');
+                        }, 2000);
+                    };
+
+                    // Update live chart with better data handling
+                    window.updateLiveChart = function(chartId, data) {
+                        const chart = window.AnalyticsModule.charts[chartId];
+                        if (!chart) {
+                            console.warn('Chart not found:', chartId);
+                            return false;
+                        }
+
+                        try {
+                            // Update labels
+                            chart.data.labels = data.labels || [];
+
+                            // Update dataset - make sure we're updating the right dataset
+                            if (data.datasets && data.datasets.length > 0 && data.datasets[0].data) {
+                                // Ensure data is numeric
+                                const numericData = data.datasets[0].data.map(v => Number(v) || 0);
+                                chart.data.datasets[0].data = numericData;
+
+                                // Ensure line properties are maintained
+                                chart.data.datasets[0].borderColor = '#3b82f6';
+                                chart.data.datasets[0].borderWidth = 3;
+                                chart.data.datasets[0].showLine = true;
+
+                                console.log(`Chart updated: ${numericData.length} points, range: ${Math.min(...numericData)} - ${Math.max(...numericData)}`);
+                            }
+
+                            // Update without animation
+                            chart.update('none');
+
+                            // Verify the line is being drawn
+                            if (chart.data.datasets[0].data.length > 0) {
+                                const dataset = chart.getDatasetMeta(0);
+                                if (dataset && dataset.visible !== false) {
+                                    console.log('Line should be visible');
+                                }
+                            }
+
+                            return true;
+                        } catch (error) {
+                            console.error('Error updating chart:', error);
+                            return false;
+                        }
+                    };
+
+                    // Destroy chart
+                    window.destroyChart = function(chartId) {
+                        if (window.AnalyticsModule.charts[chartId]) {
+                            try {
+                                window.AnalyticsModule.charts[chartId].destroy();
+                                delete window.AnalyticsModule.charts[chartId];
+                                console.log('✓ Chart destroyed');
+                                return true;
+                            } catch (error) {
+                                console.error('Error destroying chart:', error);
+                                return false;
+                            }
+                        }
+                        return false;
+                    };
+
+                    // Reset zoom (stub for now)
+                    window.resetChartZoom = function(chartId) {
+                        const chart = window.AnalyticsModule.charts[chartId];
+                        if (chart) {
+                            chart.update();
+                            return true;
+                        }
+                        return false;
+                    };
+
+                    console.log('✓ All functions defined successfully');
+                    return true;
+                } catch (error) {
+                    console.error('Error defining functions:', error);
+                    return false;
+                }
+            })()
+        ");
+
+            return functionsResult;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception in LoadAllAnalyticsScripts: { ex.Message}");
+            return false;
+        }
+    }
+
+    private async Task InitializeChart()
+    {
+        try
+        {
+            // Simple initialization - config is handled in JavaScript
+            await JSRuntime.InvokeVoidAsync("initializeLiveChart", ChartId, new { });
+            _chartInitialized = true;
+            Console.WriteLine("Chart initialized successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error initializing chart: {ex.Message}");
+        }
+    }
+
+    private void StartDataGeneration()
+    {
+        _timer = new System.Threading.Timer(async _ =>
+        {
+            if (!IsPaused)
+            {
+                await InvokeAsync(async () =>
+                {
+                    GenerateDataPoint();
+                    await UpdateChart();
+                    StateHasChanged();
+                });
+            }
+        }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(UpdateInterval));
+    }
+
+    private void GenerateDataPoint()
+    {
+        var time = DateTime.Now;
+        var baseValue = 5000m;
+        var hourOfDay = time.Hour;
+
+        // Time-of-day pattern
+        var hourlyMultiplier = hourOfDay >= 9 && hourOfDay <= 17 ? 1.5m : 0.7m;
+
+        // Randomness and spikes
+        var randomFactor = (decimal)(0.5 + _random.NextDouble() * 1.5);
+        var spike = _random.Next(100) > 95 ? 3m : 1m;
+
+        var value = baseValue * hourlyMultiplier * randomFactor * spike;
+
+        // Add to data
+        _timestamps.Add(time);
+        _values.Add(value);
+
+        // Keep only data within time window
+        var cutoff = time.AddSeconds(-TimeWindow);
+        while (_timestamps.Count > 0 && _timestamps[0] < cutoff)
+        {
+            _timestamps.RemoveAt(0);
+            _values.RemoveAt(0);
+        }
+
+        // Update metrics
+        UpdateMetrics();
+        DetectPeaks();
+
+        if (spike > 1)
+        {
+            GenerateSaleNotification(value);
+        }
+    }
+
+    private void UpdateMetrics()
+    {
+        if (!_values.Any()) return;
+
+        CurrentValue = _values.Last();
+        MaxValue = _values.Max();
+        AverageValue = _values.Average();
+        TotalValue = _values.Sum();
+
+        // Calculate sales rate
+        if (_timestamps.Count > 1)
+        {
+            var timeSpan = _timestamps.Last() - _timestamps.First();
+            if (timeSpan.TotalSeconds > 0)
+            {
+                SalesRate = (int)(_values.Count / timeSpan.TotalMinutes);
+            }
+        }
+
+        // Calculate trend
+        if (_values.Count >= 4)
+        {
+            var quarter = _values.Count / 4;
+            var recent = _values.Skip(_values.Count - quarter).Average();
+            var previous = _values.Skip(_values.Count - quarter * 2).Take(quarter).Average();
+            Trend = previous > 0 ? ((double)(recent - previous) / (double)previous) * 100 : 0;
+        }
+    }
+
+    private async Task UpdateChart()
+    {
+        if (!_chartInitialized || !_timestamps.Any()) return;
+
+        try
+        {
+            // Format timestamps for display
+            var labels = _timestamps.Select(t => t.ToString("HH:mm:ss")).ToArray();
+
+            var data = new
+            {
+                labels = labels,
+                datasets = new[]
+                {
+                    new
+                    {
+                        data = _values.Select(v => (double)v).ToArray()
+                    }
+                }
+            };
+
+            await JSRuntime.InvokeVoidAsync("updateLiveChart", ChartId, data);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating chart: {ex.Message}");
+        }
+    }
+
+    private void DetectPeaks()
+    {
+        PeakPoints.Clear();
+        if (_values.Count < 3) return;
+
+        for (int i = 1; i < _values.Count - 1; i++)
+        {
+            if (_values[i] > _values[i - 1] && _values[i] > _values[i + 1])
+            {
+                var x = (double)(i * 100.0 / _values.Count);
+                var normalizedValue = (_values[i] - _values.Min()) / (_values.Max() - _values.Min());
+                var y = 100 - (normalizedValue * 80 + 10);
+
+                PeakPoints.Add(new PeakPoint
+                    {
+                        X = x,
+                        Y = Convert.ToDouble(y),
+                        Value = _values[i],
+                        Time = _timestamps[i].ToString("HH:mm:ss")
+                    });
+            }
+        }
+
+        PeakPoints = PeakPoints.OrderByDescending(p => p.Value).Take(3).ToList();
+    }
+
+    private void GenerateSaleNotification(decimal value)
+    {
+        var products = new[] { "Premium Package", "Enterprise Suite", "Pro License", "Team Plan" };
+        var types = new[] { "New Sale", "Renewal", "Upgrade" };
+
+        var notification = new SaleNotification
+            {
+                Product = products[_random.Next(products.Length)],
+                Amount = value,
+                Type = types[_random.Next(types.Length)],
+                Timestamp = DateTime.Now
+            };
+
+        RecentSales.Insert(0, notification);
+        if (RecentSales.Count > 5)
+            RecentSales.RemoveAt(RecentSales.Count - 1);
+    }
+
+    private void TogglePause()
+    {
+        IsPaused = !IsPaused;
+    }
+
+    private void TogglePeaks()
+    {
+        ShowPeaks = !ShowPeaks;
+    }
+
+    private async Task ResetZoom()
+    {
+        await JSRuntime.InvokeVoidAsync("resetChartZoom", ChartId);
+    }
+
+    private void SetTimeWindow(int seconds)
+    {
+        TimeWindow = seconds;
+
+        var cutoff = DateTime.Now.AddSeconds(-TimeWindow);
+        while (_timestamps.Count > 0 && _timestamps[0] < cutoff)
+        {
+            _timestamps.RemoveAt(0);
+            _values.RemoveAt(0);
+        }
+
+        UpdateMetrics();
+        _ = UpdateChart();
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+        if (_chartInitialized)
+        {
+            _ = JSRuntime.InvokeVoidAsync("destroyChart", ChartId);
+        }
+    }
+
+    private class DataPoint
+    {
+        public DateTime Timestamp { get; set; }
+        public decimal Value { get; set; }
+    }
+
+    private class PeakPoint
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public decimal Value { get; set; }
+        public string Time { get; set; } = "";
+    }
+
+    private class SaleNotification
+    {
+        public string Product { get; set; } = "";
+        public decimal Amount { get; set; }
+        public string Type { get; set; } = "";
+        public DateTime Timestamp { get; set; }
+        public string TimeAgo => GetTimeAgo(Timestamp);
+
+        private string GetTimeAgo(DateTime time)
+        {
+            var elapsed = DateTime.Now - time;
+            return elapsed.TotalSeconds < 60 ? $"{(int)elapsed.TotalSeconds}s ago" :
+                   elapsed.TotalMinutes < 60 ? $"{(int)elapsed.TotalMinutes}m ago" :
+                   $"{(int)elapsed.TotalHours}h ago";
+        }
+    }
+}
+
+
+<style>
+    .chart-wrapper {
+        position: relative;
+        height: 300px; /* Fixed height for the chart */
+        width: 100%;
+    }
+
+        .chart-wrapper canvas {
+            max-height: 100%;
+            max-width: 100%;
+        }
+
+    .live-sales-chart {
+        position: relative;
+        width: 100%;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .chart-body {
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    /* Header */
+    .chart-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+    }
+
+    .header-left {
+        flex: 1;
+    }
+
+    .chart-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+    }
+
+    .live-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background: #10b981;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        animation: livePulse 2s infinite;
+    }
+
+    @@keyframes livePulse {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .chart-subtitle {
+        margin: 0.25rem 0 0 0;
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Metric Badges */
+    .metric-badges {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .metric-badge {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        background: #f9fafb;
+        min-width: 80px;
+    }
+
+        .metric-badge.revenue {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .metric-badge.rate {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .metric-badge.trend {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+            .metric-badge.trend.down {
+                background: #fee2e2;
+                color: #ef4444;
+            }
+
+    .badge-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        opacity: 0.8;
+        font-weight: 500;
+    }
+
+    .badge-value {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-top: 0.25rem;
+    }
+
+    /* Chart Controls */
+    .chart-controls {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-control {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #6b7280;
+    }
+
+        .btn-control:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .btn-control.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+    /* Chart Body */
+    .chart-body {
+        padding: 1.5rem;
+        position: relative;
+        min-height: 250px;
+    }
+
+    /* Peak Annotations */
+    .peak-annotations {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+    }
+
+    .peak-marker {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 2px solid #f59e0b;
+        border-radius: 8px;
+        padding: 0.25rem 0.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-size: 0.75rem;
+        animation: peakPulse 2s infinite;
+    }
+
+    @@keyframes peakPulse {
+        0% {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        50% {
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        100% {
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+
+    .peak-value {
+        font-weight: 700;
+        color: #f59e0b;
+        display: block;
+    }
+
+    .peak-time {
+        color: #6b7280;
+        font-size: 0.625rem;
+    }
+
+    /* Chart Footer */
+    .chart-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #f3f4f6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fafbfc;
+    }
+
+    /* Time Range Selector */
+    .time-range {
+        display: flex;
+        gap: 0.25rem;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.25rem;
+    }
+
+    .range-btn {
+        padding: 0.375rem 0.75rem;
+        border: none;
+        background: transparent;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+
+        .range-btn:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .range-btn.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+    /* Chart Stats */
+    .chart-stats {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .text-success {
+        color: #10b981;
+    }
+
+    .text-primary {
+        color: #3b82f6;
+    }
+
+    /* Sales Notifications */
+    .sales-notifications {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 280px;
+        z-index: 100;
+    }
+
+    .sale-notification {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-left: 3px solid #3b82f6;
+        opacity: 0;
+        transform: translateX(20px);
+        animation: slideInNotification 0.3s ease forwards;
+    }
+
+        .sale-notification.premium {
+            border-left-color: #8b5cf6;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f0ff 100%);
+        }
+
+        .sale-notification.flash {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+        }
+
+    @@keyframes slideInNotification {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.125rem;
+    }
+
+    .notification-value {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #10b981;
+    }
+
+    .notification-time {
+        font-size: 0.75rem;
+        color: #9ca3af;
+        white-space: nowrap;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .chart-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .header-right {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .metric-badges {
+            flex-wrap: wrap;
+        }
+
+        .chart-footer {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sales-notifications {
+            display: none;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .metric-badge {
+            min-width: 60px;
+            padding: 0.375rem 0.5rem;
+        }
+
+        .badge-label {
+            font-size: 0.625rem;
+        }
+
+        .badge-value {
+            font-size: 0.875rem;
+        }
+    }
+</style>
